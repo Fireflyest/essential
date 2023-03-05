@@ -1,7 +1,263 @@
 name: Essential
-main: org.fireflyest.essetnial.Essential
+main: org.fireflyest.essential.Essential
 version: ${project.version}
 api-version: 1.14
-prefix: CraftGUI
-depend: [ProtocolLib]
+prefix: Essential
+depend: [ProtocolLib,CraftGUI]
 authors: [Fireflyest]
+
+commands:
+  login:
+    description: 登录
+    aliases: [l]
+    usage: /l [密码]
+  register:
+    description: 注册
+    aliases: [reg]
+    usage: /reg [密码]
+  account:
+    description: 指令
+    usage: /account
+  rule:
+    description: 查看服务器规则
+    usage: /rule <reload|help|default>
+  my:
+    description: 快捷菜单
+    usage: /my
+  home:
+    description: 传送回家
+    usage: /home [name]
+  sethome:
+    description: 设置家
+    usage: /sethome [name]
+  delhome:
+    description: 删除家
+    usage: /delhome [name]
+  spawn:
+    description: 回到复活点
+    usage: /spawn
+  warp:
+    description: 传送点
+    usage: /warp [name]
+  kit:
+    description: 工具礼包
+    usage: /kit <name>
+  tpaccept:
+    description: 接受传送
+    usage: /tpaccept
+  tprefuse:
+    description: 拒绝传送
+    usage: /tprefuse
+  tpa:
+    description: 传送请求
+    usage: /tprefuse
+  message:
+    aliases: [m]
+    description: 私聊
+    usage: /m [name] [text]
+  interact:
+    description: 玩家交互
+    usage: /interact [name]
+  tphere:
+    description: 邀请他人传送
+    permission: essential.tphere
+    usage: /tphere [name]
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.tphere"
+  setwarp:
+    description: 设置传送点
+    permission: essential.setwarp
+    usage: /setwarp [name]
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.setwarp"
+  fly:
+    description: 开启飞行
+    permission: essential.fly
+    usage: /fly <name>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.fly"
+  inv:
+    description: 查看他人背包
+    permission: essential.inv
+    usage: /inv [name]
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.inv"
+  heal:
+    description: 治疗
+    permission: essential.heal
+    usage: /heal <name>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.heal"
+  mode:
+    description: 模式切换
+    permission: essential.mode
+    usage: /mode <name>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.mode"
+  einv:
+    description: 移动末影箱
+    permission: essential.einv
+    usage: /einv <name>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.einv"
+  table:
+    description: 移动工作台
+    permission: essential.table
+    usage: /table
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.table"
+  skull:
+    description: 获取玩家头颅
+    permission: essential.skull
+    usage: /skull <name>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.skull"
+  world:
+    description: 世界信息
+    permission: essential.world
+    usage: /world <name>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.world"
+  back:
+    description: 返回上一个传送点
+    permission: essential.back
+    usage: /back
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.back"
+  suicide:
+    description: 自杀
+    permission: essential.suicide
+    usage: /suicide
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.suicide"
+  plugin:
+    description: 插件管理
+    permission: essential.plugin
+    usage: /plugin
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.plugin"
+  sudo:
+    description: 让玩家执行指令
+    permission: essential.sudo
+    usage: /sudo [player] [command]
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.sudo"
+  top:
+    description: 到达顶端
+    permission: essential.top
+    usage: /top
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.top"
+  hat:
+    description: 戴帽子
+    permission: essential.hat
+    usage: /hat
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.hat"
+  mute:
+    description: 禁言指令
+    permission: essential.mute
+    usage: /mute [player] <time>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.mute"
+  up:
+    description: 向上
+    permission: essential.up
+    usage: /up <amount>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.up"
+  name:
+    description: 命名手上物品
+    permission: essential.name
+    usage: /name [text]
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.name"
+  lore:
+    description: 修改手上物品的注释
+    permission: essential.lore
+    usage: /lore [line] [text]
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.lore"
+  runtime:
+    description: 内存使用状况
+    permission: essential.runtime
+    usage: /runtime
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.runtime"
+  dnd:
+    description: 请勿打扰
+    permission: essential.dnd
+    usage: /dnd
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.dnd"
+  sun:
+    description: 晴天
+    permission: essential.sun
+    usage: /sun
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.sun"
+  hand:
+    description: 展示手上物品
+    permission: essential.hand
+    usage: /hand
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.hand"
+  rtp:
+    description: 随机传送
+    permission: essential.rtp
+    usage: /rtp
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.rtp"
+  vanish:
+    aliases: [v]
+    description: 消失
+    permission: essential.vanish
+    usage: /vanish
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.vanish"
+  god:
+    description: 无敌模式
+    permission: essential.god
+    usage: /god
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.god"
+  ride:
+    description: 骑他人
+    permission: essential.ride
+    usage: /ride
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.ride"
+  repair:
+    description: 修复
+    permission: essential.repair
+    usage: /repair
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.repair"
+  enchant:
+    description: 附魔
+    permission: essential.enchant
+    usage: /enchant
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.enchant"
+  worlds:
+    description: 世界管理
+    usage: /worlds <世界>
+    permission: essential.world
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.world"
+  money:
+    description: 查看游戏币
+    usage: /money <玩家>
+  pay:
+    description: 支付游戏币
+    usage: /pay [玩家] [数额]
+    permission: essential.pay
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.pay"
+  eco:
+    description: 赠予游戏币
+    usage: /eco [玩家] [数额]
+    permission: essential.eco
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.eco"
+  balance:
+    description: 经济排行
+    usage: /balance
+    permission: essential.balance
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.balance"
+
+permissions:
+  essential.vip:
+    description: 会员权限
+    default: op
+  essential.einv.see:
+    description: 查看他人末影箱
+    default: op
+  essential.fly.give:
+    description: 给予暂时飞行
+    default: op
+  essential.chat.color:
+    description: 聊天颜色
+    default: op
+  essential.warp.*:
+    description: 传送点传送权限
+    default: op
+    children:
+      essential.warp.vip: true
+      essential.warp.end: true
+  essential.eco:
+    default: op
+    description: 经济掌控权
+  essential.pay:
+    default: op
+    description: 支付游戏币
+  essential.money:
+    default: op
+    description: 查看他人游戏币

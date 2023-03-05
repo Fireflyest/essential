@@ -1,0 +1,28 @@
+world_main:
+  display: "§f[§a主城§f]"
+  message: "w"
+  border: 500
+  protect: true
+  pvp: false
+  explode: false
+world:
+  display: "§f[§a探险§f]"
+  message: "w"
+  border: 16000
+  protect: false
+  pvp: true
+  explode: true
+world_nether:
+  display: "§f[§c地狱§f]"
+  message: "w"
+  border: 16000
+  protect: false
+  pvp: true
+  explode: true
+world_the_end:
+  display: "§f[§5末地§f]"
+  message: "w"
+  border: 16000
+  protect: false
+  pvp: true
+  explode: true

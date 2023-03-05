@@ -11,11 +11,56 @@
   <name>Essential</name>
 
   <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.3.0</version>
+            <configuration>
+                <relocations>
+                    <relocation>
+                        <pattern>javax.mail</pattern>
+                        <shadedPattern>com.fireflyest.account.mail</shadedPattern>
+                    </relocation>
+                    <relocation>
+                        <pattern>javax.activation</pattern>
+                        <shadedPattern>com.fireflyest.account.activation</shadedPattern>
+                    </relocation>
+                </relocations>
+                <artifactSet>
+                    <includes>
+                        <include>javax.mail:mail</include>
+                        <include>javax.activation:activation</include>
+                    </includes>
+                </artifactSet>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>META-INF/MANIFEST.MF</exclude>
+                                    <exclude>META-INF/LICENSE.txt</exclude>
+                                </excludes>
+                            </filter>
+                        </filters>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
     <resources>
-      <resource>
-          <directory>src/main/resources</directory>
-          <filtering>true</filtering>
-      </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
     </resources>
   </build>
 
@@ -64,6 +109,22 @@
         <groupId>com.github.cryptomorin</groupId>
         <artifactId>XSeries</artifactId>
         <version>7.2.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.fireflyest</groupId>
+        <artifactId>craftgui</artifactId>
+        <version>1.1.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4.7</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>1.1.1</version>
     </dependency>
   </dependencies>
 
