@@ -1,0 +1,59 @@
+default:
+  prefix: "$<hg=#b2b9be:#2f4052>初来乍到"
+  name: "默认权限组"
+  desc: "玩家初始拥有权限组 有一些基本权限"
+  button: "STONE"
+  permissions:
+    - "bukkit.command.plugins,false"
+    - "minecraft.command.me,false"
+    - "minecraft.command.msg,false"
+    - "essential.warp.pvp,true"
+    - "essential.warp.pve,true"
+    - "essential.warp.world,true"
+    - "essential.warp.nether,true"
+    - "essential.warp.end,true"
+    - "essential.warp.plot,true"
+    - "essential.tphere,true"
+    - "essential.back,true"
+normal:
+  prefix: ""
+  name: "正式玩家"
+  desc: "已在服务器一段时间 成为服务器正式玩家"
+  button: "QUARTZ_BLOCK"
+  permissions:
+    - "essential.pay,true"
+    - "essential.suicide,true"
+vip:
+  prefix: ""
+  name: "会员玩家"
+  desc: "会员玩家"
+  button: "GOLD_BLOCK"
+  permissions:
+    - "essential.hat,true"
+    - "essential.einv,true"
+    - "essential.table,true"
+    - "essential.fly,true"
+    - "essential.vip,true"
+    - "essential.chat.color,true"
+    - "essential.sign.color,true"
+admin:
+  prefix: ""
+  name: "管理员"
+  desc: "服务器管理者"
+  button: "OBSIDIAN"
+  permissions:
+    - "essential.heal,true"
+    - "essential.name,true"
+    - "essential.lore,true"
+    - "essential.top,true"
+    - "essential.admin,true"
+    - "essential.fly.give,true"
+builder:
+  prefix: ""
+  name: "建筑师"
+  desc: "御用建筑师 在归属服务器的领地内可建筑"
+  button: "BRICKS"
+  permissions:
+    - "essential.build,true"
+    - "essential.fly,true"
+

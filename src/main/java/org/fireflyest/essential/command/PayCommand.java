@@ -40,11 +40,11 @@ public class PayCommand extends SimpleCommand {
         economy.depositPlayer(arg1, amount);
 
         String money = economy.format(economy.getBalance(arg1));
-        sender.sendMessage(Language.TITLE + "玩家§3" + arg1 + "§f目前拥有§3" + money + economy.currencyNameSingular());
+        sender.sendMessage("💰玩家§3" + arg1 + "§f目前拥有§3" + money + economy.currencyNameSingular());
 
         Player target = Bukkit.getPlayer(arg1);
         if(target != null && target.isOnline() && !sender.getName().equals(arg1)) {
-            target.sendMessage(Language.TITLE + "您目前拥有§3" + money + economy.currencyNameSingular());
+            target.sendMessage("💰您目前拥有§3" + money + economy.currencyNameSingular());
         }
         return true;
     }

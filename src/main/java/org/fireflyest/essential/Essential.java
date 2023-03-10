@@ -19,6 +19,9 @@ import org.fireflyest.essential.command.EconomyCommand;
 import org.fireflyest.essential.command.EinvCommand;
 import org.fireflyest.essential.command.EmailCommand;
 import org.fireflyest.essential.command.FlyCommand;
+import org.fireflyest.essential.command.GradientArgument;
+import org.fireflyest.essential.command.GroupArgument;
+import org.fireflyest.essential.command.GroupCommand;
 import org.fireflyest.essential.command.HatCommand;
 import org.fireflyest.essential.command.HealCommand;
 import org.fireflyest.essential.command.HomeArgument;
@@ -32,7 +35,10 @@ import org.fireflyest.essential.command.ModeCommand;
 import org.fireflyest.essential.command.MoneyCommand;
 import org.fireflyest.essential.command.NameCommand;
 import org.fireflyest.essential.command.PayCommand;
+import org.fireflyest.essential.command.PermissionArgument;
+import org.fireflyest.essential.command.PermissionCommand;
 import org.fireflyest.essential.command.PluginsCommand;
+import org.fireflyest.essential.command.PrefixCommand;
 import org.fireflyest.essential.command.RegisterCommand;
 import org.fireflyest.essential.command.SethomeCommand;
 import org.fireflyest.essential.command.SetwarpCommand;
@@ -56,15 +62,19 @@ import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.data.StateCache;
 import org.fireflyest.essential.gui.AccountView;
 import org.fireflyest.essential.gui.ChunksView;
+import org.fireflyest.essential.gui.PermissionView;
 import org.fireflyest.essential.gui.PluginView;
+import org.fireflyest.essential.gui.PrefixView;
 import org.fireflyest.essential.gui.WorldsView;
 import org.fireflyest.essential.listener.PlayerEventListener;
 import org.fireflyest.essential.listener.WorldEventListener;
 import org.fireflyest.essential.protocol.EssentialProtocol;
 import org.fireflyest.essential.service.EssentialEconomy;
+import org.fireflyest.essential.service.EssentialPermission;
 import org.fireflyest.essential.service.EssentialService;
 
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 
 /**
  * essential.
@@ -75,10 +85,14 @@ public class Essential extends JavaPlugin {
     public static final String VIEW_WORLDS = "essential.worlds";
     public static final String VIEW_CHUNKS = "essential.chunks";
     public static final String VIEW_PLUGIN = "essential.plugin";
+    public static final String VIEW_PERMISSION = "essential.permission";
+    public static final String VIEW_PREFIX = "essential.prefix";
 
     private EssentialService service;
     private EssentialYaml yaml;
+    private EssentialProtocol protocol;
     private EssentialEconomy economy;
+    private EssentialPermission permissions;
     private StateCache cache;
     private ViewGuide guide;
     private String url;
@@ -105,16 +119,21 @@ public class Essential extends JavaPlugin {
             e.printStackTrace();
         }
 
-        // 经济
+        // 经济服务
         this.economy = new EssentialEconomy(service);
         this.getServer().getServicesManager().register(Economy.class, economy, this, ServicePriority.Normal);
-
+        // 权限服务
+        this.permissions = new EssentialPermission(yaml, service);
+        this.getServer().getServicesManager().register(Permission.class, permissions, this, ServicePriority.Normal);
+        
         // 界面
         this.setupGuide();
+
+        this.protocol = new EssentialProtocol(guide);
         
         // 监听
         this.getLogger().info("Lunching listener.");
-        this.getServer().getPluginManager().registerEvents(new PlayerEventListener(service, cache, guide), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerEventListener(service, yaml, permissions, cache, guide), this);
         this.getServer().getPluginManager().registerEvents(new WorldEventListener(yaml, service), this);
 
         // 指令
@@ -122,12 +141,8 @@ public class Essential extends JavaPlugin {
         this.setupBasicCommand();
         this.setupTeleportCommand();
         this.setupEconomyCommand();
-        PluginCommand world = this.getCommand("world");
-        if (world != null) {
-            world.setExecutor(new WorldCommand(guide));
-        }
-
-        
+        this.setupWorldCommand();
+        this.setupGroupCommand();
         
     }
 
@@ -136,7 +151,7 @@ public class Essential extends JavaPlugin {
         // 保存玩家位置
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (StateCache.LOGIN.equals(cache.get(player.getName() + ".account.state"))) {
-                service.updateQuit(player.getLocation(), player.getUniqueId().toString());
+                service.updateQuit(player.getLocation(), player.getUniqueId());
                 player.sendMessage(Language.LOGIN);
                 player.setGameMode(GameMode.SPECTATOR);
             } else {
@@ -170,7 +185,8 @@ public class Essential extends JavaPlugin {
         guide.addView(VIEW_WORLDS, new WorldsView(yaml));
         guide.addView(VIEW_CHUNKS, new ChunksView());
         guide.addView(VIEW_PLUGIN, new PluginView());
-        new EssentialProtocol(guide);
+        guide.addView(VIEW_PERMISSION, new PermissionView(service, yaml));
+        guide.addView(VIEW_PREFIX, new PrefixView(service));
     }
 
     /**
@@ -373,6 +389,43 @@ public class Essential extends JavaPlugin {
             payCommand.setArgument(1, new NumberArgs());
             pay.setExecutor(payCommand);
             pay.setTabCompleter(payCommand);
+        }
+    }
+
+    private void setupWorldCommand() {
+        PluginCommand world = this.getCommand("world");
+        if (world != null) {
+            world.setExecutor(new WorldCommand(guide));
+        }
+    }
+
+    private void setupGroupCommand() {
+        PluginCommand group = this.getCommand("group");
+        if (group != null) {
+            GroupCommand groupCommand = new GroupCommand(permissions, guide);
+            groupCommand.setArgument(0, new PlayerArgs());
+            groupCommand.setArgument(1, new GroupArgument(yaml));
+            groupCommand.setArgument(2, new NumberArgs());
+            group.setExecutor(groupCommand);
+            group.setTabCompleter(groupCommand);
+        }
+        PluginCommand permission = this.getCommand("permission");
+        if (permission != null) {
+            PermissionCommand permissionCommand = new PermissionCommand(permissions, guide);
+            permissionCommand.setArgument(0, new PlayerArgs());
+            permissionCommand.setArgument(1, new PermissionArgument());
+            permissionCommand.setArgument(2, new NumberArgs());
+            permission.setExecutor(permissionCommand);
+            permission.setTabCompleter(permissionCommand);
+        }
+        PluginCommand prefix = this.getCommand("prefix");
+        if (prefix != null) {
+            PrefixCommand prefixCommand = new PrefixCommand(service, guide);
+            prefixCommand.setArgument(0, new PlayerArgs());
+            prefixCommand.setArgument(1, new GradientArgument());
+            prefixCommand.setArgument(2, new NumberArgs());
+            prefix.setExecutor(prefixCommand);
+            prefix.setTabCompleter(prefixCommand);
         }
     }
 

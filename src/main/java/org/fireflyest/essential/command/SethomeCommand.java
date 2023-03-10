@@ -2,6 +2,7 @@ package org.fireflyest.essential.command;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
@@ -36,7 +37,7 @@ public class SethomeCommand extends SimpleCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        String uid = player.getUniqueId().toString();
+        UUID uid = player.getUniqueId();
         List<Home> homes = Arrays.asList(service.selectHomes(uid));
         if ((homes.size() > 3 && !player.hasPermission("essential.vip"))) {
             player.sendMessage(Language.MAXIMUM_AMOUNT);

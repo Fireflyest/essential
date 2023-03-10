@@ -29,8 +29,8 @@ public interface SteveDao {
      * 插入玩家数据
      * @return id
      */
-    @Insert("INSERT INTO `essential_steve` (`name`,`uid`,`register`) VALUES ('${name}','${uid}',${register});")
-    long insertSteve(String name, String uid, long register);
+    @Insert("INSERT INTO `essential_steve` (`name`,`uid`,`register`,`prefix`) VALUES ('${name}','${uid}',${register},'${prefix}');")
+    long insertSteve(String name, String uid, long register, String prefix);
 
     /**
      * 更新离开位置
@@ -114,4 +114,10 @@ public interface SteveDao {
     @Select("SELECT `money` FROM `essential_steve` WHERE `name`='${name}';")
     double selectMoneyByName(String name);
 
+    @Select("SELECT `prefix` FROM `essential_steve` WHERE `uid`='${uid}';")
+    String selectPrefix(String uid);
+
+    @Update("UPDATE `essential_steve` SET `prefix`='${prefix}' WHERE `uid`='${uid}';")
+    long updatePrefix(String prefix, String uid);
+    
 }

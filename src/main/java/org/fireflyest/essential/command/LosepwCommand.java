@@ -1,5 +1,7 @@
 package org.fireflyest.essential.command;
 
+import java.util.UUID;
+
 import javax.annotation.Nonnull;
 
 import org.bukkit.command.CommandSender;
@@ -52,7 +54,7 @@ public class LosepwCommand extends SubCommand {
             return false;
         }
         String name = player.getName();
-        String uid = player.getUniqueId().toString();
+        UUID uid = player.getUniqueId();
         String email = service.selectEmail(uid);
         if ("".equals(email)) {
             player.sendMessage(Language.DON_HAS_EMAIL);

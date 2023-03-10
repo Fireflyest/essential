@@ -41,7 +41,7 @@ public class MoneyCommand extends SimpleCommand {
             return false;
         }
 
-        String money = economy.format(economy.getBalance(arg1));
+        String money = economy.format(economy.getBalance(arg1)) + economy.currencyNameSingular();
         sender.sendMessage(Language.ECONOMY_PLAYER.replace("%player%", money).replace("%money%", money));
 
         return true;

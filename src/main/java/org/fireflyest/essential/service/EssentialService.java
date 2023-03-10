@@ -1,16 +1,24 @@
 package org.fireflyest.essential.service;
 
+import java.util.UUID;
+
 import javax.annotation.Nonnull;
 
 import org.bukkit.Location;
 import org.fireflyest.craftdatabase.annotation.Auto;
 import org.fireflyest.craftdatabase.annotation.Service;
 import org.fireflyest.craftdatabase.sql.SQLService;
+import org.fireflyest.essential.bean.Confer;
 import org.fireflyest.essential.bean.Home;
+import org.fireflyest.essential.bean.Permit;
 import org.fireflyest.essential.bean.Point;
+import org.fireflyest.essential.bean.Prefix;
 import org.fireflyest.essential.bean.Steve;
+import org.fireflyest.essential.dao.ConferDao;
 import org.fireflyest.essential.dao.HomeDao;
+import org.fireflyest.essential.dao.PermitDao;
 import org.fireflyest.essential.dao.PointDao;
+import org.fireflyest.essential.dao.PrefixDao;
 import org.fireflyest.essential.dao.SteveDao;
 import org.fireflyest.util.SerializationUtil;
 
@@ -34,13 +42,22 @@ public class EssentialService extends SQLService {
     @Auto
     public PointDao pointDao;
 
+    @Auto
+    public PermitDao permitDao;
+
+    @Auto
+    public ConferDao conferDao;
+
+    @Auto
+    public PrefixDao prefixDao;
+
     /**
      * 查找玩家数据
      * @param uid uid
      * @return 玩家数据
      */
-    public Steve selectSteveByUid(String uid) {
-        return steveDao.selectSteveByUid(uid);
+    public Steve selectSteveByUid(UUID uid) {
+        return steveDao.selectSteveByUid(uid.toString());
     }
 
     /**
@@ -57,10 +74,11 @@ public class EssentialService extends SQLService {
      * @param name 名称
      * @param uid uid
      * @param register 注册时间
+     * @param prefix 头衔
      * @return id
      */
-    public long insertSteve(String name, String uid, long register) {
-        return steveDao.insertSteve(name, uid, register);
+    public long insertSteve(String name, UUID uid, long register, String prefix) {
+        return steveDao.insertSteve(name, uid.toString(), register, prefix);
     }
 
     /**
@@ -68,8 +86,8 @@ public class EssentialService extends SQLService {
      * @param quit 离开位置
      * @param uid uid
      */
-    public void updateQuit(Location quit, String uid) {
-        steveDao.updateQuit(SerializationUtil.serialize(quit), uid);
+    public void updateQuit(Location quit, UUID uid) {
+        steveDao.updateQuit(SerializationUtil.serialize(quit), uid.toString());
     }
 
     /**
@@ -77,12 +95,12 @@ public class EssentialService extends SQLService {
      * @param uid uid
      * @return 玩家离开位置
      */
-    public Location selectQuit(String uid) {
-        String quit = steveDao.selectQuit(uid);
+    public Location selectQuit(UUID uid) {
+        String quit = steveDao.selectQuit(uid.toString());
         if (quit == null || "".equals(quit)) {
             return null;
         }
-        return SerializationUtil.deserialize(steveDao.selectQuit(uid), Location.class);
+        return SerializationUtil.deserialize(steveDao.selectQuit(uid.toString()), Location.class);
     }
 
     /**
@@ -90,8 +108,8 @@ public class EssentialService extends SQLService {
      * @param password 密码
      * @param uid uid
      */
-    public void updatePassword(String password, String uid) {
-        steveDao.updatePassword(password, uid);
+    public void updatePassword(String password, UUID uid) {
+        steveDao.updatePassword(password, uid.toString());
     }
 
     /**
@@ -99,8 +117,8 @@ public class EssentialService extends SQLService {
      * @param uid uid
      * @return 玩家密码
      */
-    public String selectPassword(String uid) {
-        return steveDao.selectPassword(uid);
+    public String selectPassword(UUID uid) {
+        return steveDao.selectPassword(uid.toString());
     }
 
     /**
@@ -108,8 +126,8 @@ public class EssentialService extends SQLService {
      * @param email 邮箱
      * @param uid uid
      */
-    public void updateEmail(String email, String uid) {
-        steveDao.updateEmail(email, uid);
+    public void updateEmail(String email, UUID uid) {
+        steveDao.updateEmail(email, uid.toString());
     }
 
     /**
@@ -117,8 +135,8 @@ public class EssentialService extends SQLService {
      * @param uid uid
      * @return 邮箱
      */
-    public String selectEmail(String uid) {
-        return steveDao.selectEmail(uid);
+    public String selectEmail(UUID uid) {
+        return steveDao.selectEmail(uid.toString());
     }
 
     /**
@@ -128,8 +146,8 @@ public class EssentialService extends SQLService {
      * @param uid 玩家id
      * @return 更新条目
      */
-    public long updateMoney(String symbol, double money, String uid) {
-        return steveDao.updateMoney(symbol, money, uid);
+    public long updateMoney(String symbol, double money, UUID uid) {
+        return steveDao.updateMoney(symbol, money, uid.toString());
     }
 
     /**
@@ -137,8 +155,8 @@ public class EssentialService extends SQLService {
      * @param uid 玩家id
      * @return 钱
      */
-    public double selectMoney(String uid) {
-        return steveDao.selectMoney(uid);
+    public double selectMoney(UUID uid) {
+        return steveDao.selectMoney(uid.toString());
     }
 
     /**
@@ -160,6 +178,25 @@ public class EssentialService extends SQLService {
     public double selectMoneyByName(String name) {
         return steveDao.selectMoneyByName(name);
     }
+    
+    /**
+     * 获取头衔
+     * @param uid uid
+     * @return 头衔
+     */
+    public String selectStevePrefix(UUID uid) {
+        return steveDao.selectPrefix(uid.toString());
+    }
+
+    /**
+     * 更新头衔
+     * @param prefix 头衔
+     * @param uid uid
+     * @return 更新条目
+     */
+    public long updatePrefix(String prefix, UUID uid) {
+        return steveDao.updatePrefix(prefix, uid.toString());
+    }
 
     /*****************************************************************************/
 
@@ -169,8 +206,8 @@ public class EssentialService extends SQLService {
      * @param name 名称
      * @return 删除数量
      */
-    public long deleteHome(String owner, String name) {
-        return homeDao.deleteHome(owner, name);
+    public long deleteHome(UUID owner, String name) {
+        return homeDao.deleteHome(owner.toString(), name);
     }
 
     /**
@@ -180,8 +217,8 @@ public class EssentialService extends SQLService {
      * @param loc 位置
      * @return id
      */
-    public long insertHome(String owner, String name, Location loc) {
-        return homeDao.insertHome(owner, name, SerializationUtil.serialize(loc));
+    public long insertHome(UUID owner, String name, Location loc) {
+        return homeDao.insertHome(owner.toString(), name, SerializationUtil.serialize(loc));
     }
 
     /**
@@ -190,8 +227,8 @@ public class EssentialService extends SQLService {
      * @param name 名称
      * @return 家
      */
-    public Home selectHome(String owner, String name) {
-        return homeDao.selectHome(owner, name);
+    public Home selectHome(UUID owner, String name) {
+        return homeDao.selectHome(owner.toString(), name);
     }
 
     /**
@@ -199,8 +236,8 @@ public class EssentialService extends SQLService {
      * @param owner 主人
      * @return 家
      */
-    public Home[] selectHomes(String owner) {
-        return homeDao.selectHomes(owner);
+    public Home[] selectHomes(UUID owner) {
+        return homeDao.selectHomes(owner.toString());
     }
 
     /**
@@ -210,8 +247,8 @@ public class EssentialService extends SQLService {
      * @param name 名称
      * @return 更新数目
      */
-    public long updateHome(Location loc, String owner, String name) {
-        return homeDao.updateHome(SerializationUtil.serialize(loc), owner, name);
+    public long updateHome(Location loc, UUID owner, String name) {
+        return homeDao.updateHome(SerializationUtil.serialize(loc), owner.toString(), name);
     }
 
     /*****************************************************************************/
@@ -244,6 +281,76 @@ public class EssentialService extends SQLService {
      */
     public long updatePoint(Location loc, String name) {
         return pointDao.updatePoint(SerializationUtil.serialize(loc), name);  
+    }
+
+    /*****************************************************************************/
+
+    public long insertPermit(UUID owner, String name, boolean value, String world, long deadline) {
+        return permitDao.insertPermit(owner.toString(), name, value, world, deadline);
+    }
+
+    public Permit[] selectPermits(UUID owner) {
+        return permitDao.selectPermits(owner.toString());
+    }
+
+    public Permit selectPermit(UUID owner, String name) {
+        return permitDao.selectPermit(owner.toString(), name);
+    }
+
+    public long updatePermit(long deadline, long id) {
+        return permitDao.updatePermit(deadline, id);
+    }
+
+    public long deletePermit(UUID owner, String name) {
+        return permitDao.deletePermit(owner.toString(), name);
+    }
+    
+    /*****************************************************************************/
+
+    public long insertConfer(UUID owner, String group, String world, long deadline) {
+        return conferDao.insertConfer(owner.toString(), group, world, deadline);
+    }
+
+    public Confer[] selectConfers(UUID owner) {
+        return conferDao.selectConfers(owner.toString());
+    }
+
+    public Confer selectConfer(UUID owner, String group) {
+        return conferDao.selectConfer(owner.toString(), group);
+    }
+
+    public long updateConfer(long deadline, long id) {
+        return conferDao.updateConfer(deadline, id);
+    }
+
+    public long deleteConfer(UUID owner, String group) {
+        return conferDao.deleteConfer(owner.toString(), group);
+    }
+
+    /*****************************************************************************/
+
+    public long insertPrefix(UUID owner, String value, long deadline) {
+        return prefixDao.insertPrefix(owner.toString(), value, deadline);
+    }
+
+    public Prefix[] selectPrefixs(UUID owner) {
+        return prefixDao.selectPrefixs(owner.toString());
+    }
+
+    public Prefix selectPrefix(long id) {
+        return prefixDao.selectPrefix(id);
+    }
+
+    public Prefix selectPrefix(UUID owner, String value) {
+        return prefixDao.selectPrefix(owner.toString(), value);
+    }
+
+    public long updatePrefix(long deadline, long id) {
+        return prefixDao.updatePrefix(deadline, id);
+    }
+
+    public long deletePrefix(long id) {
+        return prefixDao.deletePrefix(id);
     }
 
 }

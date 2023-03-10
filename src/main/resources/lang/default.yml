@@ -7,14 +7,23 @@ OnlyPlayerUse: '🔔§f该指令仅限玩家输入'
 NotPermission: '🔔§f你没有使用该指令的权限 §3%permission%'
 OfflinePlayer: '🔔§f玩家§3%player%§f不在线或不存在'
 SucceedSwitch: '🔔§f成功切换状态'
+
+GroupAdd: '📗§f已被添加到权限组§3%group%§f，输入§3 /group§f查看更多信息'
+PermissionAdd: '📗§f授予权限§3%permission%§f，输入§3 /group§f查看更多信息'
+PrefixAdd: '📗§f授予头衔§3%prefix%§f，输入§3 /prefix§f查看更多信息'
+PrefixChange: '📗§f修改头衔'
+
 MaximumAmount: '🏡§f你已经设置了太多家了'
 SucceedSettle: '🏡§f成功设置家§3%home%'
 SucceedDelete: '🏡§f成功删除家§3%home%'
 HaveNotSettle: '🏡§f没有设置家§3%home%'
-HaveNotSetPoi: '🔔§f没有设置点§3%point%'
+
 HaveNotSetKit: '🔔§f工具包§3%kit%§f不存在'
 DisposableKit: '🔔§f工具包§3%kit%§f只能使用一次'
+
 CooldownToUse: '⏳§f冷却中§3%time%'
+
+HaveNotSetPoi: '🧿§f没有设置点§3%point%'
 TeleportPoint: '🧿§f正在传送到§3%point%'
 SavePoint: '🧿§f已保存返回点'
 CancelWaiting: '🧿§f你取消了传送'
@@ -23,7 +32,8 @@ SucceedSendTp: '🧿§f成功发出传送请求'
 TeleportApply: '🧿§f玩家§3%player%§f请求传送到你身边'
 TeleportIvttp: '🧿§f玩家§3%player%§f邀请你传送到他身边'
 TpApplyRefuse: '🧿§f对方拒绝了你的请求'
-EconomyPlayer: '🔔§3%player%§f拥有麦块币: §3%money%'
+
+EconomyPlayer: '💰§3%player%§f拥有: §3%money%'
 
 # 登录插件
 Register: '👻§f欢迎加入我们，输入§3/reg [密码] §f注册一个账户吧'

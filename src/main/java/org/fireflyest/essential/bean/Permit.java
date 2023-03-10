@@ -4,8 +4,8 @@ import org.fireflyest.craftdatabase.annotation.Column;
 import org.fireflyest.craftdatabase.annotation.ID;
 import org.fireflyest.craftdatabase.annotation.Table;
 
-@Table("essential_prefix")
-public class Prefix {
+@Table("essential_permission")
+public class Permit {
 
     @ID
     @Column
@@ -15,12 +15,18 @@ public class Prefix {
     private String owner;
 
     @Column
-    private String value;
+    private String name;
+
+    @Column
+    private boolean value;
+
+    @Column
+    private String world;
 
     @Column
     private long deadline;
 
-    public Prefix() {
+    public Permit() {
     }
 
     public int getId() {
@@ -39,12 +45,28 @@ public class Prefix {
         this.owner = owner;
     }
 
-    public String getValue() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(boolean value) {
         this.value = value;
+    }
+
+    public String getWorld() {
+        return world;
+    }
+
+    public void setWorld(String world) {
+        this.world = world;
     }
 
     public long getDeadline() {
@@ -54,7 +76,5 @@ public class Prefix {
     public void setDeadline(long deadline) {
         this.deadline = deadline;
     }
-
-    
 
 }

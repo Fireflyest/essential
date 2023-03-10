@@ -2,6 +2,7 @@ package org.fireflyest.essential.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +33,7 @@ public class HomeArgument implements Argument {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return homes;
         }
-        String uid = player.getUniqueId().toString();
+        UUID uid = player.getUniqueId();
         Home[] hs = service.selectHomes(uid);
         for (Home h : hs) {
             if (h.getName().startsWith(arg)) {

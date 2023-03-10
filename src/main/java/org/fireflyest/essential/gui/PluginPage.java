@@ -45,23 +45,27 @@ public class PluginPage extends TemplatePage {
             if (i >= pluginFiles.size()) break;
             String pluginFile = pluginFiles.get(i);
             Material material = Material.BUCKET;
+            String color ="$<hg=#f0932b:#eb4d4b>";
             ItemStack item;
             Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginFile);
             if (plugin != null) {
                 material = plugin.isEnabled() ? Material.LAVA_BUCKET : Material.WATER_BUCKET;
+                color = plugin.isEnabled() ? "$<hg=#f0932b:#f9ca24>" : "$<hg=#f0932b:#22a6b3>";
                 ItemBuilder pluginButtonBuilder = new ButtonItemBuilder(material)
-                        .name(String.format("§e§l%s", pluginFile))
-                        .lore(String.format("§3§l版本§7: §f%s", plugin.getDescription().getVersion()));
-                pluginButtonBuilder.lore("§3§l作者§7: ");
+                        .name(String.format("%s%s", color, pluginFile))
+                        .colorful()
+                        .lore(String.format("§r$<c=#6ab04c>版本$<c=#f6f6f6>: $<c=#ffbe76>%s", plugin.getDescription().getVersion()));
+                pluginButtonBuilder.lore("§r$<c=#6ab04c>作者$<c=#f6f6f6>: ");
                 for (String author : plugin.getDescription().getAuthors()) {
-                    pluginButtonBuilder.lore(String.format(" §7• §f%s", author));
+                    pluginButtonBuilder.lore(String.format(" $<c=#f6f6f6>• $<c=#ffbe76>%s", author));
                 }
                 item = pluginButtonBuilder.build();
             } else {
                 item = new ButtonItemBuilder(material)
-                        .name(String.format("§e§l%s", pluginFile))
-                        .lore("§f插件未加载")
-                        .lore("§f请检查前置插件是否安装")
+                        .name(String.format("%s%s", color, pluginFile))
+                        .lore("$<c=#f6f6f6>插件未加载")
+                        .lore("$<c=#f6f6f6>请检查前置插件是否安装")
+                        .colorful()
                         .build();
             }
             asyncButtonMap.put(pos++, item);

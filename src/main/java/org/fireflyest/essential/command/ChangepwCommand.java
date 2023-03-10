@@ -1,5 +1,7 @@
 package org.fireflyest.essential.command;
 
+import java.util.UUID;
+
 import javax.annotation.Nonnull;
 
 import org.bukkit.command.CommandSender;
@@ -32,7 +34,7 @@ public class ChangepwCommand extends SubCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        String uid = player.getUniqueId().toString();
+        UUID uid = player.getUniqueId();
         String password = service.selectPassword(uid);
         
         if (password.equals(arg1)) {

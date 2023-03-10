@@ -2,10 +2,14 @@ package org.fireflyest.essential.listener;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,26 +17,40 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.fireflyest.craftgui.api.ViewGuide;
 import org.fireflyest.essential.Essential;
+import org.fireflyest.essential.bean.Prefix;
 import org.fireflyest.essential.bean.Steve;
 import org.fireflyest.essential.data.Config;
+import org.fireflyest.essential.data.EssentialYaml;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.data.StateCache;
+import org.fireflyest.essential.service.EssentialPermission;
 import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.util.DeathMsgUtils;
+import org.fireflyest.util.ItemUtils;
 import org.fireflyest.util.SerializationUtil;
+
+import de.tr7zw.changeme.nbtapi.NBTItem;
 
 public class PlayerEventListener implements Listener {
     
     private EssentialService service;
+    private EssentialYaml yaml;
+    private EssentialPermission permission;
     private StateCache cache;
     private ViewGuide guide;
+
+    private final Pattern aitePattern = Pattern.compile("@[a-z0-9A-Z][^ ]+");
+    private final Pattern varPattern = Pattern.compile("%([^%]*)%");
 
     private final String motdHeader = 
             "   .·*ᄽ´¯`§7*·.¸¸ᄿ*·.  §e§l◎  §6§lEdgeCraft§r  §e§l◎ §7 .·*ᄽ¸¸.·*§f´¯`ᄿ*·.   \n"
@@ -45,8 +63,10 @@ public class PlayerEventListener implements Listener {
      * @param service 数据服务
      * @param cache 缓存
      */
-    public PlayerEventListener(EssentialService service, StateCache cache, ViewGuide guide) {
+    public PlayerEventListener(EssentialService service, EssentialYaml yaml, EssentialPermission permission, StateCache cache, ViewGuide guide) {
         this.service = service;
+        this.yaml = yaml;
+        this.permission = permission;
         this.cache = cache;
         this.guide = guide;
     }
@@ -68,7 +88,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        String uid = player.getUniqueId().toString();
+        UUID uid = player.getUniqueId();
         
         // 传送到主世界
         World mainWorld = Bukkit.getWorld(Config.MAIN_WORLD);
@@ -84,8 +104,7 @@ public class PlayerEventListener implements Listener {
         Steve steve = service.selectSteveByUid(uid);
         if (steve == null) {
             Bukkit.broadcastMessage(Language.NEW_PLAYER.replace("%player%", player.getName()));
-
-            service.insertSteve(player.getName(), uid, Instant.now().toEpochMilli());
+            service.insertSteve(player.getName(), uid, Instant.now().toEpochMilli(), yaml.getGroup().getString("default.prefix"));
             steve = service.selectSteveByUid(uid);
         }
 
@@ -97,15 +116,6 @@ public class PlayerEventListener implements Listener {
             cache.set(player.getName() + ".account.state", StateCache.UN_LOGIN);
             player.sendMessage(Language.DON_LOGIN);
         }
-
-        // 观察者模式
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.setGameMode(GameMode.SPECTATOR);
-            }
-        }.runTaskLater(Essential.getPlugin(), 2);
-
         
         if (cache.exist(player.getName() + ".account.auto")) {
             // 自动登录
@@ -131,11 +141,69 @@ public class PlayerEventListener implements Listener {
                         cancel();
                         return;
                     }
+                    // 观察者模式
+                    player.setGameMode(GameMode.SPECTATOR);
                     if (guide.unUsed(player.getName())) {
                         guide.openView(player, Essential.VIEW_ACCOUNT, player.getName());
                     }
                 }
             }.runTaskTimer(Essential.getPlugin(), 3, 60);
+        }
+
+        // 刷新权限
+        permission.refreshPlayerPermission(player);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+
+        // 处理聊天格式
+        World world = player.getWorld();
+        String worldName = yaml.getWorld().getString(world.getName() + ".display");
+        String worldColor = yaml.getWorld().getString(world.getName() + ".color");
+
+        String prefix = service.selectStevePrefix(player.getUniqueId());
+        prefix = prefix.replace("<", "<he=show_text•点击切换头衔,ce=run_command•/prefix,");
+
+        event.setFormat("§f[$<he=show_text•点击切换聊天范围,ce=run_command•/world," + worldColor + ">" + worldName + "§f]§f[" + prefix + "§f]$<c=#b8e994>%1$s §7▷§r %2$s");
+
+        // 处理聊天内容
+        String message = event.getMessage();
+        if (message.contains("@")) {
+            Matcher matcher = aitePattern.matcher(event.getMessage());
+            while (matcher.find()) {
+                String aite = matcher.group();
+                Player target = Bukkit.getPlayer(aite.substring(1));
+                if (target != null) {
+                    message = message.replace(aite, "$<c=#f8c291>@" + target.getName() + "§r");
+                    target.sendTitle("", "在聊天中提到你", 10, 40, 20);
+                    target.playSound(target.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 5, 5);
+                }
+            }
+            event.setMessage(message);
+        }
+
+        if (message.contains("%")) {
+            Matcher matcher = varPattern.matcher(event.getMessage());
+            if (matcher.find()) {
+                String var = matcher.group();
+                switch (var) {
+                    case "%item%":
+                        ItemStack itemStack = player.getInventory().getItemInMainHand();
+                        message = message.replace(var, "§n$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() + "•" + ItemUtils.toNbtString(itemStack) + ",c=#f8c291>手上物品§r");
+                        break;
+                
+                    default:
+                        break;
+                }
+            }
+            event.setMessage(message);
+        }
+
+        if (message.contains("&")) {
+            message = message.replace("&", "§");
+            event.setMessage(message);
         }
     }
 
@@ -183,7 +251,7 @@ public class PlayerEventListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                service.updateQuit(player.getLocation(), player.getUniqueId().toString());
+                service.updateQuit(player.getLocation(), player.getUniqueId());
             }
         }.runTaskAsynchronously(Essential.getPlugin());
     }
@@ -247,7 +315,16 @@ public class PlayerEventListener implements Listener {
             public void run() {
                 event.getEntity().spigot().respawn();
             }
-        }.runTask(Essential.getPlugin());
+        }.runTaskLater(Essential.getPlugin(), 30);
+    }
+
+    @EventHandler
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        World world = player.getWorld();
+        String title = yaml.getWorld().getString(world.getName() + ".display");
+        String message = yaml.getWorld().getString(world.getName() + ".message");
+        player.sendTitle(title, message, 10, 70, 20);
     }
 
 }

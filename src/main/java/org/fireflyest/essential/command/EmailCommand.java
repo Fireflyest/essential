@@ -1,5 +1,6 @@
 package org.fireflyest.essential.command;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
@@ -34,7 +35,7 @@ public class EmailCommand extends SubCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        String uid = player.getUniqueId().toString();
+        UUID uid = player.getUniqueId();
         String email = service.selectEmail(uid);
         if (!"".equals(email)) {
             player.sendMessage(Language.ALREADY_PROVE);

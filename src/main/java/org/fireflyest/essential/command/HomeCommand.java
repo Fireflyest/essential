@@ -39,7 +39,7 @@ public class HomeCommand extends SimpleCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        Home home = service.selectHome(player.getUniqueId().toString(), arg1);
+        Home home = service.selectHome(player.getUniqueId(), arg1);
         if (home == null) {
             player.sendMessage(Language.HAVE_NOT_SETTLE.replace("%home%", arg1));
             return true;

@@ -45,7 +45,6 @@ public class AccountPage implements ViewPage {
                 .name(TIP_TEXT)
                 .lore("§7在上方输入框输入密码")
                 .build();
-    
 
         ItemStack login = new ItemBuilder(Material.NAME_TAG)
                 .name("§f[§a点击确认§f]")

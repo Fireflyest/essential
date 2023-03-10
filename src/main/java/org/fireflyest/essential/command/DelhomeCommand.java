@@ -22,7 +22,12 @@ public class DelhomeCommand extends SimpleCommand {
 
     @Override
     protected boolean execute(@Nonnull CommandSender sender) {
-        sender.sendMessage(Language.TITLE + service.selectHomes(sender.getName()));
+        Player player = (sender instanceof Player) ? (Player)sender : null;
+        if (player == null) {
+            sender.sendMessage(Language.ONLY_PLAYER_USE);
+            return false;
+        }
+        sender.sendMessage(Language.TITLE + service.selectHomes(player.getUniqueId()));
         return true;
     }
 
@@ -33,7 +38,7 @@ public class DelhomeCommand extends SimpleCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        long num = service.deleteHome(player.getUniqueId().toString(), arg1);
+        long num = service.deleteHome(player.getUniqueId(), arg1);
         if (num > 0) {
             sender.sendMessage(Language.SUCCEED_DELETE.replace("%home%", arg1));
         } else {

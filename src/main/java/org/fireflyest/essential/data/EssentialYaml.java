@@ -9,6 +9,7 @@ import org.fireflyest.craftdatabase.yaml.YamlService;
 public class EssentialYaml extends YamlService {
 
     private FileConfiguration world;
+    private FileConfiguration group;
 
     /**
      * 文件数据
@@ -19,14 +20,23 @@ public class EssentialYaml extends YamlService {
         this.setupConfig(Config.class);
         this.setupLanguage(Language.class, Config.LANGUAGE);
         this.world = this.loadYamlFile("worlds");
+        this.group = this.loadYamlFile("groups");
     }
 
     /**
      * 多世界配置
-     * @return
+     * @return 配置文件
      */
     public FileConfiguration getWorld() {
         return world;
+    }
+
+    /**
+     * 权限组配置
+     * @return 配置文件
+     */
+    public FileConfiguration getGroup() {
+        return group;
     }
     
 }

@@ -1,6 +1,7 @@
 package org.fireflyest.essential.command;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -42,7 +43,7 @@ public class LoginCommand extends SimpleCommand {
             return false;
         }
         String name = player.getName();
-        String uid = player.getUniqueId().toString();
+        UUID uid = player.getUniqueId();
 
         // 是否未注册或已登录
         String state = cache.get(name + ".account.state");
@@ -72,7 +73,7 @@ public class LoginCommand extends SimpleCommand {
         player.setGameMode(GameMode.SURVIVAL);
         player.sendMessage(Language.SUC_LOGIN);
         // 最后离开位置
-        Location quit = service.selectQuit(player.getUniqueId().toString());
+        Location quit = service.selectQuit(player.getUniqueId());
         if (quit != null) {
             player.teleport(quit);
         }

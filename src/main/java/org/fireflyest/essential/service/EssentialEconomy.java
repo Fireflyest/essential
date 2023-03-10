@@ -42,12 +42,12 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public String currencyNamePlural() {
-        return "ɞ";
+        return "§6ɞ";
     }
 
     @Override
     public String currencyNameSingular() {
-        return "ɞ";
+        return "§6ɞ";
     }
 
     @Override
@@ -57,7 +57,7 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public boolean hasAccount(OfflinePlayer player) {
-        return service.selectSteveByUid(player.getUniqueId().toString()) != null;
+        return service.selectSteveByUid(player.getUniqueId()) != null;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public boolean hasAccount(OfflinePlayer player, String worldName) {
-        return service.selectSteveByUid(player.getUniqueId().toString()) != null;
+        return service.selectSteveByUid(player.getUniqueId()) != null;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        return service.selectMoney(player.getUniqueId().toString());
+        return service.selectMoney(player.getUniqueId());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public double getBalance(OfflinePlayer player, String world) {
-        return service.selectMoney(player.getUniqueId().toString());
+        return service.selectMoney(player.getUniqueId());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
-        return service.selectMoney(player.getUniqueId().toString()) >= amount;
+        return service.selectMoney(player.getUniqueId()) >= amount;
     }
 
     @Override
@@ -123,9 +123,9 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        double money = service.selectMoney(player.getUniqueId().toString());
+        double money = service.selectMoney(player.getUniqueId());
         if (money >= amount) {
-            service.updateMoney("-", amount, player.getUniqueId().toString());
+            service.updateMoney("-", amount, player.getUniqueId());
             return new EconomyResponse(amount, money - amount, EconomyResponse.ResponseType.SUCCESS, "SUCCESS");
         } else {
             return new EconomyResponse(0, money, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "NOT_IMPLEMENTED");
@@ -150,7 +150,7 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        service.updateMoney("+", amount, player.getUniqueId().toString());
+        service.updateMoney("+", amount, player.getUniqueId());
         return new EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.SUCCESS, "SUCCESS");
     }
 

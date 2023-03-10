@@ -52,7 +52,7 @@ public class RegisterCommand extends SimpleCommand {
         }
 
         // 更新密码
-        service.updatePassword(arg1, player.getUniqueId().toString());
+        service.updatePassword(arg1, player.getUniqueId());
         // 更新状态
         cache.set(player.getName() + ".account.state", StateCache.LOGIN);
 

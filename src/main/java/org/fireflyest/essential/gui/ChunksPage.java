@@ -140,20 +140,20 @@ public class ChunksPage extends TemplatePage {
     public @Nullable ItemStack getItem(int slot) {
         switch (slot) {
             case 0:
-                centerX += 1;
-                centerZ +=1;
+                centerX -= 1;
+                centerZ -=1;
                 break;
             case 8:
-                centerX -= 1;
-                centerZ +=1;
-                break;
-            case 45:
                 centerX += 1;
                 centerZ -=1;
                 break;
-            case 53:
+            case 45:
                 centerX -= 1;
-                centerZ -=1;
+                centerZ +=1;
+                break;
+            case 53:
+                centerX += 1;
+                centerZ +=1;
                 break;
             default:
                 break;

@@ -1,27 +1,31 @@
 world_main:
-  display: "§f[§a主城§f]"
-  message: "w"
+  display: "主城"
+  color: "c=#f0932b"
+  message: "欢迎来到这里"
   border: 500
   protect: true
   pvp: false
   explode: false
 world:
-  display: "§f[§a探险§f]"
-  message: "w"
+  display: "探险"
+  color: "c=#22a6b3"
+  message: "欢迎来到这里"
   border: 16000
   protect: false
   pvp: true
   explode: true
 world_nether:
-  display: "§f[§c地狱§f]"
-  message: "w"
+  display: "地狱"
+  color: "c=#eb4d4b"
+  message: "欢迎来到这里"
   border: 16000
   protect: false
   pvp: true
   explode: true
 world_the_end:
-  display: "§f[§5末地§f]"
-  message: "w"
+  display: "末地"
+  color: "c=#be2edd"
+  message: "欢迎来到这里"
   border: 16000
   protect: false
   pvp: true

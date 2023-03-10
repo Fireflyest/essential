@@ -24,8 +24,8 @@ public class FlyCommand extends SimpleCommand {
 
     @Override
     protected boolean execute(@Nonnull CommandSender sender, @Nonnull String arg1) {
-        if (!sender.hasPermission("essential.fly.give"))  {
-            sender.sendMessage(Language.NOT_PERMISSION.replace("%permission%", "essential.fly.give"));
+        if (!sender.hasPermission("essential.givefly"))  {
+            sender.sendMessage(Language.NOT_PERMISSION.replace("%permission%", "essential.givefly"));
             return true;
         }
         Player target = Bukkit.getPlayer(arg1);

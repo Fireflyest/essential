@@ -232,6 +232,15 @@ commands:
     usage: /balance
     permission: essential.balance
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.balance"
+  prefix:
+    description: 称号
+    usage: /prefix [玩家] [称号] <天数>
+  permission:
+    description: 权限
+    usage: /permission [玩家] [权限] <天数>
+  group:
+    description: 权限组
+    usage: /group [玩家] [权限组] <天数>
 
 permissions:
   essential.vip:
@@ -240,7 +249,7 @@ permissions:
   essential.einv.see:
     description: 查看他人末影箱
     default: op
-  essential.fly.give:
+  essential.givefly:
     description: 给予暂时飞行
     default: op
   essential.chat.color:
@@ -261,3 +270,6 @@ permissions:
   essential.money:
     default: op
     description: 查看他人游戏币
+  essential.admin:
+    default: op
+    description: 管理员权限

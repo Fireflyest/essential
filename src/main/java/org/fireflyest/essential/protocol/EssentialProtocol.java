@@ -12,6 +12,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 
 import org.fireflyest.craftgui.api.ViewGuide;
 import org.fireflyest.craftgui.api.ViewPage;
+import org.fireflyest.crafttext.formal.TextInteractFormal;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.gui.AccountPage;
 
@@ -73,11 +74,13 @@ public class EssentialProtocol {
                 @Override
                 public void onPacketSending(PacketEvent event) {
                     ChatType type = event.getPacket().getChatTypes().read(0);
+                    WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
 
-                    System.out.println("getChatTypes=" + type);
                     switch (type) {
                         case CHAT:
-                            
+                            TextInteractFormal text = new TextInteractFormal(component.getJson());
+                            WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(text.toString());
+                            event.getPacket().getChatComponents().write(0, chatComponent);
                             break;
                         case SYSTEM:
 
@@ -88,10 +91,6 @@ public class EssentialProtocol {
                         default:
                             break;
                     }
-                    WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
-                    if (component != null) {
-                        System.out.println("getChatComponents=" + component.getJson());
-                    } 
                 }
             });
     }
