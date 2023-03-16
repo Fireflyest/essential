@@ -15,6 +15,8 @@ import org.fireflyest.essential.bean.Ship;
 import org.fireflyest.essential.command.AccountCommand;
 import org.fireflyest.essential.command.BackCommand;
 import org.fireflyest.essential.command.ChangepwCommand;
+import org.fireflyest.essential.command.ChatArgument;
+import org.fireflyest.essential.command.ChatCommand;
 import org.fireflyest.essential.command.DelhomeCommand;
 import org.fireflyest.essential.command.EconomyCommand;
 import org.fireflyest.essential.command.EinvCommand;
@@ -321,6 +323,13 @@ public class Essential extends JavaPlugin {
         PluginCommand repair = this.getCommand("repair");
         if (repair != null) {
             repair.setExecutor(new RepairCommand());
+        }
+        PluginCommand chat = this.getCommand("chat");
+        if (chat != null) {
+            ChatCommand chatCommand = new ChatCommand(cache);
+            chatCommand.setArgument(0, new ChatArgument(cache));
+            chat.setExecutor(chatCommand);
+            chat.setTabCompleter(chatCommand);
         }
         PluginCommand enchant = this.getCommand("enchant");
         if (enchant != null) {

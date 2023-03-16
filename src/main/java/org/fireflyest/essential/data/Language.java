@@ -35,6 +35,11 @@ public class Language {
 
     public static String HAVE_NOT_SET_KIT;
     public static String DISPOSABLE_KIT;
+    
+    public static String CHAT_GLOBAL;
+    public static String CHAT_NEAR;
+    public static String CHAT_ROOM;
+
 
     public static String COOLDOWN_TO_USE;
 

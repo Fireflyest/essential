@@ -24,6 +24,7 @@ normal:
     - "essential.suicide,true"
     - "essential.ride,true"
     - "essential.tphere,true"
+    - "essential.chat.room,true"
 vip:
   prefix: ""
   name: "会员玩家"

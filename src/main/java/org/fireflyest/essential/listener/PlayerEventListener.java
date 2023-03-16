@@ -1,7 +1,9 @@
 package org.fireflyest.essential.listener;
 
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,8 +29,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.fireflyest.craftgui.api.ViewGuide;
+import org.fireflyest.craftgui.util.TranslateUtils;
 import org.fireflyest.essential.Essential;
-import org.fireflyest.essential.bean.Prefix;
 import org.fireflyest.essential.bean.Steve;
 import org.fireflyest.essential.data.Config;
 import org.fireflyest.essential.data.EssentialYaml;
@@ -38,8 +41,6 @@ import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.util.DeathMsgUtils;
 import org.fireflyest.util.ItemUtils;
 import org.fireflyest.util.SerializationUtil;
-
-import de.tr7zw.changeme.nbtapi.NBTItem;
 
 public class PlayerEventListener implements Listener {
     
@@ -165,14 +166,47 @@ public class PlayerEventListener implements Listener {
 
         // 处理聊天格式
         World world = player.getWorld();
-        String worldName = yaml.getWorld().getString(world.getName() + ".display");
-        String worldColor = yaml.getWorld().getString(world.getName() + ".color");
+        String chatRangeName;
+        String chatRangeColor;
+        // 聊天范围
+        String range = cache.get(player.getName() + ".chat.range");
+        if ("globe".equals(range)) { // 全部可见
+            chatRangeName = yaml.getWorld().getString(world.getName() + ".display");
+            chatRangeColor = yaml.getWorld().getString(world.getName() + ".color");
+        } else if (range == null) { // 附近可见
+            chatRangeName = "附近";
+            chatRangeColor = "c=#747d8c";
+            // 附近人可接收
+            Iterator<Player> iterator = event.getRecipients().iterator();
+            while (iterator.hasNext()) {
+                Player p = iterator.next();
+                if (!p.getWorld().equals(world) || p.getLocation().distance(player.getLocation()) > 180) {
+                    iterator.remove();
+                }
+            }
+        } else { // 群聊
+            Set<String> smembers = cache.smembers(range);
+            if (smembers == null) {
+                cache.del(player.getName() + ".chat.range");
+                chatRangeName = yaml.getWorld().getString(world.getName() + ".display");
+                chatRangeColor = yaml.getWorld().getString(world.getName() + ".color");
+            } else {
+                chatRangeName = range.substring(range.lastIndexOf(".") + 1);
+                chatRangeColor = "c=#9b59b6";
+                event.getRecipients().clear();
+                cache.expire(range, 60 * 60 * 3);
+                for (String smember : smembers) {
+                    System.out.println(smember);
+                    event.getRecipients().add(Bukkit.getPlayerExact(smember));
+                }
+            }
+        }
 
         String prefix = service.selectStevePrefix(player.getUniqueId());
         prefix = prefix.replace("<", "<he=show_text•点击切换头衔|ce=run_command•/prefix|");
 
         event.setFormat("§f[$<he=show_text•点击切换聊天范围|ce=run_command•/chat|"
-                 + worldColor + ">" + worldName + "§f]§f[" // 聊天范围显示
+                 + chatRangeColor + ">" + chatRangeName + "§f]§f[" // 聊天范围显示
                  + prefix + "§f]$<he=show_text•点击交互|ce=run_command•/interact " // 点击头衔切换
                  + player.getName() + "|c=#b8e994>%1$s §7▷§r %2$s"); // 点击名称交互
 
@@ -192,6 +226,7 @@ public class PlayerEventListener implements Listener {
             event.setMessage(message);
         }
 
+        // 聊天变量
         if (message.contains("%")) {
             Matcher matcher = varPattern.matcher(event.getMessage());
             if (matcher.find()) {
@@ -199,7 +234,10 @@ public class PlayerEventListener implements Listener {
                 switch (var) {
                     case "%item%":
                         ItemStack itemStack = player.getInventory().getItemInMainHand();
-                        message = message.replace(var, "§n$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() + "•" + ItemUtils.toNbtString(itemStack) + "|c=#f8c291>手上物品§r");
+                        
+                        message = message.replace(var, "§n$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() 
+                                + "•" + ItemUtils.toNbtString(itemStack) 
+                                + "|c=#f8c291>手上物品§r");
                         break;
                 
                     default:
@@ -209,7 +247,8 @@ public class PlayerEventListener implements Listener {
             event.setMessage(message);
         }
 
-        if (message.contains("&")) {
+        // 聊天颜色
+        if (player.hasPermission("essential.chat.color") && message.contains("&")) {
             message = message.replace("&", "§");
             event.setMessage(message);
         }

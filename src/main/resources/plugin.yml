@@ -61,6 +61,9 @@ commands:
   ship: 
     description: 关系
     usage: /ship <name>
+  chat: 
+    description: 切换聊天范围
+    usage: /chat
   tphere:
     description: 邀请他人传送
     permission: essential.tphere
@@ -242,6 +245,9 @@ permissions:
     default: op
   essential.chat.color:
     description: 聊天颜色
+    default: op
+  essential.chat.room:
+    description: 聊天室
     default: op
   essential.warp.*:
     description: 传送点传送权限

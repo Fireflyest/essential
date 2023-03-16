@@ -30,6 +30,10 @@ HaveNotSettle: '🏡§f没有设置家§3%home%'
 HaveNotSetKit: '🔔§f工具包§3%kit%§f不存在'
 DisposableKit: '🔔§f工具包§3%kit%§f只能使用一次'
 
+ChatGlobal: '📢聊天范围切换为全部可见'
+ChatNear: '📢聊天范围切换为附近可见'
+ChatRoom: '📢已加入聊天室'
+
 CooldownToUse: '⏳§f冷却中§3%time%'
 
 HaveNotSetPoi: '🧿§f没有设置点§3%point%'
