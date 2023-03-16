@@ -13,6 +13,15 @@ PermissionAdd: '📗§f授予权限§3%permission%§f，输入§3 /group§f查�
 PrefixAdd: '📗§f授予头衔§3%prefix%§f，输入§3 /prefix§f查看更多信息'
 PrefixChange: '📗§f修改头衔'
 
+ShipApplyFor: '🎭§f已发送好友申请'
+ShipAccept: '🎭§f已接受好友申请'
+ShipExist: '🎭§f已经是对方的好友'
+
+ItemRepair: '⚒§f手持物品耐久已修复'
+ItemEnchant: '⚒§f手持物品添加附魔'
+
+KitsNewPlayer: '🎁'
+
 MaximumAmount: '🏡§f你已经设置了太多家了'
 SucceedSettle: '🏡§f成功设置家§3%home%'
 SucceedDelete: '🏡§f成功删除家§3%home%'
@@ -32,6 +41,8 @@ SucceedSendTp: '🧿§f成功发出传送请求'
 TeleportApply: '🧿§f玩家§3%player%§f请求传送到你身边'
 TeleportIvttp: '🧿§f玩家§3%player%§f邀请你传送到他身边'
 TpApplyRefuse: '🧿§f对方拒绝了你的请求'
+ApplyRefuse: '🧿§f已拒绝传送请求'
+ApplyAccept: '🧿§f已接受传送请求'
 
 EconomyPlayer: '💰§3%player%§f拥有: §3%money%'
 

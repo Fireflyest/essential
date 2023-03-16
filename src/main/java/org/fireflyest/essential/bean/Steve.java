@@ -14,6 +14,12 @@ public class Steve {
     @Column
     private String name;
 
+    @Column(defaultValue = "0")
+    private int gender;
+
+    @Column
+    private long age;
+
     @Column(defaultValue = "")
     private String password;
 
@@ -57,6 +63,22 @@ public class Steve {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
+    public long getAge() {
+        return age;
+    }
+
+    public void setAge(long age) {
+        this.age = age;
     }
 
     public String getPassword() {

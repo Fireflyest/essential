@@ -21,6 +21,13 @@ public class Language {
     public static String PREFIX_ADD;
     public static String PREFIX_CHANGE;
 
+    public static String SHIP_APPLY_FOR;
+    public static String SHIP_ACCEPT;
+    public static String SHIP_EXIST;
+    
+    public static String ITEM_REPAIR;
+    public static String ITEM_ENCHANT;
+
     public static String MAXIMUM_AMOUNT;
     public static String SUCCEED_SETTLE;
     public static String SUCCEED_DELETE;
@@ -40,6 +47,8 @@ public class Language {
     public static String TELEPORT_APPLY;
     public static String TELEPORT_IVTTP;
     public static String TP_APPLY_REFUSE;
+    public static String APPLY_REFUSE;
+    public static String APPLY_ACCEPT;
 
     public static String ECONOMY_PLAYER;
 

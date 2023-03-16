@@ -11,6 +11,7 @@ import org.fireflyest.craftcommand.argument.NumberArgs;
 import org.fireflyest.craftcommand.argument.PlayerArgs;
 import org.fireflyest.craftdatabase.sql.SQLConnector;
 import org.fireflyest.craftgui.api.ViewGuide;
+import org.fireflyest.essential.bean.Ship;
 import org.fireflyest.essential.command.AccountCommand;
 import org.fireflyest.essential.command.BackCommand;
 import org.fireflyest.essential.command.ChangepwCommand;
@@ -18,6 +19,8 @@ import org.fireflyest.essential.command.DelhomeCommand;
 import org.fireflyest.essential.command.EconomyCommand;
 import org.fireflyest.essential.command.EinvCommand;
 import org.fireflyest.essential.command.EmailCommand;
+import org.fireflyest.essential.command.EnchantArgument;
+import org.fireflyest.essential.command.EnchantCommand;
 import org.fireflyest.essential.command.FlyCommand;
 import org.fireflyest.essential.command.GradientArgument;
 import org.fireflyest.essential.command.GroupArgument;
@@ -26,6 +29,7 @@ import org.fireflyest.essential.command.HatCommand;
 import org.fireflyest.essential.command.HealCommand;
 import org.fireflyest.essential.command.HomeArgument;
 import org.fireflyest.essential.command.HomeCommand;
+import org.fireflyest.essential.command.InteractCommand;
 import org.fireflyest.essential.command.InvCommand;
 import org.fireflyest.essential.command.LoginCommand;
 import org.fireflyest.essential.command.LoreCommand;
@@ -33,6 +37,8 @@ import org.fireflyest.essential.command.LosepwCommand;
 import org.fireflyest.essential.command.MessageCommand;
 import org.fireflyest.essential.command.ModeCommand;
 import org.fireflyest.essential.command.MoneyCommand;
+import org.fireflyest.essential.command.MuteArgument;
+import org.fireflyest.essential.command.MuteCommand;
 import org.fireflyest.essential.command.NameCommand;
 import org.fireflyest.essential.command.PayCommand;
 import org.fireflyest.essential.command.PermissionArgument;
@@ -40,8 +46,10 @@ import org.fireflyest.essential.command.PermissionCommand;
 import org.fireflyest.essential.command.PluginsCommand;
 import org.fireflyest.essential.command.PrefixCommand;
 import org.fireflyest.essential.command.RegisterCommand;
+import org.fireflyest.essential.command.RepairCommand;
 import org.fireflyest.essential.command.SethomeCommand;
 import org.fireflyest.essential.command.SetwarpCommand;
+import org.fireflyest.essential.command.ShipCommand;
 import org.fireflyest.essential.command.SkullCommand;
 import org.fireflyest.essential.command.SpawnCommand;
 import org.fireflyest.essential.command.SudoCommand;
@@ -62,9 +70,11 @@ import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.data.StateCache;
 import org.fireflyest.essential.gui.AccountView;
 import org.fireflyest.essential.gui.ChunksView;
+import org.fireflyest.essential.gui.InteractView;
 import org.fireflyest.essential.gui.PermissionView;
 import org.fireflyest.essential.gui.PluginView;
 import org.fireflyest.essential.gui.PrefixView;
+import org.fireflyest.essential.gui.ShipView;
 import org.fireflyest.essential.gui.WorldsView;
 import org.fireflyest.essential.listener.PlayerEventListener;
 import org.fireflyest.essential.listener.WorldEventListener;
@@ -87,6 +97,8 @@ public class Essential extends JavaPlugin {
     public static final String VIEW_PLUGIN = "essential.plugin";
     public static final String VIEW_PERMISSION = "essential.permission";
     public static final String VIEW_PREFIX = "essential.prefix";
+    public static final String VIEW_SHIP = "essential.ship";
+    public static final String VIEW_INTERACT = "essential.interact";
 
     private EssentialService service;
     private EssentialYaml yaml;
@@ -143,6 +155,7 @@ public class Essential extends JavaPlugin {
         this.setupEconomyCommand();
         this.setupWorldCommand();
         this.setupGroupCommand();
+        this.setupShipCommand();
         
     }
 
@@ -187,6 +200,8 @@ public class Essential extends JavaPlugin {
         guide.addView(VIEW_PLUGIN, new PluginView());
         guide.addView(VIEW_PERMISSION, new PermissionView(service, yaml));
         guide.addView(VIEW_PREFIX, new PrefixView(service));
+        guide.addView(VIEW_SHIP, new ShipView(service));
+        guide.addView(VIEW_INTERACT, new InteractView(service));
     }
 
     /**
@@ -293,6 +308,34 @@ public class Essential extends JavaPlugin {
         PluginCommand table = this.getCommand("table");
         if (table != null) {
             table.setExecutor(new TableCommand());
+        }
+        PluginCommand mute = this.getCommand("mute");
+        if (mute != null) {
+            MuteCommand muteCommand = new MuteCommand(cache);
+            muteCommand.setArgument(0, new PlayerArgs());
+            muteCommand.setArgument(1, new NumberArgs());
+            muteCommand.setArgument(2, new MuteArgument());
+            mute.setExecutor(muteCommand);
+            mute.setTabCompleter(muteCommand);
+        }
+        PluginCommand repair = this.getCommand("repair");
+        if (repair != null) {
+            repair.setExecutor(new RepairCommand());
+        }
+        PluginCommand enchant = this.getCommand("enchant");
+        if (enchant != null) {
+            EnchantCommand enchantCommand = new EnchantCommand();
+            enchantCommand.setArgument(0, new EnchantArgument());
+            enchantCommand.setArgument(1, new NumberArgs());
+            enchant.setExecutor(enchantCommand);
+            enchant.setTabCompleter(enchantCommand);
+        }
+        PluginCommand interact = this.getCommand("interact");
+        if (interact != null) {
+            InteractCommand interactCommand = new InteractCommand(guide);
+            interactCommand.setArgument(0, new PlayerArgs());
+            interact.setExecutor(interactCommand);
+            interact.setTabCompleter(interactCommand);
         }
     }
 
@@ -426,6 +469,16 @@ public class Essential extends JavaPlugin {
             prefixCommand.setArgument(2, new NumberArgs());
             prefix.setExecutor(prefixCommand);
             prefix.setTabCompleter(prefixCommand);
+        }
+    }
+
+    private void setupShipCommand() {
+        PluginCommand ship = this.getCommand("ship");
+        if (ship != null) {
+            ShipCommand shipCommand = new ShipCommand(service, guide);
+            shipCommand.setArgument(0, new PlayerArgs());
+            ship.setExecutor(shipCommand);
+            ship.setTabCompleter(shipCommand);
         }
     }
 

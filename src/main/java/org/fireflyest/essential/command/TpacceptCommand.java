@@ -42,6 +42,8 @@ public class TpacceptCommand extends SimpleCommand {
                 
                 TeleportUtils.teleportTo(target, player.getLocation(), target.hasPermission("essential.vip"));
                 target.sendMessage(Language.TELEPORT_POINT.replace("%point%", player.getName()));
+
+                sender.sendMessage(Language.APPLY_ACCEPT);
             }
             return true;
         }
@@ -56,6 +58,8 @@ public class TpacceptCommand extends SimpleCommand {
                 
                 TeleportUtils.teleportTo(player, target.getLocation(), player.hasPermission("essential.vip"));
                 player.sendMessage(Language.TELEPORT_POINT.replace("%point%", target.getName()));
+
+                sender.sendMessage(Language.APPLY_ACCEPT);
             }
             return true;
         }

@@ -22,8 +22,11 @@ public interface SteveDao {
      * @param name 名称
      * @return 玩家数据
      */
-    @Select("SELECT * FROM `essential_steve` WHERE `name`='${name}';")
+    @Select("SELECT * FROM `essential_steve` WHERE `name`='${name}' LIMIT 1;")
     Steve selectSteveByName(String name);
+
+    @Select("SELECT `uid` FROM `essential_steve` WHERE `name`='${name}' LIMIT 1;")
+    String selectSteveUid(String name);
 
     /**
      * 插入玩家数据
@@ -37,7 +40,7 @@ public interface SteveDao {
      * @param uid 玩家id
      * @param quit 离开位置
      */
-    @Update("UPDATE `essential_steve` SET`quit`='${quit}' WHERE `uid`='${uid}';")
+    @Update("UPDATE `essential_steve` SET `quit`='${quit}' WHERE `uid`='${uid}';")
     long updateQuit(String quit, String uid);
 
     /**
@@ -53,7 +56,7 @@ public interface SteveDao {
      * @param uid 玩家id
      * @param password 离开位置
      */
-    @Update("UPDATE `essential_steve` SET`password`='${password}' WHERE `uid`='${uid}';")
+    @Update("UPDATE `essential_steve` SET `password`='${password}' WHERE `uid`='${uid}';")
     long updatePassword(String password, String uid);
 
     /**
@@ -69,7 +72,7 @@ public interface SteveDao {
      * @param uid 玩家id
      * @param email 离开位置
      */
-    @Update("UPDATE `essential_steve` SET`email`='${email}' WHERE `uid`='${uid}';")
+    @Update("UPDATE `essential_steve` SET `email`='${email}' WHERE `uid`='${uid}';")
     long updateEmail(String email, String uid);
 
     /**
@@ -103,7 +106,7 @@ public interface SteveDao {
      * @param money 修改数量
      * @param name 游戏名
      */
-    @Update("UPDATE `essential_steve` SET `money`=`money`${symbol}${money} WHERE `name`='${name}';")
+    @Update("UPDATE `essential_steve` SET `money`=`money`${symbol}${money} WHERE `name`='${name}' LIMIT 1;")
     long updateMoneyByName(String symbol, double money, String name);
 
     /**
@@ -111,7 +114,7 @@ public interface SteveDao {
      * @param name 游戏名
      * @return 钱
      */
-    @Select("SELECT `money` FROM `essential_steve` WHERE `name`='${name}';")
+    @Select("SELECT `money` FROM `essential_steve` WHERE `name`='${name}' LIMIT 1;")
     double selectMoneyByName(String name);
 
     @Select("SELECT `prefix` FROM `essential_steve` WHERE `uid`='${uid}';")
@@ -119,5 +122,11 @@ public interface SteveDao {
 
     @Update("UPDATE `essential_steve` SET `prefix`='${prefix}' WHERE `uid`='${uid}';")
     long updatePrefix(String prefix, String uid);
+
+    @Select("SELECT `gender` FROM `essential_steve` WHERE `uid`='${uid}';")
+    int selectGender(String uid);
+
+    @Update("UPDATE `essential_steve` SET `gender`=${gender} WHERE `uid`='${uid}';")
+    long updateGender(int gender, String uid);
     
 }

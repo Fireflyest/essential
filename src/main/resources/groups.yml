@@ -1,5 +1,5 @@
 default:
-  prefix: "$<hg=#b2b9be:#2f4052>初来乍到"
+  prefix: "$<hg=#b2b9be:#5f7082>初来乍到"
   name: "默认权限组"
   desc: "玩家初始拥有权限组 有一些基本权限"
   button: "STONE"
@@ -13,7 +13,6 @@ default:
     - "essential.warp.nether,true"
     - "essential.warp.end,true"
     - "essential.warp.plot,true"
-    - "essential.tphere,true"
     - "essential.back,true"
 normal:
   prefix: ""
@@ -23,6 +22,8 @@ normal:
   permissions:
     - "essential.pay,true"
     - "essential.suicide,true"
+    - "essential.ride,true"
+    - "essential.tphere,true"
 vip:
   prefix: ""
   name: "会员玩家"
@@ -47,7 +48,9 @@ admin:
     - "essential.lore,true"
     - "essential.top,true"
     - "essential.admin,true"
-    - "essential.fly.give,true"
+    - "essential.givefly,true"
+    - "essential.mute,true"
+    - "minecraft.command.kick"
 builder:
   prefix: ""
   name: "建筑师"

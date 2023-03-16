@@ -63,36 +63,40 @@ public class EssentialProtocol {
 
                         viewGuide.refreshPage(playerName);
                     }
-                });
+                }
+        );
 
-         // 聊天监听
+        // 聊天监听
         protocolManager.addPacketListener(
-            new PacketAdapter(Essential.getPlugin(),
-                    ListenerPriority.NORMAL,
-                    PacketType.Play.Server.CHAT) {
+                new PacketAdapter(Essential.getPlugin(),
+                        ListenerPriority.NORMAL,
+                        PacketType.Play.Server.CHAT) {
 
-                @Override
-                public void onPacketSending(PacketEvent event) {
-                    ChatType type = event.getPacket().getChatTypes().read(0);
-                    WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        ChatType type = event.getPacket().getChatTypes().read(0);
+                        WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
 
-                    switch (type) {
-                        case CHAT:
-                            TextInteractFormal text = new TextInteractFormal(component.getJson());
-                            WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(text.toString());
-                            event.getPacket().getChatComponents().write(0, chatComponent);
-                            break;
-                        case SYSTEM:
+                        switch (type) {
+                            case CHAT:
+                                TextInteractFormal text = new TextInteractFormal(component.getJson());
+                                WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(text.toString());
+                                // System.out.println(chatComponent.toString());
+                                event.getPacket().getChatComponents().write(0, chatComponent);
+                                break;
+                            case SYSTEM:
+                                // System.out.println(component.toString());
 
-                            break;
-                        case GAME_INFO:
-                        
-                            break;
-                        default:
-                            break;
+                                break;
+                            case GAME_INFO:
+                            
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
-            });
+        );
     }
 
     

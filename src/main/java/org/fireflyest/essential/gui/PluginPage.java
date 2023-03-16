@@ -41,16 +41,18 @@ public class PluginPage extends TemplatePage {
         asyncButtonMap.putAll(buttonMap);
 
         int pos = 0;
-        for (int i = page * 45 ; i < (page + 1) * 45; i++) {
-            if (i >= pluginFiles.size()) break;
+        for (int i = page * 45; i < (page + 1) * 45; i++) {
+            if (i >= pluginFiles.size()) {
+                break;
+            }
             String pluginFile = pluginFiles.get(i);
             Material material = Material.BUCKET;
-            String color ="$<hg=#f0932b:#eb4d4b>";
+            String color = "§r$<hg=#f0932b:#eb4d4b>";
             ItemStack item;
             Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginFile);
             if (plugin != null) {
                 material = plugin.isEnabled() ? Material.LAVA_BUCKET : Material.WATER_BUCKET;
-                color = plugin.isEnabled() ? "$<hg=#f0932b:#f9ca24>" : "$<hg=#f0932b:#22a6b3>";
+                color = plugin.isEnabled() ? "§r$<hg=#f0932b:#f9ca24>" : "§r$<hg=#f0932b:#22a6b3>";
                 ItemBuilder pluginButtonBuilder = new ButtonItemBuilder(material)
                         .name(String.format("%s%s", color, pluginFile))
                         .colorful()
@@ -94,12 +96,14 @@ public class PluginPage extends TemplatePage {
 
         ItemStack pre = new ButtonItemBuilder(Material.PAPER)
                 .actionPagePre()
-                .name("§3◀")
+                .name("§r◀")
                 .build();
-        if (page > 0) buttonMap.put(45, pre);
+        if (page > 0) {
+            buttonMap.put(45, pre);
+        }
         ItemStack next = new ButtonItemBuilder(Material.PAPER)
                 .actionPageNext()
-                .name("§3▶")
+                .name("§r▶")
                 .build();
         buttonMap.put(46, next);
 

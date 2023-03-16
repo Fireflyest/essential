@@ -58,6 +58,9 @@ commands:
   interact:
     description: 玩家交互
     usage: /interact [name]
+  ship: 
+    description: 关系
+    usage: /ship <name>
   tphere:
     description: 邀请他人传送
     permission: essential.tphere
@@ -158,11 +161,6 @@ commands:
     permission: essential.lore
     usage: /lore [line] [text]
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.lore"
-  runtime:
-    description: 内存使用状况
-    permission: essential.runtime
-    usage: /runtime
-    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.runtime"
   dnd:
     description: 请勿打扰
     permission: essential.dnd
@@ -173,11 +171,6 @@ commands:
     permission: essential.sun
     usage: /sun
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.sun"
-  hand:
-    description: 展示手上物品
-    permission: essential.hand
-    usage: /hand
-    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.hand"
   rtp:
     description: 随机传送
     permission: essential.rtp
@@ -209,11 +202,6 @@ commands:
     permission: essential.enchant
     usage: /enchant
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.enchant"
-  worlds:
-    description: 世界管理
-    usage: /worlds <世界>
-    permission: essential.world
-    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.world"
   money:
     description: 查看游戏币
     usage: /money <玩家>

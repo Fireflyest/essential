@@ -284,8 +284,14 @@ public class WorldEventListener implements Listener {
      */
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        // 战斗时不允许飞行
+        Player player = ((Player)event.getEntity());
+        player.setFlying(false);
         // 判断是否pvp
-        if (event.getCause() == DamageCause.ENTITY_ATTACK && !(event.getDamager() instanceof Player)) {
+        if (event.getCause() == DamageCause.ENTITY_ATTACK&& !(event.getDamager() instanceof Player)) {
             return;
         } else if (event.getCause() == DamageCause.PROJECTILE) {
             Projectile projectile = ((Projectile)event.getDamager());

@@ -5,14 +5,19 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.fireflyest.craftgui.button.ButtonItemBuilder;
 import org.fireflyest.craftgui.view.TemplatePage;
-import org.fireflyest.craftitem.builder.ItemBuilder;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.bean.Prefix;
 import org.fireflyest.essential.service.EssentialService;
+import org.fireflyest.util.ColorUtils;
 import org.fireflyest.util.TimeUtils;
 
 public class PrefixPage extends TemplatePage {
@@ -35,10 +40,14 @@ public class PrefixPage extends TemplatePage {
 
             ItemStack item = new ButtonItemBuilder(Material.WHITE_BANNER)
                     .actionPlayerCommand("prefix " + prefix.getId())
-                    .name("§r$<c=#f1f1f1>[" + prefix.getValue() + "$<c=#f1f1f1>]")
+                    .name("§f[" + prefix.getValue() + "$f]")
                     .lore(deadline)
                     .colorful()
                     .build();
+            
+            // TODO: 
+            // BannerMeta bannerMeta = ((BannerMeta)item.getItemMeta());
+            // bannerMeta.setPattern(0, new Pattern(DyeColor.getByColor(Color.AQUA), PatternType.));
 
             asyncButtonMap.put(pos++, item);
         }

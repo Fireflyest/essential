@@ -45,7 +45,7 @@ public class EmailCommand extends SubCommand {
             player.sendMessage(Language.INVALID_EMAIL);
             return true;
         }
-        service.updateEmail(email, uid);
+        service.updateEmail(arg1, uid);
         player.sendMessage(Language.SUC_SET_EMAIL);
         return true;
     }

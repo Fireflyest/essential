@@ -154,9 +154,14 @@ public class PlayerEventListener implements Listener {
         permission.refreshPlayerPermission(player);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+
+        if (cache.get(player.getName() + ".base.mute") != null) {
+            player.sendMessage(Language.TITLE + "禁言还剩§3" + cache.ttl(player.getName() + ".base.mute") + "秒");
+            event.setCancelled(true);
+        }
 
         // 处理聊天格式
         World world = player.getWorld();
@@ -164,9 +169,12 @@ public class PlayerEventListener implements Listener {
         String worldColor = yaml.getWorld().getString(world.getName() + ".color");
 
         String prefix = service.selectStevePrefix(player.getUniqueId());
-        prefix = prefix.replace("<", "<he=show_text•点击切换头衔,ce=run_command•/prefix,");
+        prefix = prefix.replace("<", "<he=show_text•点击切换头衔|ce=run_command•/prefix|");
 
-        event.setFormat("§f[$<he=show_text•点击切换聊天范围,ce=run_command•/world," + worldColor + ">" + worldName + "§f]§f[" + prefix + "§f]$<c=#b8e994>%1$s §7▷§r %2$s");
+        event.setFormat("§f[$<he=show_text•点击切换聊天范围|ce=run_command•/chat|"
+                 + worldColor + ">" + worldName + "§f]§f[" // 聊天范围显示
+                 + prefix + "§f]$<he=show_text•点击交互|ce=run_command•/interact " // 点击头衔切换
+                 + player.getName() + "|c=#b8e994>%1$s §7▷§r %2$s"); // 点击名称交互
 
         // 处理聊天内容
         String message = event.getMessage();
@@ -191,7 +199,7 @@ public class PlayerEventListener implements Listener {
                 switch (var) {
                     case "%item%":
                         ItemStack itemStack = player.getInventory().getItemInMainHand();
-                        message = message.replace(var, "§n$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() + "•" + ItemUtils.toNbtString(itemStack) + ",c=#f8c291>手上物品§r");
+                        message = message.replace(var, "§n$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() + "•" + ItemUtils.toNbtString(itemStack) + "|c=#f8c291>手上物品§r");
                         break;
                 
                     default:

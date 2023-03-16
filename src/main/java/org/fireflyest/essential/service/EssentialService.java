@@ -13,12 +13,14 @@ import org.fireflyest.essential.bean.Home;
 import org.fireflyest.essential.bean.Permit;
 import org.fireflyest.essential.bean.Point;
 import org.fireflyest.essential.bean.Prefix;
+import org.fireflyest.essential.bean.Ship;
 import org.fireflyest.essential.bean.Steve;
 import org.fireflyest.essential.dao.ConferDao;
 import org.fireflyest.essential.dao.HomeDao;
 import org.fireflyest.essential.dao.PermitDao;
 import org.fireflyest.essential.dao.PointDao;
 import org.fireflyest.essential.dao.PrefixDao;
+import org.fireflyest.essential.dao.ShipDao;
 import org.fireflyest.essential.dao.SteveDao;
 import org.fireflyest.util.SerializationUtil;
 
@@ -51,6 +53,9 @@ public class EssentialService extends SQLService {
     @Auto
     public PrefixDao prefixDao;
 
+    @Auto
+    public ShipDao shipDao;
+
     /**
      * 查找玩家数据
      * @param uid uid
@@ -67,6 +72,10 @@ public class EssentialService extends SQLService {
      */
     public Steve selectSteveByName(String name) {
         return steveDao.selectSteveByName(name);
+    }
+
+    public String selectSteveUid(String name) {
+        return steveDao.selectSteveUid(name);
     }
 
     /**
@@ -196,6 +205,25 @@ public class EssentialService extends SQLService {
      */
     public long updatePrefix(String prefix, UUID uid) {
         return steveDao.updatePrefix(prefix, uid.toString());
+    }
+
+    /**
+     * 获取玩家性别
+     * @param uid uid
+     * @return 性别
+     */
+    public int selectGender(UUID uid) {
+        return steveDao.selectGender(uid.toString());
+    }
+
+    /**
+     * 更新玩家性别
+     * @param gender 性别
+     * @param uid uid
+     * @return 更新条目
+     */
+    public long updateGender(int gender, UUID uid) {
+        return steveDao.updateGender(gender, uid.toString());
     }
 
     /*****************************************************************************/
@@ -351,6 +379,33 @@ public class EssentialService extends SQLService {
 
     public long deletePrefix(long id) {
         return prefixDao.deletePrefix(id);
+    }
+
+    /*****************************************************************************/
+
+    public long insertShip(UUID b, UUID d, String tag, String target, long outset) {
+        return shipDao.insertShip(b.toString() + "&" + d.toString(), tag, target, outset);
+    }
+
+    public Ship selectShip(UUID b, UUID d) {
+        return shipDao.selectShip(b.toString() + "&" + d.toString());
+    }
+
+    public Ship[] selectShips(String target, UUID uid) {
+        return shipDao.selectShips(target, uid.toString());
+    }
+
+    public long updateShipLevel(int level, String bond) {
+        return shipDao.updateShipLevel(level, bond);
+    }
+
+    public long updateShipTag(String tag, String bond) {
+        return shipDao.updateShipTag(tag, bond);
+    }
+
+
+    public long deleteShip(String bond) {
+        return shipDao.deleteShip(bond);
     }
 
 }

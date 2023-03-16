@@ -1,6 +1,8 @@
 package org.fireflyest.essential.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +28,10 @@ public class ChunksPage extends TemplatePage {
     private int centerX;
     private int centerZ;
 
+    private Map<String,ChunkInfo> chunkEntityMap;
+
     public ChunksPage(String target, int size) {
         super("§9§l区块管理", target, -1, size);
-        this.world = Bukkit.getWorld(target);
         this.centerX = 0;
         this.centerZ = 0;
     }
@@ -47,18 +50,33 @@ public class ChunksPage extends TemplatePage {
                 int x = centerX + j;
                 int z = centerZ + i;
                 String name = "§r[" + x + ":" + z + "]";
-                Chunk chunk = world.getChunkAt(x, z);
+                ChunkInfo chunkInfo = chunkEntityMap.get(name);
 
                 ItemStack item = null;
-                if (chunk.isLoaded() && chunk.getInhabitedTime() > 0) {
-                    item = new ButtonItemBuilder(Material.WHITE_STAINED_GLASS_PANE)
+                if (chunkInfo != null) {
+                    Material material;
+                    if (chunkInfo.entities.isEmpty()){
+                        material = Material.WHITE_STAINED_GLASS_PANE;
+                    } else if (chunkInfo.entities.size() < 30){
+                        material = Material.LIME_STAINED_GLASS_PANE;
+                    } else if (chunkInfo.entities.size() < 80) {
+                        material = Material.YELLOW_STAINED_GLASS_PANE;
+                    } else if (chunkInfo.entities.size() < 120) {
+                        material = Material.PINK_STAINED_GLASS_PANE;
+                    } else {
+                        material = Material.RED_STAINED_GLASS_PANE;
+                    }
+                    item = new ButtonItemBuilder(material)
+                            .actionPlayerCommand("tp " + (x * 16) + " 80 " + (z * 16))
                             .name(name)
+                            .lore("§3占据§7: " + chunkInfo.inhabited / (20 * 60))
                             .build();
-                    // for (Entity entity : chunk.getEntities()) {
-                    //     this.addEntity(item, entity);
-                    // }
+                    for (Entity entity : chunkInfo.entities) {
+                        this.addEntity(item, entity);
+                    }
                 } else {
                     item = new ButtonItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
+                            .actionPlayerCommand("tp " + (x * 16) + " 80 " + (z * 16))
                             .name(name)
                             .build();
                 }
@@ -66,68 +84,6 @@ public class ChunksPage extends TemplatePage {
                 asyncButtonMap.put(pos++, item);
             }
         }
-
-        // // 判断是否有区块
-        // if (chunks == null || chunks.length == 0) return crashMap;
-
-        // int pos = 0;
-        // for (int i = (page-1) * 54; i < page * 54; i++) {
-        //     if (chunks.length <= i) break;
-        //     Chunk chunk = chunks[i];
-        //     String material, color;
-        //     ViewItemBuilder chunkButtonBuilder;
-        //     ItemStack chunkButton;
-        //     if (chunk.isLoaded()){
-        //         int entityAmount = chunk.getEntities().length;
-        //         StringBuilder state = new StringBuilder();
-        //         for (int j = 0; j < entityAmount / 10; j++) state.append("▎");
-        //         if (entityAmount == 0){
-        //             color = "§f";
-        //             material = "WHITE_STAINED_GLASS_PANE";
-        //         } else if (entityAmount < 30){
-        //             color = "§a";
-        //             material = "LIME_STAINED_GLASS_PANE";
-        //         } else if (entityAmount < 80) {
-        //             color = "§e";
-        //             material = "YELLOW_STAINED_GLASS_PANE";
-        //         } else if (entityAmount < 120) {
-        //             color = "§c";
-        //             material = "PINK_STAINED_GLASS_PANE";
-        //         } else {
-        //             color = "§4";
-        //             material = "RED_STAINED_GLASS_PANE";
-        //         }
-        //         // 信息
-        //         chunkButtonBuilder = new ViewItemBuilder(material)
-        //                 .name(String.format("§7[§3%s, %s§7]", chunk.getX(), chunk.getZ()))
-        //                 .lore(String.format("§3载荷§7: §f%s%s", color, state));
-        //         if (world.getEnvironment() == World.Environment.NORMAL){
-        //             chunkButtonBuilder.lore(String.format("§3史莱姆§7: §f%s", chunk.isSlimeChunk()));
-        //         }
-        //         // 记录
-        //         ChunkData chunkData = EssentialWorld.getChunkDataMap(
-        //                 String.format("%s[%s, %s]", target, chunk.getX(), chunk.getZ()));
-        //         if (chunkData != null) {
-        //             chunkButtonBuilder.lore(String.format("§3闲置§7: §f%s", chunkData.getIdle()))
-        //                     .lore(String.format("§3活跃§7: §f%s",  chunkData.getDelta() / (20*60*60F)));
-        //         }
-        //         // 展示实体
-        //         if (entityAmount > 0) chunkButtonBuilder.lore("§3实体§7: §f");
-        //         chunkButton = chunkButtonBuilder.build();
-        //         for (Entity entity : chunk.getEntities()) {
-        //             this.addEntity(chunkButton, entity);
-        //         }
-        //     }else {
-        //         // 信息
-        //         chunkButtonBuilder = new ViewItemBuilder("BLACK_STAINED_GLASS_PANE")
-        //                 .name(String.format("§7[§3%s, %s§7]", chunk.getX(), chunk.getZ()))
-        //                 .lore("§3状态§7: §f未加载");
-        //         chunkButton = chunkButtonBuilder.build();
-        //     }
-        //     crashMap.put(pos++, chunkButton);
-
-        //     if (pos > 44) break;
-        // }
         return asyncButtonMap;
     }
 
@@ -154,6 +110,13 @@ public class ChunksPage extends TemplatePage {
             case 53:
                 centerX += 1;
                 centerZ +=1;
+                break;
+            case 35:
+                centerX = 0;
+                centerZ =0;
+                break;
+            case 26:
+                this.refreshPage();
                 break;
             default:
                 break;
@@ -183,6 +146,38 @@ public class ChunksPage extends TemplatePage {
         buttonMap.put(8, ru);
         buttonMap.put(45, ld);
         buttonMap.put(53, rd);
+
+        ItemStack refresh = new ButtonItemBuilder(Material.STRING)
+                .actionEdit()
+                .name("§e刷新")
+                .build();
+        buttonMap.put(26, refresh);
+        ItemStack center = new ButtonItemBuilder(Material.ENDER_EYE)
+                .actionEdit()
+                .name("§e原点")
+                .build();
+        buttonMap.put(35, center);
+        ItemStack tp = new ButtonItemBuilder(Material.FIREWORK_ROCKET)
+                .actionPlayerCommand("warp " + target)
+                .name("§e传送")
+                .build();
+        buttonMap.put(18, tp);
+        ItemStack back = new ButtonItemBuilder(Material.REDSTONE)
+                .actionBack()
+                .name("§c返回")
+                .build();
+        buttonMap.put(27, back);
+
+        // 记录生物
+        this.world = Bukkit.getWorld(target);
+        this.chunkEntityMap = new HashMap<>();
+        for (Chunk chunk : world.getLoadedChunks()) {
+            String name = "§r[" + chunk.getX() + ":" + chunk.getZ() + "]";
+            ChunkInfo chunkInfo = new ChunkInfo();
+            chunkInfo.inhabited = chunk.getInhabitedTime();
+            chunkInfo.entities.addAll(Arrays.asList(chunk.getEntities()));
+            chunkEntityMap.put(name, chunkInfo);
+        }
     }
 
     private void addEntity(ItemStack item, Entity entity){
@@ -221,4 +216,10 @@ public class ChunksPage extends TemplatePage {
             item.setItemMeta(meta);
         }
     }
+
+    class ChunkInfo {
+        public long inhabited;
+        public List<Entity> entities = new ArrayList<>(); 
+    }
+
 }

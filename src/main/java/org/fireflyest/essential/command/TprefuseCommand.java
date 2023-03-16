@@ -35,6 +35,8 @@ public class TprefuseCommand extends SimpleCommand {
             if (target != null) {
                 cache.del(target.getName() + ".base.tp");
                 target.sendMessage(Language.TP_APPLY_REFUSE);
+
+                sender.sendMessage(Language.APPLY_REFUSE);
             }
             return true;
         }
@@ -45,6 +47,8 @@ public class TprefuseCommand extends SimpleCommand {
             if (target != null) {
                 cache.del(target.getName() + ".base.tphere");
                 target.sendMessage(Language.TP_APPLY_REFUSE);
+
+                sender.sendMessage(Language.APPLY_REFUSE);
             }
         }
         return true;
