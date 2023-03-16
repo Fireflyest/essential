@@ -81,11 +81,9 @@ public class EssentialProtocol {
                             case CHAT:
                                 TextInteractFormal text = new TextInteractFormal(component.getJson());
                                 WrappedChatComponent chatComponent = WrappedChatComponent.fromJson(text.toString());
-                                // System.out.println(chatComponent.toString());
                                 event.getPacket().getChatComponents().write(0, chatComponent);
                                 break;
                             case SYSTEM:
-                                // System.out.println(component.toString());
 
                                 break;
                             case GAME_INFO:

@@ -158,6 +158,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+        String message = event.getMessage();
 
         if (cache.get(player.getName() + ".base.mute") != null) {
             player.sendMessage(Language.TITLE + "禁言还剩§3" + cache.ttl(player.getName() + ".base.mute") + "秒");
@@ -170,7 +171,7 @@ public class PlayerEventListener implements Listener {
         String chatRangeColor;
         // 聊天范围
         String range = cache.get(player.getName() + ".chat.range");
-        if ("globe".equals(range)) { // 全部可见
+        if ("globe".equals(range) || message.contains("%room%")) { // 全部可见
             chatRangeName = yaml.getWorld().getString(world.getName() + ".display");
             chatRangeColor = yaml.getWorld().getString(world.getName() + ".color");
         } else if (range == null) { // 附近可见
@@ -196,7 +197,6 @@ public class PlayerEventListener implements Listener {
                 event.getRecipients().clear();
                 cache.expire(range, 60 * 60 * 3);
                 for (String smember : smembers) {
-                    System.out.println(smember);
                     event.getRecipients().add(Bukkit.getPlayerExact(smember));
                 }
             }
@@ -211,7 +211,6 @@ public class PlayerEventListener implements Listener {
                  + player.getName() + "|c=#b8e994>%1$s §7▷§r %2$s"); // 点击名称交互
 
         // 处理聊天内容
-        String message = event.getMessage();
         if (message.contains("@")) {
             Matcher matcher = aitePattern.matcher(event.getMessage());
             while (matcher.find()) {
@@ -230,16 +229,25 @@ public class PlayerEventListener implements Listener {
         if (message.contains("%")) {
             Matcher matcher = varPattern.matcher(event.getMessage());
             if (matcher.find()) {
-                String var = matcher.group();
-                switch (var) {
+                String value = matcher.group();
+                switch (value) {
                     case "%item%":
                         ItemStack itemStack = player.getInventory().getItemInMainHand();
-                        
-                        message = message.replace(var, "§n$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() 
+                        message = message.replace(value, "§7[$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() 
                                 + "•" + ItemUtils.toNbtString(itemStack) 
-                                + "|c=#f8c291>手上物品§r");
+                                + "|c=#f8c291>物品§7]§r");
                         break;
-                
+                    case "%room%":
+                        String room;
+                        if (range != null && range.contains(".")) {
+                            room = range.substring(range.lastIndexOf(".") + 1);
+                        } else {
+                            room = "群聊";
+                        }
+                        message = message.replace(value, "§7[$<he=show_text•点击加入群聊|"
+                            + "ce=run_command•/chat " + room
+                            + "|c=#f8c291>" +room + "§7]§r");
+                        break;
                     default:
                         break;
                 }
