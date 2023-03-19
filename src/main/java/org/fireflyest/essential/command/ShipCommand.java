@@ -45,16 +45,27 @@ public class ShipCommand extends SimpleCommand {
             sender.sendMessage(Language.OFFLINE_PLAYER.replace("%player%", arg1));
         } else {
             // 判断对方是否发送过好友请求，如果发送过，则为接受请求
-            Ship ship = service.selectShip(target.getUniqueId(), player.getUniqueId());
-            if (ship != null) {
-                service.updateShipTag("friend", ship.getBond());
-                service.insertShip(player.getUniqueId(), target.getUniqueId(), "friend", arg1, TimeUtils.getTime());
+            Ship toMe = service.selectShip(target.getUniqueId(), player.getUniqueId());
+            Ship toHe = service.selectShip(player.getUniqueId(), target.getUniqueId());
+
+            if (toMe != null && !"".equals(toMe.getRequest())) { 
+                //对方有请求，接受后修改好友标签，去除请求
+                service.updateShipTag(toMe.getRequest(), toMe.getBond());
+                service.updateShipRequest("", toMe.getBond());
+                // 更新我对对方的标签，如果还没有更新则建立
+                if (toHe == null) {
+                    service.insertShip(player.getUniqueId(), target.getUniqueId(), toMe.getRequest(), "", arg1, TimeUtils.getTime());
+                } else {
+                    service.updateShipTag(toMe.getRequest(), toHe.getBond());
+                }
                 sender.sendMessage(Language.SHIP_ACCEPT);
             } else {
-                if (service.selectShip(player.getUniqueId(), target.getUniqueId()) != null) {
+                if (toHe != null) {
+                    // 已经是好友
                     sender.sendMessage(Language.SHIP_EXIST);
                 } else {
-                    service.insertShip(player.getUniqueId(), target.getUniqueId(), "apply_for", arg1, TimeUtils.getTime());
+                    // 发送好友申请
+                    service.insertShip(player.getUniqueId(), target.getUniqueId(), "", "friend", arg1, TimeUtils.getTime());
                     sender.sendMessage(Language.SHIP_APPLY_FOR);
                 }
             }

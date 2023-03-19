@@ -6,4 +6,10 @@ public class Domain {
 
     private String owner;
 
+    private String plots;
+
+    private boolean finish;
+
+
+
 }

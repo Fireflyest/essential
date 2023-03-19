@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -158,7 +159,7 @@ public class ChunksPage extends TemplatePage {
                 .build();
         buttonMap.put(35, center);
         ItemStack tp = new ButtonItemBuilder(Material.FIREWORK_ROCKET)
-                .actionPlayerCommand("warp " + target)
+                .actionPlayerCommand("world " + target + " tp")
                 .name("§e传送")
                 .build();
         buttonMap.put(18, tp);
@@ -173,9 +174,15 @@ public class ChunksPage extends TemplatePage {
         this.chunkEntityMap = new HashMap<>();
         for (Chunk chunk : world.getLoadedChunks()) {
             String name = "§r[" + chunk.getX() + ":" + chunk.getZ() + "]";
+
+            // ChunkSnapshot chunkSnapshot = chunk.getChunkSnapshot();
+
             ChunkInfo chunkInfo = new ChunkInfo();
             chunkInfo.inhabited = chunk.getInhabitedTime();
             chunkInfo.entities.addAll(Arrays.asList(chunk.getEntities()));
+
+
+
             chunkEntityMap.put(name, chunkInfo);
         }
     }

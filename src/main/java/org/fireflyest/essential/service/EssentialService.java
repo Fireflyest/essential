@@ -383,8 +383,8 @@ public class EssentialService extends SQLService {
 
     /*****************************************************************************/
 
-    public long insertShip(UUID b, UUID d, String tag, String target, long outset) {
-        return shipDao.insertShip(b.toString() + "&" + d.toString(), tag, target, outset);
+    public long insertShip(UUID b, UUID d, String tag, String request, String target, long outset) {
+        return shipDao.insertShip(b.toString() + "&" + d.toString(), tag, request, target, outset);
     }
 
     public Ship selectShip(UUID b, UUID d) {
@@ -401,6 +401,10 @@ public class EssentialService extends SQLService {
 
     public long updateShipTag(String tag, String bond) {
         return shipDao.updateShipTag(tag, bond);
+    }
+
+    public long updateShipRequest(String request, String bond) {
+        return shipDao.updateShipRequest(request, bond);
     }
 
 

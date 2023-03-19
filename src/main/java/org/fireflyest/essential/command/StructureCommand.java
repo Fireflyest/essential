@@ -1,14 +1,21 @@
 package org.fireflyest.essential.command;
 
-import javax.swing.text.html.parser.Entity;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.fireflyest.craftcommand.command.SimpleCommand;
+import org.bukkit.structure.Structure;
+import org.bukkit.structure.StructureManager;
+import org.fireflyest.craftcommand.command.ComplexCommand;
+import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.data.Language;
 
-public class RideCommand extends SimpleCommand {
+public class StructureCommand extends ComplexCommand {
+
 
     @Override
     protected boolean execute(CommandSender sender) {
@@ -17,8 +24,7 @@ public class RideCommand extends SimpleCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        
-        LivingEntity e = ((LivingEntity)player);
+
         
         
         return true;

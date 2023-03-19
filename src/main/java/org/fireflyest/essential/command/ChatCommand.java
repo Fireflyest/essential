@@ -23,12 +23,17 @@ public class ChatCommand extends SimpleCommand {
         }
 
         String key = player.getName() + ".chat.range";
-        if (cache.exist(key)) {
-            player.sendMessage(Language.CHAT_NEAR);
-            cache.del(key);
-        } else {
+        String range = cache.get(key);
+        if (range == null) { // 附近切换到全球
             player.sendMessage(Language.CHAT_GLOBAL);
             cache.set(key, "globe");
+        } else if ("globe".equals(range)) { // 全球切换到附近
+            player.sendMessage(Language.CHAT_NEAR);
+            cache.del(key);
+        } else { // 群聊切换到附近
+            cache.srem(range, player.getName());
+            player.sendMessage(Language.CHAT_NEAR);
+            cache.del(key);
         }
 
         return true;
@@ -36,6 +41,12 @@ public class ChatCommand extends SimpleCommand {
     
     @Override
     protected boolean execute(CommandSender sender, String arg1) {
+        execute(sender, arg1, null);
+        return true;
+    }
+
+    @Override
+    protected boolean execute(CommandSender sender, String arg1, String arg2) {
         Player player = (sender instanceof Player) ? (Player)sender : null;
         if (player == null) {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
@@ -49,9 +60,26 @@ public class ChatCommand extends SimpleCommand {
 
         String rangeKey = player.getName() + ".chat.range";
         String roomKey = "server.chat.room." + arg1;
-        cache.set(rangeKey, roomKey);
-        cache.sadd(roomKey, player.getName());
-        cache.sadd("server.chat.room", arg1);
+        String passwordKey = "server.chat.password." + arg1;
+        
+        // 判断房间是否已经存在
+        if (cache.smembers("server.chat.room").contains(arg1)) {
+            String password;
+            if ((password = cache.get(passwordKey)) != null && !password.equals(arg2)) {
+                sender.sendMessage(Language.CHAT_ROOM_FAIL);
+                return true;
+            } else {
+                // 密码正确加入
+                cache.set(rangeKey, roomKey);
+                cache.sadd(roomKey, player.getName());
+            }
+        } else {
+            // 创建房间并加入
+            cache.set(rangeKey, roomKey);
+            cache.set(passwordKey, arg2);
+            cache.sadd(roomKey, player.getName());
+            cache.sadd("server.chat.room", arg1);
+        }
         player.sendMessage(Language.CHAT_ROOM + " §7" + cache.smembers(roomKey).toString());
         
         return true;

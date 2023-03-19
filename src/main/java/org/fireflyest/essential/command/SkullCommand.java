@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +25,11 @@ public class SkullCommand extends SimpleCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        OfflinePlayer target = Bukkit.getPlayer(arg1);
+        Player target = Bukkit.getPlayer(arg1);
+        if (target == null) {
+            sender.sendMessage(Language.OFFLINE_PLAYER.replace("%player%", arg1));
+            return false;
+        }
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = ((SkullMeta)item.getItemMeta());
         if (meta != null) {

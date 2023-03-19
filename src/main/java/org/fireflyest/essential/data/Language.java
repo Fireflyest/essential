@@ -39,6 +39,7 @@ public class Language {
     public static String CHAT_GLOBAL;
     public static String CHAT_NEAR;
     public static String CHAT_ROOM;
+    public static String CHAT_ROOM_FAIL;
 
 
     public static String COOLDOWN_TO_USE;
@@ -54,6 +55,15 @@ public class Language {
     public static String TP_APPLY_REFUSE;
     public static String APPLY_REFUSE;
     public static String APPLY_ACCEPT;
+
+    public static String STRUCTURE_CREATE_TIP;
+    public static String STRUCTURE_CREATE_FIRST;
+    public static String STRUCTURE_CREATE_SECOND;
+    public static String STRUCTURE_CREATE_FINISH;
+    public static String STRUCTURE_CREATE_FAIL;
+    public static String STRUCTURE_PLACE_FAIL;
+    public static String STRUCTURE_PLACE_NULL;
+    public static String STRUCTURE_LOAD;
 
     public static String ECONOMY_PLAYER;
 

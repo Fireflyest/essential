@@ -1,7 +1,5 @@
 package org.fireflyest.essential.bean;
 
-import java.util.Set;
-
 import org.fireflyest.craftdatabase.annotation.Column;
 import org.fireflyest.craftdatabase.annotation.Primary;
 import org.fireflyest.craftdatabase.annotation.Skip;
@@ -15,6 +13,8 @@ public class Ship {
     private String bond;
     @Column
     private String tag;
+    @Column
+    private String request;
     @Column
     private String target;
     // 亲密度
@@ -39,6 +39,12 @@ public class Ship {
     }
     public void setTag(String tag) {
         this.tag = tag;
+    }
+    public String getRequest() {
+        return request;
+    }
+    public void setRequest(String request) {
+        this.request = request;
     }
     public String getTarget() {
         return target;

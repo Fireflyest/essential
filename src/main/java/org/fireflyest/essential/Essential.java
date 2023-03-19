@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.fireflyest.craftcommand.argument.EmailArgs;
 import org.fireflyest.craftcommand.argument.NumberArgs;
 import org.fireflyest.craftcommand.argument.PlayerArgs;
 import org.fireflyest.craftdatabase.sql.SQLConnector;
@@ -24,6 +25,7 @@ import org.fireflyest.essential.command.EmailCommand;
 import org.fireflyest.essential.command.EnchantArgument;
 import org.fireflyest.essential.command.EnchantCommand;
 import org.fireflyest.essential.command.FlyCommand;
+import org.fireflyest.essential.command.GodCommand;
 import org.fireflyest.essential.command.GradientArgument;
 import org.fireflyest.essential.command.GroupArgument;
 import org.fireflyest.essential.command.GroupCommand;
@@ -54,6 +56,13 @@ import org.fireflyest.essential.command.SetwarpCommand;
 import org.fireflyest.essential.command.ShipCommand;
 import org.fireflyest.essential.command.SkullCommand;
 import org.fireflyest.essential.command.SpawnCommand;
+import org.fireflyest.essential.command.StructureArgument;
+import org.fireflyest.essential.command.StructureTypeArgument;
+import org.fireflyest.essential.command.StructureCommand;
+import org.fireflyest.essential.command.StructureCreateCommand;
+import org.fireflyest.essential.command.StructureMirrorArgument;
+import org.fireflyest.essential.command.StructurePlaceCommand;
+import org.fireflyest.essential.command.StructureRotationArgument;
 import org.fireflyest.essential.command.SudoCommand;
 import org.fireflyest.essential.command.SuicideCommand;
 import org.fireflyest.essential.command.SunCommand;
@@ -64,6 +73,7 @@ import org.fireflyest.essential.command.TpacceptCommand;
 import org.fireflyest.essential.command.TphereCommand;
 import org.fireflyest.essential.command.TprefuseCommand;
 import org.fireflyest.essential.command.UpCommand;
+import org.fireflyest.essential.command.VanishCommand;
 import org.fireflyest.essential.command.WarpCommand;
 import org.fireflyest.essential.command.WorldCommand;
 import org.fireflyest.essential.data.Config;
@@ -221,8 +231,10 @@ public class Essential extends JavaPlugin {
         PluginCommand account = this.getCommand("account");
         if (account != null) {
             AccountCommand accountCommand = new AccountCommand();
+            EmailCommand emailCommand = new EmailCommand(service);
+            emailCommand.setArgument(0, new EmailArgs());
             accountCommand.addSubCommand("changepw", new ChangepwCommand(service));
-            accountCommand.addSubCommand("email", new EmailCommand(service));
+            accountCommand.addSubCommand("email", emailCommand);
             accountCommand.addSubCommand("losepw", new LosepwCommand(service));
             account.setExecutor(accountCommand);
             account.setTabCompleter(accountCommand);
@@ -323,6 +335,14 @@ public class Essential extends JavaPlugin {
         PluginCommand repair = this.getCommand("repair");
         if (repair != null) {
             repair.setExecutor(new RepairCommand());
+        }
+        PluginCommand vanish = this.getCommand("vanish");
+        if (vanish != null) {
+            vanish.setExecutor(new VanishCommand());
+        }
+        PluginCommand god = this.getCommand("god");
+        if (god != null) {
+            god.setExecutor(new GodCommand());
         }
         PluginCommand chat = this.getCommand("chat");
         if (chat != null) {
@@ -448,6 +468,20 @@ public class Essential extends JavaPlugin {
         PluginCommand world = this.getCommand("world");
         if (world != null) {
             world.setExecutor(new WorldCommand(guide));
+        }
+        PluginCommand structure = this.getCommand("structure");
+        if (structure != null) {
+            StructureCommand structureCommand = new StructureCommand();
+            StructureCreateCommand structureCreateCommand = new StructureCreateCommand();
+            structureCreateCommand.setArgument(0, new StructureTypeArgument());
+            StructurePlaceCommand structurePlaceCommand = new StructurePlaceCommand();
+            structurePlaceCommand.setArgument(0, new StructureArgument());
+            structurePlaceCommand.setArgument(1, new StructureRotationArgument());
+            structurePlaceCommand.setArgument(2, new StructureMirrorArgument());
+            structureCommand.addSubCommand("create", structureCreateCommand);
+            structureCommand.addSubCommand("place", structurePlaceCommand);
+            structure.setExecutor(structureCommand);
+            structure.setTabCompleter(structureCommand);
         }
     }
 

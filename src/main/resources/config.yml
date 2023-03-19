@@ -1,6 +1,6 @@
 Debug: false
 
-# 
+# 语言文件
 Language: default
 
 # SQL参数(高一点的版本需要在url加上'useSSL=false')
@@ -11,7 +11,7 @@ Password: '123456'
 
 ###############################################
 #
-# 世界保护
+# 世界管理
 #
 ###############################################
 MainWorld: 'world'
@@ -20,3 +20,14 @@ MainWorld: 'world'
 IgniteSpread: false
 # 火矢点然
 IgniteArrow: false
+
+# 开启结构体功能
+StructureEnable: true
+
+###############################################
+#
+# 好友关系
+#
+###############################################
+MaxFriends: 50
+MaxIntimate: 10

@@ -50,7 +50,7 @@ commands:
     usage: /tprefuse
   tpa:
     description: 传送请求
-    usage: /tprefuse
+    usage: /tpa [name]
   message:
     aliases: [m]
     description: 私聊
@@ -63,7 +63,10 @@ commands:
     usage: /ship <name>
   chat: 
     description: 切换聊天范围
-    usage: /chat
+    usage: /chat [room]
+  menu: 
+    description: 菜单
+    usage: /menu
   tphere:
     description: 邀请他人传送
     permission: essential.tphere
@@ -164,11 +167,6 @@ commands:
     permission: essential.lore
     usage: /lore [line] [text]
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.lore"
-  dnd:
-    description: 请勿打扰
-    permission: essential.dnd
-    usage: /dnd
-    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.dnd"
   sun:
     description: 晴天
     permission: essential.sun
@@ -205,6 +203,11 @@ commands:
     permission: essential.enchant
     usage: /enchant
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.enchant"
+  structure:
+    description: 结构
+    permission: essential.structure
+    usage: /structure
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.structure"
   money:
     description: 查看游戏币
     usage: /money <玩家>

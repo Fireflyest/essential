@@ -38,6 +38,10 @@ public class TphereCommand extends SimpleCommand {
         cache.setex(arg1 + ".base.tphere", 120, player.getName());
         
         Player target = Bukkit.getPlayer(arg1);
+        if (target == null || target.isInvisible()) {
+            sender.sendMessage(Language.OFFLINE_PLAYER.replace("%player%", arg1));
+            return true;
+        }
         target.sendMessage(Language.TELEPORT_IVTTP.replace("%player%", player.getName()));
         ChatUtils.sendApplyButton(target, "/tp");
         player.sendMessage(Language.SUCCEED_SEND_TP);

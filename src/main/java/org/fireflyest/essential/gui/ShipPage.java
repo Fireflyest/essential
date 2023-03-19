@@ -69,29 +69,36 @@ public class ShipPage extends TemplatePage {
             Ship ship = shipList.get(i);
             ItemStack friendItem;
             ItemStack shipItem;
-            // 判断是否申请
+
             if (ship.getTarget().equals(target)) {
+                // 好友申请的目标是我
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(ship.getBond().split("&")[0]));
+
                 friendItem = new ButtonItemBuilder(Material.PLAYER_HEAD)
                         .actionPlayerCommand("ship " + offlinePlayer.getName())
                         .name("§r$<hg=#218c74:#33d9b2>" + offlinePlayer.getName())
-                        .lore(this.getTagString(ship.getTag()))
+                        .lore(this.getRequestString(ship.getRequest()))
                         .lore("§r$<c=#778ca3>点击接受")
                         .colorful()
                         .build();
+                
                 shipItem = new ButtonItemBuilder(this.getTagItem(ship.getTag()))
                         .build();
             } else {
+                // 已经是好友
                 OfflinePlayer friend = Bukkit.getOfflinePlayer(UUID.fromString(ship.getBond().split("&")[1]));
                 int genderNum = service.selectGender(friend.getUniqueId());
                 String gender = this.getGenderIcon(genderNum);
                 int level = this.getLevel(ship.getLevel());
-                friendItem = new ButtonItemBuilder(friend.isOnline() ? Material.PLAYER_HEAD : Material.WITHER_SKELETON_SKULL)
+                boolean isOnline = (friend != null && friend.isOnline() && !((Player)friend).isInvisible());
+
+                friendItem = new ButtonItemBuilder(isOnline ? Material.PLAYER_HEAD : Material.WITHER_SKELETON_SKULL)
                         .actionPlayerCommand("interact " + ship.getTarget())
-                        .name("§f" + gender + (friend.isOnline() ? "$<hg=#218c74:#33d9b2>" : "$<hg=#b33939:#ff5252>") + ship.getTarget())
-                        .lore(friend.isOnline() ? "§a在线"  : "§7最后在线" + TimeUtils.getLocalDate(friend.getLastPlayed()))
+                        .name("§f" + gender + (isOnline ? "$<hg=#218c74:#33d9b2>" : "$<hg=#b33939:#ff5252>") + ship.getTarget())
+                        .lore(isOnline ? "§a在线"  : "§7最后在线" + TimeUtils.getLocalDate(friend.getLastPlayed()))
                         .colorful()
                         .build();
+                
                 shipItem = new ButtonItemBuilder(this.getTagItem(ship.getTag()))
                         .name(this.getTagString(ship.getTag()))
                         .amount(level)
@@ -152,7 +159,7 @@ public class ShipPage extends TemplatePage {
      */
     private String getTagString(String tag) {
         switch (tag) {
-            case "apply_for":
+            case "":
                 return "§r$<c=#778ca3>好友请求中...";
             case "friend":
                 return "§f[$<c=#006266>好友§f]";
@@ -161,9 +168,25 @@ public class ShipPage extends TemplatePage {
         }
     }
 
+    /**
+     * 获取请求类型
+     * @param request 请求
+     * @return 请求类型
+     */
+    private String getRequestString(String request) {
+        switch (request) {
+            case "":
+                return "无";
+            case "friend":
+                return "$<c=#006266>好友§r";
+            default:
+                return request;
+        }
+    }
+
     private Material getTagItem(String tag) {
         switch (tag) {
-                case "apply_for":
+                case "":
                     return Material.REDSTONE;
                 case "friend":
                 default:

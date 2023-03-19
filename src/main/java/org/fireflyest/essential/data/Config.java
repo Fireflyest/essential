@@ -14,6 +14,7 @@ public class Config {
     public static String MAIN_WORLD;
     public static boolean IGNITE_SPREAD;
     public static boolean IGNITE_ARROW;
+    public static boolean STRUCTURE_ENABLE;
 
     private Config() {
     }

@@ -17,8 +17,8 @@ public interface ShipDao {
      * @param outset 开端
      * @return 无效数字
      */
-    @Insert("INSERT INTO `essential_ship` (`bond`,`tag`,`target`,`outset`) VALUES ('${bond}','${tag}','${target}',${outset});")
-    long insertShip(String bond, String tag, String target, long outset);
+    @Insert("INSERT INTO `essential_ship` (`bond`,`tag`,`request`,`target`,`outset`) VALUES ('${bond}','${tag}','${request}','${target}',${outset});")
+    long insertShip(String bond, String tag, String request, String target, long outset);
 
     /**
      * 获取关系
@@ -34,7 +34,7 @@ public interface ShipDao {
      * @param target 玩家名称
      * @return 好友关系
      */
-    @Select("SELECT * FROM `essential_ship` WHERE `target`='${target}' AND `tag`='apply_for' OR `bond` LIKE '${uid}&%';")
+    @Select("SELECT * FROM `essential_ship` WHERE `target`='${target}' AND `tag`='' OR `bond` LIKE '${uid}&%';")
     Ship[] selectShips(String target, String uid);
 
     @Update("UPDATE `essential_ship` SET `level`=`level`+${level} WHERE `bond`='${bond}';")
@@ -48,6 +48,9 @@ public interface ShipDao {
      */
     @Update("UPDATE `essential_ship` SET `tag`='${tag}' WHERE `bond`='${bond}';")
     long updateShipTag(String tag, String bond);
+
+    @Update("UPDATE `essential_ship` SET `request`='${request}' WHERE `bond`='${bond}';")
+    long updateShipRequest(String request, String bond);
 
     @Delete("DELETE FROM `essential_ship` WHERE `bond`='${bond}';")
     long deleteShip(String bond);

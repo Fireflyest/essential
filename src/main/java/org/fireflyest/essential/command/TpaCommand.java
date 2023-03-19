@@ -38,6 +38,10 @@ public class TpaCommand extends SimpleCommand {
         cache.setex(arg1 + ".base.tp", 120, player.getName());
         
         Player target = Bukkit.getPlayer(arg1);
+        if (target == null || target.isInvisible()) {
+            sender.sendMessage(Language.OFFLINE_PLAYER.replace("%player%", arg1));
+            return true;
+        }
         target.sendMessage(Language.TELEPORT_APPLY.replace("%player%", player.getName()));
         ChatUtils.sendApplyButton(target, "/tp");
         player.sendMessage(Language.SUCCEED_SEND_TP);

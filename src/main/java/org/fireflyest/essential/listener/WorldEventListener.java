@@ -1,9 +1,12 @@
 package org.fireflyest.essential.listener;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.EntityType;
@@ -26,6 +29,8 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.structure.Structure;
+import org.bukkit.structure.StructureManager;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.bean.Dimension;
 import org.fireflyest.essential.data.Config;
@@ -64,6 +69,28 @@ public class WorldEventListener implements Listener {
             // 边界
             int border = yaml.getWorld().getInt(String.format("%s.border", key));
             world.getWorldBorder().setSize(border);
+        }
+
+        // 结构体
+        if (Config.STRUCTURE_ENABLE) {
+            StructureManager manager = Bukkit.getServer().getStructureManager();
+            File folder = new File(Essential.getPlugin().getDataFolder(), "structures");
+                folder.mkdirs();
+                for (String structName : folder.list()) {
+                    if (!structName.endsWith(".struct")) {
+                        continue;
+                    }
+                    File structFile = new File(folder, structName);
+                    try {
+                        Structure loadStructure = manager.loadStructure(structFile);
+                        NamespacedKey key = NamespacedKey.fromString(structName.replace(".struct", ""));
+                        manager.registerStructure(key, loadStructure);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            String info = Language.STRUCTURE_LOAD.replace("%num%", String.valueOf(manager.getStructures().size()));
+            Essential.getPlugin().getLogger().info(info);
         }
     }
 

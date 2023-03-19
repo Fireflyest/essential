@@ -165,7 +165,6 @@ public class PlayerEventListener implements Listener {
             event.setCancelled(true);
         }
 
-        // 处理聊天格式
         World world = player.getWorld();
         String chatRangeName;
         String chatRangeColor;
@@ -202,9 +201,9 @@ public class PlayerEventListener implements Listener {
             }
         }
 
+        // 处理聊天格式
         String prefix = service.selectStevePrefix(player.getUniqueId());
         prefix = prefix.replace("<", "<he=show_text•点击切换头衔|ce=run_command•/prefix|");
-
         event.setFormat("§f[$<he=show_text•点击切换聊天范围|ce=run_command•/chat|"
                  + chatRangeColor + ">" + chatRangeName + "§f]§f[" // 聊天范围显示
                  + prefix + "§f]$<he=show_text•点击交互|ce=run_command•/interact " // 点击头衔切换
@@ -233,9 +232,9 @@ public class PlayerEventListener implements Listener {
                 switch (value) {
                     case "%item%":
                         ItemStack itemStack = player.getInventory().getItemInMainHand();
-                        message = message.replace(value, "§7[$<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() 
+                        message = message.replace(value, "§7($<he=show_item•minecraft:" + itemStack.getType().toString().toLowerCase() 
                                 + "•" + ItemUtils.toNbtString(itemStack) 
-                                + "|c=#f8c291>物品§7]§r");
+                                + "|c=#f8c291>物品§7)§r");
                         break;
                     case "%room%":
                         String room;
@@ -244,9 +243,9 @@ public class PlayerEventListener implements Listener {
                         } else {
                             room = "群聊";
                         }
-                        message = message.replace(value, "§7[$<he=show_text•点击加入群聊|"
+                        message = message.replace(value, "§7($<he=show_text•点击加入群聊|"
                             + "ce=run_command•/chat " + room
-                            + "|c=#f8c291>" +room + "§7]§r");
+                            + "|c=#f8c291>" +room + "§7)§r");
                         break;
                     default:
                         break;

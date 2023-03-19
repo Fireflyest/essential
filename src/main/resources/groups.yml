@@ -51,6 +51,8 @@ admin:
     - "essential.admin,true"
     - "essential.givefly,true"
     - "essential.mute,true"
+    - "essential.vanish,true"
+    - "essential.god,true"
     - "minecraft.command.kick"
 builder:
   prefix: ""
