@@ -72,9 +72,10 @@ public class PermissionPage extends TemplatePage {
                 }
                 item = itemBuilder.colorful().build();
             } else {
-                item = new ButtonItemBuilder(Material.GLASS)
+                item = new ButtonItemBuilder(Material.RED_STAINED_GLASS)
                         .name("§r§l$<hg=#eb4d4b:#f0932b>" + name + "§r$<c=#a6a6a6> (" + groupName + ")")
                         .lore("§r$<c=#f6f6f6>" + desc)
+                        .lore("§r$<c=#95afc0>未拥有")
                         .colorful()
                         .build();
             }

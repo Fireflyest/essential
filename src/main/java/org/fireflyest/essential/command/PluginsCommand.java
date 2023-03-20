@@ -4,12 +4,12 @@ import javax.annotation.Nonnull;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.fireflyest.craftcommand.command.SimpleCommand;
+import org.fireflyest.craftcommand.command.ComplexCommand;
 import org.fireflyest.craftgui.api.ViewGuide;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.data.Language;
 
-public class PluginsCommand extends SimpleCommand {
+public class PluginsCommand extends ComplexCommand {
 
     private ViewGuide guide;
 

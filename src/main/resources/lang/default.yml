@@ -7,6 +7,13 @@ OnlyPlayerUse: '🔔§f该指令仅限玩家输入'
 NotPermission: '🔔§f你没有使用该指令的权限 §3%permission%'
 OfflinePlayer: '🔔§f玩家§3%player%§f不在线或不存在'
 SucceedSwitch: '🔔§f成功切换状态'
+PluginLoad: '🔔§f成功加载插件§3'
+PluginEnable: '🔔§f成功启用插件§3'
+PluginEnableFail: '🔔§f无法启用插件§3'
+PluginDisable: '🔔§f成功关闭插件§3'
+
+WorldCreate: '🌏正在创建世界§3'
+WorldUnload: '🌏卸载世界§3'
 
 GroupAdd: '📗§f已被添加到权限组§3%group%§f，输入§3 /group§f查看更多信息'
 PermissionAdd: '📗§f授予权限§3%permission%§f，输入§3 /group§f查看更多信息'

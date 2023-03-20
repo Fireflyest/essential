@@ -159,7 +159,7 @@ public class ChunksPage extends TemplatePage {
                 .build();
         buttonMap.put(35, center);
         ItemStack tp = new ButtonItemBuilder(Material.FIREWORK_ROCKET)
-                .actionPlayerCommand("world " + target + " tp")
+                .actionPlayerCommand("world tp " + target)
                 .name("§e传送")
                 .build();
         buttonMap.put(18, tp);

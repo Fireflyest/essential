@@ -63,6 +63,7 @@ public class PrefixCommand extends SimpleCommand {
     @Override
     protected boolean execute(@Nonnull CommandSender sender, @Nonnull String arg1, @Nonnull String arg2,
             @Nonnull String arg3) {
+        arg2 = arg2.replace("&", "§");
         // 是否有权限
         if(!sender.hasPermission("essential.admin"))  {
             sender.sendMessage(Language.NOT_PERMISSION.replace("%permission%", "essential.admin"));

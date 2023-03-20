@@ -47,7 +47,12 @@ import org.fireflyest.essential.command.NameCommand;
 import org.fireflyest.essential.command.PayCommand;
 import org.fireflyest.essential.command.PermissionArgument;
 import org.fireflyest.essential.command.PermissionCommand;
+import org.fireflyest.essential.command.PluginsArgument;
 import org.fireflyest.essential.command.PluginsCommand;
+import org.fireflyest.essential.command.PluginsDisableCommand;
+import org.fireflyest.essential.command.PluginsEnableCommand;
+import org.fireflyest.essential.command.PluginsLoadArgument;
+import org.fireflyest.essential.command.PluginsLoadCommand;
 import org.fireflyest.essential.command.PrefixCommand;
 import org.fireflyest.essential.command.RegisterCommand;
 import org.fireflyest.essential.command.RepairCommand;
@@ -75,7 +80,11 @@ import org.fireflyest.essential.command.TprefuseCommand;
 import org.fireflyest.essential.command.UpCommand;
 import org.fireflyest.essential.command.VanishCommand;
 import org.fireflyest.essential.command.WarpCommand;
+import org.fireflyest.essential.command.WorldArgument;
 import org.fireflyest.essential.command.WorldCommand;
+import org.fireflyest.essential.command.WorldCreateCommand;
+import org.fireflyest.essential.command.WorldTpCommand;
+import org.fireflyest.essential.command.WorldUnloadCommand;
 import org.fireflyest.essential.data.Config;
 import org.fireflyest.essential.data.EssentialYaml;
 import org.fireflyest.essential.data.Language;
@@ -298,7 +307,17 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand plugins = this.getCommand("plugin");
         if (plugins != null) {
-            plugins.setExecutor(new PluginsCommand(guide));
+            PluginsCommand pluginsCommand = new PluginsCommand(guide);
+            PluginsLoadCommand pluginsLoadCommand = new PluginsLoadCommand();
+            pluginsLoadCommand.setArgument(0, new PluginsLoadArgument());
+            PluginsEnableCommand pluginsEnableCommand = new PluginsEnableCommand();
+            pluginsEnableCommand.setArgument(0, new PluginsArgument());
+            PluginsDisableCommand pluginsDisableCommand = new PluginsDisableCommand();
+            pluginsDisableCommand.setArgument(0, new PluginsArgument());
+            pluginsCommand.addSubCommand("load", pluginsLoadCommand);
+            pluginsCommand.addSubCommand("enable", pluginsEnableCommand);
+            pluginsCommand.addSubCommand("disable", pluginsDisableCommand);
+            plugins.setExecutor(pluginsCommand);
         }
         PluginCommand skull = this.getCommand("skull");
         if (skull != null) {
@@ -467,7 +486,16 @@ public class Essential extends JavaPlugin {
     private void setupWorldCommand() {
         PluginCommand world = this.getCommand("world");
         if (world != null) {
-            world.setExecutor(new WorldCommand(guide));
+            WorldCommand worldCommand = new WorldCommand(guide);
+            WorldTpCommand worldTpCommand = new WorldTpCommand();
+            worldTpCommand.setArgument(0, new WorldArgument());
+            WorldUnloadCommand worldUnloadCommand = new WorldUnloadCommand();
+            worldUnloadCommand.setArgument(0, new WorldArgument());
+            WorldCreateCommand worldCreateCommand = new WorldCreateCommand();
+            worldCommand.addSubCommand("tp", worldTpCommand);
+            worldCommand.addSubCommand("unload", worldUnloadCommand);
+            worldCommand.addSubCommand("create", worldCreateCommand);
+            world.setExecutor(worldCommand);
         }
         PluginCommand structure = this.getCommand("structure");
         if (structure != null) {

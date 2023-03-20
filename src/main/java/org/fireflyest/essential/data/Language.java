@@ -15,6 +15,13 @@ public class Language {
     public static String NOT_PERMISSION;
     public static String OFFLINE_PLAYER;
     public static String SUCCEED_SWITCH;
+    public static String PLUGIN_LOAD;
+    public static String PLUGIN_ENABLE;
+    public static String PLUGIN_ENABLE_FAIL;
+    public static String PLUGIN_DISABLE;
+
+    public static String WORLD_CREATE;
+    public static String WORLD_UNLOAD;
     
     public static String GROUP_ADD;
     public static String PERMISSION_ADD;
