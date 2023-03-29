@@ -14,6 +14,7 @@ default:
     - "essential.warp.end,true"
     - "essential.warp.plot,true"
     - "essential.back,true"
+    - "essential.domain,true"
 normal:
   prefix: ""
   name: "正式玩家"
@@ -23,6 +24,7 @@ normal:
     - "essential.pay,true"
     - "essential.suicide,true"
     - "essential.ride,true"
+    - "essential.hold,true"
     - "essential.tphere,true"
     - "essential.chat.room,true"
 vip:
@@ -53,7 +55,8 @@ admin:
     - "essential.mute,true"
     - "essential.vanish,true"
     - "essential.god,true"
-    - "minecraft.command.kick"
+    - "essential.hold.anything,true"
+    - "minecraft.command.kick,true"
 builder:
   prefix: ""
   name: "建筑师"

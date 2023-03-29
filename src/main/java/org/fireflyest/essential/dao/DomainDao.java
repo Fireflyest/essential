@@ -1,0 +1,49 @@
+package org.fireflyest.essential.dao;
+
+import org.fireflyest.craftdatabase.annotation.Dao;
+import org.fireflyest.craftdatabase.annotation.Delete;
+import org.fireflyest.craftdatabase.annotation.Insert;
+import org.fireflyest.craftdatabase.annotation.Select;
+import org.fireflyest.craftdatabase.annotation.Update;
+import org.fireflyest.essential.bean.Domain;
+
+@Dao("org.fireflyest.essential.bean.Domain")
+public interface DomainDao {
+
+    @Insert("INSERT INTO `essential_domain` (`name`,`owner`,`world`,`outset`,`center`,`plots`) VALUES ('${name}','${owner}','${world}','${outset}','${center}','${plots}');")
+    long insertDomain(String name, String owner, String world, long outset, String center, String plots);
+
+    @Select("SELECT * FROM `essential_domain` WHERE `world`='${world}';")
+    Domain[] selectDomainsByWorld(String world);
+
+    @Select("SELECT * FROM `essential_domain` WHERE `owner`='${owner}';")
+    Domain[] selectDomainsByPlayer(String owner);
+
+    @Select("SELECT `name` FROM `essential_domain` WHERE `owner`='${owner}';")
+    String[] selectDomainsNameByPlayer(String owner);
+
+    @Select("SELECT * FROM `essential_domain` WHERE `name`='${name}';")
+    Domain selectDomainsByName(String name);
+
+    @Select("SELECT `owner` FROM `essential_domain` WHERE `name`='${name}';")
+    String selectDomainOwner(String name);
+
+    @Select("SELECT `world` FROM `essential_domain` WHERE `name`='${name}';")
+    String selectDomainWorld(String name);
+
+    @Update("UPDATE `essential_domain` SET `plots`='${plots}' WHERE `name`='${name}';")
+    long updateDomainPlots(String plots, String name);
+
+    @Update("UPDATE `essential_domain` SET `owner`='${owner}' WHERE `name`='${name}';")
+    long updateDomainOwner(String owner, String name);
+
+    @Update("UPDATE `essential_domain` SET `level`=`level`+1 WHERE `name`='${name}';")
+    long domainLevelUp(String name);
+
+    @Update("UPDATE `essential_domain` SET `level`=`level`-1 WHERE `name`='${name}';")
+    long domainLevelDown(String name);
+
+    @Delete("DELETE FROM `essential_domain` WHERE `name`='${name}';")
+    long deleteDomain(String name);
+
+}

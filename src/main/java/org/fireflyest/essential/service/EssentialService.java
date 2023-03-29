@@ -1,5 +1,6 @@
 package org.fireflyest.essential.service;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -9,6 +10,7 @@ import org.fireflyest.craftdatabase.annotation.Auto;
 import org.fireflyest.craftdatabase.annotation.Service;
 import org.fireflyest.craftdatabase.sql.SQLService;
 import org.fireflyest.essential.bean.Confer;
+import org.fireflyest.essential.bean.Domain;
 import org.fireflyest.essential.bean.Home;
 import org.fireflyest.essential.bean.Permit;
 import org.fireflyest.essential.bean.Point;
@@ -16,6 +18,7 @@ import org.fireflyest.essential.bean.Prefix;
 import org.fireflyest.essential.bean.Ship;
 import org.fireflyest.essential.bean.Steve;
 import org.fireflyest.essential.dao.ConferDao;
+import org.fireflyest.essential.dao.DomainDao;
 import org.fireflyest.essential.dao.HomeDao;
 import org.fireflyest.essential.dao.PermitDao;
 import org.fireflyest.essential.dao.PointDao;
@@ -56,6 +59,9 @@ public class EssentialService extends SQLService {
     @Auto
     public ShipDao shipDao;
 
+    @Auto
+    public DomainDao domainDao;
+
     /**
      * 查找玩家数据
      * @param uid uid
@@ -78,6 +84,10 @@ public class EssentialService extends SQLService {
         return steveDao.selectSteveUid(name);
     }
 
+    public String selectSteveName(String uid) {
+        return steveDao.selectSteveName(uid);
+    }
+
     /**
      * 插入玩家数据
      * @param name 名称
@@ -86,8 +96,8 @@ public class EssentialService extends SQLService {
      * @param prefix 头衔
      * @return id
      */
-    public long insertSteve(String name, UUID uid, long register, String prefix) {
-        return steveDao.insertSteve(name, uid.toString(), register, prefix);
+    public long insertSteve(String name, UUID uid, long register, String prefix, int money) {
+        return steveDao.insertSteve(name, uid.toString(), register, prefix, money);
     }
 
     /**
@@ -410,6 +420,57 @@ public class EssentialService extends SQLService {
 
     public long deleteShip(String bond) {
         return shipDao.deleteShip(bond);
+    }
+
+    /*****************************************************************************/
+
+    public long insertDomain(String name, UUID owner, Location location) {
+        String plot = location.getChunk().getX() + ":" + location.getChunk().getZ();
+        return domainDao.insertDomain(name, owner.toString(), location.getWorld().getName(), Instant.now().toEpochMilli(), SerializationUtil.serialize(location), plot);
+    }
+
+    public Domain[] selectDomainsByWorld(String world) {
+        return domainDao.selectDomainsByWorld(world);
+    }
+
+    public Domain[] selectDomainsByPlayer(UUID owner) {
+        return domainDao.selectDomainsByPlayer(owner.toString());
+    }
+
+    public String[] selectDomainsNameByPlayer(UUID owner) {
+        return domainDao.selectDomainsNameByPlayer(owner.toString());
+    }
+
+    public Domain selectDomainsByName(String name) {
+        return domainDao.selectDomainsByName(name);
+    }
+
+    public String selectDomainOwner(String name) {
+        return domainDao.selectDomainOwner(name);
+    }
+
+    public String selectDomainWorld(String name) {
+        return domainDao.selectDomainWorld(name);
+    }
+
+    public long updateDomainPlots(String plots, String name) {
+        return domainDao.updateDomainPlots(plots, name);
+    }
+
+    public long updateDomainOwner(String owner, String name) {
+        return domainDao.updateDomainOwner(owner, name);
+    }
+
+    public long domainLevelUp(String name) {
+        return domainDao.domainLevelUp(name);
+    }
+
+    public long domainLevelDown(String name) {
+        return domainDao.domainLevelDown(name);
+    }
+
+    public long deleteDomain(String name) {
+        return domainDao.deleteDomain(name);
     }
 
 }

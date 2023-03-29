@@ -25,15 +25,28 @@ public interface SteveDao {
     @Select("SELECT * FROM `essential_steve` WHERE `name`='${name}' LIMIT 1;")
     Steve selectSteveByName(String name);
 
+    /**
+     * 获取uid
+     * @param name 游戏名
+     * @return uid
+     */
     @Select("SELECT `uid` FROM `essential_steve` WHERE `name`='${name}' LIMIT 1;")
     String selectSteveUid(String name);
+
+        /**
+     * 获取名称
+     * @param uid uid
+     * @return 游戏名
+     */
+    @Select("SELECT `name` FROM `essential_steve` WHERE `uid`='${uid}';")
+    String selectSteveName(String uid);
 
     /**
      * 插入玩家数据
      * @return id
      */
-    @Insert("INSERT INTO `essential_steve` (`name`,`uid`,`register`,`prefix`) VALUES ('${name}','${uid}',${register},'${prefix}');")
-    long insertSteve(String name, String uid, long register, String prefix);
+    @Insert("INSERT INTO `essential_steve` (`name`,`uid`,`register`,`prefix`,`money`) VALUES ('${name}','${uid}',${register},'${prefix}',${money});")
+    long insertSteve(String name, String uid, long register, String prefix, int money);
 
     /**
      * 更新离开位置
@@ -106,7 +119,7 @@ public interface SteveDao {
      * @param money 修改数量
      * @param name 游戏名
      */
-    @Update("UPDATE `essential_steve` SET `money`=`money`${symbol}${money} WHERE `name`='${name}' LIMIT 1;")
+    @Update("UPDATE `essential_steve` SET `money`=`money`${symbol}${money} WHERE `name`='${name}';")
     long updateMoneyByName(String symbol, double money, String name);
 
     /**
@@ -117,15 +130,37 @@ public interface SteveDao {
     @Select("SELECT `money` FROM `essential_steve` WHERE `name`='${name}' LIMIT 1;")
     double selectMoneyByName(String name);
 
+    /**
+     * 获取头衔
+     * @param uid uid
+     * @return 头衔
+     */
     @Select("SELECT `prefix` FROM `essential_steve` WHERE `uid`='${uid}';")
     String selectPrefix(String uid);
 
+    /**
+     * 更新头衔
+     * @param prefix 头衔
+     * @param uid uid
+     * @return 更新条目
+     */
     @Update("UPDATE `essential_steve` SET `prefix`='${prefix}' WHERE `uid`='${uid}';")
     long updatePrefix(String prefix, String uid);
 
+    /**
+     * 获取性别
+     * @param uid uid
+     * @return 性别
+     */
     @Select("SELECT `gender` FROM `essential_steve` WHERE `uid`='${uid}';")
     int selectGender(String uid);
 
+    /**
+     * 更新性别
+     * @param gender 性别
+     * @param uid uid
+     * @return 更新条目
+     */
     @Update("UPDATE `essential_steve` SET `gender`=${gender} WHERE `uid`='${uid}';")
     long updateGender(int gender, String uid);
     

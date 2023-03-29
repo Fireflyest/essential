@@ -29,7 +29,7 @@ public class Steve {
     @Column
     private long register;
 
-    @Column(defaultValue = "0")
+    @Column
     private double money;
 
     @Column

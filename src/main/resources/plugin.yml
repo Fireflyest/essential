@@ -67,6 +67,9 @@ commands:
   menu: 
     description: 菜单
     usage: /menu
+  plot: 
+    description: 地皮
+    usage: /plot
   tphere:
     description: 邀请他人传送
     permission: essential.tphere
@@ -193,6 +196,11 @@ commands:
     permission: essential.ride
     usage: /ride
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.ride"
+  hold:
+    description: 举起他人
+    permission: essential.hold
+    usage: /hold
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.hold"
   repair:
     description: 修复
     permission: essential.repair
@@ -240,6 +248,9 @@ permissions:
   essential.vip:
     description: 会员权限
     default: op
+  essential.hold.anything:
+    description: 举起任何生物
+    default: op
   essential.einv.see:
     description: 查看他人末影箱
     default: op
@@ -250,9 +261,9 @@ permissions:
     description: 聊天颜色
     default: op
   essential.chat.room:
-    description: 聊天室
+    description: 创建聊天室
     default: op
-  essential.warp.*:
+  essential.warp:
     description: 传送点传送权限
     default: op
     children:
@@ -270,3 +281,10 @@ permissions:
   essential.admin:
     default: op
     description: 管理员权限
+  essential.domain:
+    default: op
+    description: 领地创建权限
+    children:
+      essential.domain.world: true
+      essential.domain.world_nether: true
+      essential.domain.world_the_end: true

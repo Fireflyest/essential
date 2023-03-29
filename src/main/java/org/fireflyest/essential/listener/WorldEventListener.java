@@ -3,6 +3,7 @@ package org.fireflyest.essential.listener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -32,26 +33,28 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.structure.Structure;
 import org.bukkit.structure.StructureManager;
 import org.fireflyest.essential.Essential;
-import org.fireflyest.essential.bean.Dimension;
 import org.fireflyest.essential.data.Config;
 import org.fireflyest.essential.data.EssentialYaml;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.service.EssentialService;
+import org.fireflyest.essential.world.Dimension;
 
 public class WorldEventListener implements Listener {
 
-    private HashMap<String, Dimension> worldMap = new HashMap<>();
+    private Map<String, Dimension> worldMap;
 
     /**
      * 世界事件监听
      * @param yaml 数据
      * @param service 数据
      */
-    public WorldEventListener(EssentialYaml yaml, EssentialService service) {
+    public WorldEventListener(EssentialYaml yaml, EssentialService service, Map<String, Dimension> worldMap) {
+        this.worldMap = worldMap;
         // 加载主城
         WorldCreator creator = new WorldCreator(Config.MAIN_WORLD);
         creator.createWorld();
 
+        worldMap.clear();
         // 加载世界数据
         for (String key : yaml.getWorld().getKeys(false)) {
             World world = Bukkit.getWorld(key);
@@ -119,7 +122,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
             Dimension.EventResult result = dimension.explode(loc);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.blockList().clear();
             }
         }
@@ -147,7 +150,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
             Dimension.EventResult result = dimension.destroy(loc, uid);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.setCancelled(true);
                 // TODO: 
                 player.sendMessage(Language.TITLE + "这个世界已被保护");
@@ -181,7 +184,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
             Dimension.EventResult result = dimension.use(loc, uid);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.setCancelled(true);
                 // TODO: 
                 player.sendMessage(Language.TITLE + "你不能给框架物品");
@@ -202,7 +205,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(player.getLocation().getChunk());
             Dimension.EventResult result = dimension.use(loc, uid);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.setCancelled(true);
                 // TODO: 
                 player.sendMessage(Language.TITLE + "你不能和框架交互");
@@ -223,7 +226,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
             Dimension.EventResult result = dimension.bucket(loc, uid);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.setCancelled(true);
                 // TODO: 
                 player.sendMessage(Language.TITLE + "你不能在这用桶");
@@ -244,7 +247,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
             Dimension.EventResult result = dimension.bucket(loc, uid);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.setCancelled(true);
                 // TODO: 
                 player.sendMessage(Language.TITLE + "你不能在这用桶");
@@ -264,8 +267,8 @@ public class WorldEventListener implements Listener {
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.build(loc, uid);
-            if  (result.cancel) {
+            Dimension.EventResult result = dimension.place(loc, uid);
+            if  (!result.isAllow()) {
                 event.setCancelled(true);
                 // TODO: 
                 player.sendMessage(Language.TITLE + "你不能放置物品！");
@@ -318,7 +321,7 @@ public class WorldEventListener implements Listener {
         Player player = ((Player)event.getEntity());
         player.setFlying(false);
         // 判断是否pvp
-        if (event.getCause() == DamageCause.ENTITY_ATTACK&& !(event.getDamager() instanceof Player)) {
+        if (event.getCause() == DamageCause.ENTITY_ATTACK && !(event.getDamager() instanceof Player)) {
             return;
         } else if (event.getCause() == DamageCause.PROJECTILE) {
             Projectile projectile = ((Projectile)event.getDamager());
@@ -332,7 +335,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(event.getEntity().getLocation().getChunk());
             Dimension.EventResult result = dimension.pvp(loc);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.setCancelled(true);
             }
         }
@@ -349,7 +352,7 @@ public class WorldEventListener implements Listener {
         if (dimension != null) {
             String loc = this.getLoc(event.getEntity().getLocation().getChunk());
             Dimension.EventResult result = dimension.explode(loc);
-            if  (result.cancel) {
+            if  (!result.isAllow()) {
                 event.blockList().clear();
             }
         }

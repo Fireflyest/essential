@@ -10,6 +10,10 @@ public class ChatCommand extends SimpleCommand {
 
     private StateCache cache;
 
+    /**
+     * 聊天室指令
+     * @param cache 数据缓存
+     */
     public ChatCommand(StateCache cache) {
         this.cache = cache;
     }
@@ -53,11 +57,6 @@ public class ChatCommand extends SimpleCommand {
             return false;
         }
 
-        if (!sender.hasPermission("essential.chat.room"))  {
-            sender.sendMessage(Language.NOT_PERMISSION.replace("%permission%", "essential.chat.room"));
-            return true;
-        }
-
         String rangeKey = player.getName() + ".chat.range";
         String roomKey = "server.chat.room." + arg1;
         String passwordKey = "server.chat.password." + arg1;
@@ -74,6 +73,10 @@ public class ChatCommand extends SimpleCommand {
                 cache.sadd(roomKey, player.getName());
             }
         } else {
+            if (!sender.hasPermission("essential.chat.room"))  {
+                sender.sendMessage(Language.NOT_PERMISSION.replace("%permission%", "essential.chat.room"));
+                return true;
+            }
             // 创建房间并加入
             cache.set(rangeKey, roomKey);
             cache.set(passwordKey, arg2);

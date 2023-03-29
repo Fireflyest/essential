@@ -72,6 +72,30 @@ public class Language {
     public static String STRUCTURE_PLACE_NULL;
     public static String STRUCTURE_LOAD;
 
+    public static String PLOT_CREATE;
+    public static String PLOT_EXIST;
+    public static String PLOT_UPPER_LIMIT;
+    public static String PLOT_WORLD_UNKNOWN;
+    public static String PLOT_IN_DOMAIN;
+    public static String PLOT_IN_LEAGUE;
+    public static String PLOT_SERVER_PROTECT;
+    public static String PLOT_IN_ROAD;
+    public static String PLOT_NON_EXISTENT;
+    public static String PLOT_NULL;
+    public static String PLOT_EXPAND_NULL;
+    public static String PLOT_EXPAND_FAIL;
+    public static String PLOT_EXPAND_COST;
+    public static String PLOT_OUTSIDE;
+    public static String PLOT_FORBID;
+    public static String PLOT_ABANDON_CENTER;
+    public static String PLOT_ABANDON;
+    public static String PLOT_REMOVE;
+    public static String PLOT_GIVE;
+    public static String PLOT_BE_GIVEN;
+
+    public static String COMMAND_CONFIRM;
+    public static String COMMAND_ARGUMENT;
+
     public static String ECONOMY_PLAYER;
 
     // 登录插件

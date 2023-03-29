@@ -105,7 +105,7 @@ public class PlayerEventListener implements Listener {
         Steve steve = service.selectSteveByUid(uid);
         if (steve == null) {
             Bukkit.broadcastMessage(Language.NEW_PLAYER.replace("%player%", player.getName()));
-            service.insertSteve(player.getName(), uid, Instant.now().toEpochMilli(), yaml.getGroup().getString("default.prefix"));
+            service.insertSteve(player.getName(), uid, Instant.now().toEpochMilli(), yaml.getGroup().getString("default.prefix"), Config.BASE_MONEY);
             steve = service.selectSteveByUid(uid);
         }
 
@@ -148,7 +148,7 @@ public class PlayerEventListener implements Listener {
                         guide.openView(player, Essential.VIEW_ACCOUNT, player.getName());
                     }
                 }
-            }.runTaskTimer(Essential.getPlugin(), 30, 60);
+            }.runTaskTimer(Essential.getPlugin(), 100, 60);
         }
 
         // 刷新权限

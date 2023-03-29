@@ -65,19 +65,7 @@ public class StructureCreateCommand extends SubCommand {
                     point = String.format("[%s,%s,%s]", corners[1].getX(), corners[1].getY(), corners[1].getZ());
                     sender.sendMessage(Language.STRUCTURE_CREATE_SECOND.replace("%point%", point));
 
-                    new BukkitRunnable() {
-                        // 次数
-                        int time = 0;
-                       @Override
-                       public void run() {
-                            // 到次数或清空取消
-                            time++;
-                            if (time > 100 || corners[0] == null || corners[1] == null) {
-                                cancel();
-                            }
-                            ParticleUtils.cuboid(Particle.END_ROD, corners[0].clone(), corners[1].clone());
-                       } 
-                    }.runTaskTimer(Essential.getPlugin(), 0, 10);
+                    this.sizeDisplay();
                 } else {
                     sender.sendMessage(Language.STRUCTURE_CREATE_FAIL);
                 }
@@ -125,8 +113,8 @@ public class StructureCreateCommand extends SubCommand {
 
     /**
      * 角落有方块圈不到，要修复偏差
-     * @param loc1
-     * @param loc2
+     * @param loc1 角点1
+     * @param loc2 角点2
      */
     private void fixLocation(@Nonnull Location loc1, @Nonnull Location loc2) {
         if (loc1.getY() > loc2.getY()) {
@@ -144,6 +132,23 @@ public class StructureCreateCommand extends SubCommand {
         } else {
             loc2.add(0, 0, 1);
         }
+    }
+
+    private void sizeDisplay() {
+        new BukkitRunnable() {
+            // 次数
+            int time = 0;
+            @Override
+            public void run() {
+                    // 到次数或清空取消
+                    time++;
+                    if (time > 100 || corners[0] == null || corners[1] == null) {
+                        cancel();
+                        return;
+                    }
+                    ParticleUtils.cuboid(Particle.END_ROD, corners[0].clone(), corners[1].clone());
+            } 
+        }.runTaskTimer(Essential.getPlugin(), 0, 10);
     }
     
 }

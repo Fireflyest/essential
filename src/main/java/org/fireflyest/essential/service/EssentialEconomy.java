@@ -3,6 +3,7 @@ package org.fireflyest.essential.service;
 import java.util.List;
 
 import org.bukkit.OfflinePlayer;
+import org.fireflyest.essential.data.Config;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -42,12 +43,12 @@ public class EssentialEconomy implements Economy {
 
     @Override
     public String currencyNamePlural() {
-        return "§6ɞ";
+        return Config.CURRENCY_NAME;
     }
 
     @Override
     public String currencyNameSingular() {
-        return "§6ɞ";
+        return Config.CURRENCY_NAME;
     }
 
     @Override

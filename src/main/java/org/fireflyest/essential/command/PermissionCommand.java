@@ -54,7 +54,7 @@ public class PermissionCommand extends SimpleCommand {
     protected boolean execute(@Nonnull CommandSender sender, @Nonnull String arg1, @Nonnull String arg2,
             @Nonnull String arg3) {
         // 是否有权限
-        if(!sender.hasPermission("essential.admin"))  {
+        if (!sender.hasPermission("essential.admin"))  {
             sender.sendMessage(Language.NOT_PERMISSION.replace("%permission%", "essential.admin"));
             return false;
         }

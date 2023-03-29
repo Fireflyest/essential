@@ -15,6 +15,16 @@ public class Config {
     public static boolean IGNITE_SPREAD;
     public static boolean IGNITE_ARROW;
     public static boolean STRUCTURE_ENABLE;
+    public static int MAX_DOMAIN;
+    public static int MAX_CHUNK;
+    public static int BASE_CHUNK_PRICE;
+
+    public static int MAX_FRIENDS;
+    public static int MAX_INTIMATE;
+
+    public static int BASE_MONEY;
+    public static String CURRENCY_NAME;
+
 
     private Config() {
     }

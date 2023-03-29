@@ -1,5 +1,8 @@
 package org.fireflyest.essential;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.PluginCommand;
@@ -10,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.fireflyest.craftcommand.argument.EmailArgs;
 import org.fireflyest.craftcommand.argument.NumberArgs;
 import org.fireflyest.craftcommand.argument.PlayerArgs;
+import org.fireflyest.craftcommand.argument.StringArgs;
 import org.fireflyest.craftdatabase.sql.SQLConnector;
 import org.fireflyest.craftgui.api.ViewGuide;
 import org.fireflyest.essential.bean.Ship;
@@ -31,6 +35,7 @@ import org.fireflyest.essential.command.GroupArgument;
 import org.fireflyest.essential.command.GroupCommand;
 import org.fireflyest.essential.command.HatCommand;
 import org.fireflyest.essential.command.HealCommand;
+import org.fireflyest.essential.command.HoldCommand;
 import org.fireflyest.essential.command.HomeArgument;
 import org.fireflyest.essential.command.HomeCommand;
 import org.fireflyest.essential.command.InteractCommand;
@@ -47,6 +52,15 @@ import org.fireflyest.essential.command.NameCommand;
 import org.fireflyest.essential.command.PayCommand;
 import org.fireflyest.essential.command.PermissionArgument;
 import org.fireflyest.essential.command.PermissionCommand;
+import org.fireflyest.essential.command.PlotAbandonCommand;
+import org.fireflyest.essential.command.PlotArgument;
+import org.fireflyest.essential.command.PlotCommand;
+import org.fireflyest.essential.command.PlotCreateCommand;
+import org.fireflyest.essential.command.PlotExpandCommand;
+import org.fireflyest.essential.command.PlotGiveCommand;
+import org.fireflyest.essential.command.PlotMapCommand;
+import org.fireflyest.essential.command.PlotRemoveCommand;
+import org.fireflyest.essential.command.PlotTpCommand;
 import org.fireflyest.essential.command.PluginsArgument;
 import org.fireflyest.essential.command.PluginsCommand;
 import org.fireflyest.essential.command.PluginsDisableCommand;
@@ -56,6 +70,7 @@ import org.fireflyest.essential.command.PluginsLoadCommand;
 import org.fireflyest.essential.command.PrefixCommand;
 import org.fireflyest.essential.command.RegisterCommand;
 import org.fireflyest.essential.command.RepairCommand;
+import org.fireflyest.essential.command.RideCommand;
 import org.fireflyest.essential.command.SethomeCommand;
 import org.fireflyest.essential.command.SetwarpCommand;
 import org.fireflyest.essential.command.ShipCommand;
@@ -103,6 +118,7 @@ import org.fireflyest.essential.protocol.EssentialProtocol;
 import org.fireflyest.essential.service.EssentialEconomy;
 import org.fireflyest.essential.service.EssentialPermission;
 import org.fireflyest.essential.service.EssentialService;
+import org.fireflyest.essential.world.Dimension;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -129,6 +145,8 @@ public class Essential extends JavaPlugin {
     private StateCache cache;
     private ViewGuide guide;
     private String url;
+
+    private Map<String, Dimension> worldMap = new HashMap<>();
 
     /**
      * 插件加载入口
@@ -167,7 +185,7 @@ public class Essential extends JavaPlugin {
         // 监听
         this.getLogger().info("Lunching listener.");
         this.getServer().getPluginManager().registerEvents(new PlayerEventListener(service, yaml, permissions, cache, guide), this);
-        this.getServer().getPluginManager().registerEvents(new WorldEventListener(yaml, service), this);
+        this.getServer().getPluginManager().registerEvents(new WorldEventListener(yaml, service, worldMap), this);
 
         // 指令
         this.setupAccountCommand();
@@ -177,6 +195,7 @@ public class Essential extends JavaPlugin {
         this.setupWorldCommand();
         this.setupGroupCommand();
         this.setupShipCommand();
+        this.setupPlotCommand();
         
     }
 
@@ -242,7 +261,10 @@ public class Essential extends JavaPlugin {
             AccountCommand accountCommand = new AccountCommand();
             EmailCommand emailCommand = new EmailCommand(service);
             emailCommand.setArgument(0, new EmailArgs());
-            accountCommand.addSubCommand("changepw", new ChangepwCommand(service));
+            ChangepwCommand changepwCommand = new ChangepwCommand(service);
+            changepwCommand.setArgument(0, new StringArgs("[old_password]"));
+            changepwCommand.setArgument(1, new StringArgs("[new_password]"));
+            accountCommand.addSubCommand("changepw", changepwCommand);
             accountCommand.addSubCommand("email", emailCommand);
             accountCommand.addSubCommand("losepw", new LosepwCommand(service));
             account.setExecutor(accountCommand);
@@ -288,7 +310,11 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand lore = this.getCommand("lore");
         if (lore != null) {
-            lore.setExecutor(new LoreCommand());
+            LoreCommand loreCommand = new LoreCommand();
+            loreCommand.setArgument(0, new StringArgs("[lore]"));
+            loreCommand.setArgument(1, new NumberArgs());
+            lore.setExecutor(loreCommand);
+            lore.setTabCompleter(loreCommand);
         }
         PluginCommand message = this.getCommand("message");
         if (message != null) {
@@ -328,7 +354,11 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand sudo = this.getCommand("sudo");
         if (sudo != null) {
-            sudo.setExecutor(new SudoCommand());
+            SudoCommand sudoCommand = new SudoCommand();
+            sudoCommand.setArgument(0, new PlayerArgs());
+            sudoCommand.setArgument(1, new StringArgs("[command]"));
+            sudo.setExecutor(sudoCommand);
+            sudo.setTabCompleter(sudoCommand);
         }
         PluginCommand suicide = this.getCommand("suicide");
         if (suicide != null) {
@@ -385,6 +415,20 @@ public class Essential extends JavaPlugin {
             interact.setExecutor(interactCommand);
             interact.setTabCompleter(interactCommand);
         }
+        PluginCommand ride = this.getCommand("ride");
+        if (ride != null) {
+            RideCommand rideCommand = new RideCommand();
+            rideCommand.setArgument(0, new PlayerArgs());
+            ride.setExecutor(rideCommand);
+            ride.setTabCompleter(rideCommand);
+        }
+        PluginCommand hold = this.getCommand("hold");
+        if (hold != null) {
+            HoldCommand holdCommand = new HoldCommand();
+            holdCommand.setArgument(0, new PlayerArgs());
+            hold.setExecutor(holdCommand);
+            hold.setTabCompleter(holdCommand);
+        }
     }
 
     /**
@@ -407,7 +451,10 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand sethome = this.getCommand("sethome");
         if (sethome != null) {
-            sethome.setExecutor(new SethomeCommand(service));
+            SethomeCommand sethomeCommand = new SethomeCommand(service);
+            sethomeCommand.setArgument(0, new StringArgs("[name]"));
+            sethome.setExecutor(sethomeCommand);
+            sethome.setTabCompleter(sethomeCommand);
         }
         PluginCommand tpaccept = this.getCommand("tpaccept");
         if (tpaccept != null) {
@@ -437,7 +484,10 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand warp = this.getCommand("warp");
         if (warp != null) {
-            warp.setExecutor(new WarpCommand(service, cache));
+            WarpCommand warpCommand = new WarpCommand(service, cache);
+            warpCommand.setArgument(0, new StringArgs("[name]"));
+            warp.setExecutor(warpCommand);
+            warp.setTabCompleter(warpCommand);
         }
         PluginCommand back = this.getCommand("back");
         if (back != null) {
@@ -453,7 +503,9 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand up = this.getCommand("up");
         if (up != null) {
-            up.setExecutor(new UpCommand(cache));
+            UpCommand upCommand = new UpCommand(cache);
+            upCommand.setArgument(0, new NumberArgs());
+            up.setExecutor(upCommand);
         }
     }
 
@@ -550,6 +602,31 @@ public class Essential extends JavaPlugin {
             shipCommand.setArgument(0, new PlayerArgs());
             ship.setExecutor(shipCommand);
             ship.setTabCompleter(shipCommand);
+        }
+    }
+
+    private void setupPlotCommand() {
+        PluginCommand plot = this.getCommand("plot");
+        if (plot != null) {
+            PlotCommand plotCommand = new PlotCommand();
+            PlotCreateCommand plotCreateCommand = new PlotCreateCommand(service, worldMap);
+            plotCreateCommand.setArgument(0, new StringArgs("[name]"));
+            PlotTpCommand plotTpCommand = new PlotTpCommand(service, cache);
+            plotTpCommand.setArgument(0, new PlotArgument(service));
+            PlotRemoveCommand plotRemoveCommand = new PlotRemoveCommand(service, economy, cache, worldMap);
+            plotRemoveCommand.setArgument(0, new PlotArgument(service));
+            PlotGiveCommand plotGiveCommand = new PlotGiveCommand(service, cache, worldMap);
+            plotGiveCommand.setArgument(0, new PlotArgument(service));
+            plotGiveCommand.setArgument(1, new PlayerArgs());
+            plotCommand.addSubCommand("create", plotCreateCommand);
+            plotCommand.addSubCommand("tp", plotTpCommand);
+            plotCommand.addSubCommand("remove", plotRemoveCommand);
+            plotCommand.addSubCommand("give", plotGiveCommand);
+            plotCommand.addSubCommand("expand", new PlotExpandCommand(economy, worldMap));
+            plotCommand.addSubCommand("abandon", new PlotAbandonCommand(economy, worldMap));
+            plotCommand.addSubCommand("map", new PlotMapCommand(service, economy, worldMap));
+            plot.setExecutor(plotCommand);
+            plot.setTabCompleter(plotCommand);
         }
     }
 

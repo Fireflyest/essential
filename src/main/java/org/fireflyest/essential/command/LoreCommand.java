@@ -17,6 +17,20 @@ public class LoreCommand extends SimpleCommand {
     }
 
     @Override
+    protected boolean execute(CommandSender sender, String arg1) {
+        Player player = (sender instanceof Player) ? (Player)sender : null;
+        if (player == null) {
+            sender.sendMessage(Language.ONLY_PLAYER_USE);
+            return false;
+        }
+        if (player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
+            return true;
+        }
+        ItemUtils.addLore(player.getInventory().getItemInMainHand(), arg1.replace("&", "§"));
+        return true;
+    }
+
+    @Override
     protected boolean execute(@Nonnull CommandSender sender, @Nonnull String arg1, @Nonnull String arg2) {
         Player player = (sender instanceof Player) ? (Player)sender : null;
         if (player == null) {
