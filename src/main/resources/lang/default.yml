@@ -65,26 +65,33 @@ StructurePlaceFail: ⚒请选择有效建筑地点
 StructurePlaceNull: ⚒建筑结构体不存在
 StructureLoad: 成功加载结构体%num%个
 
-PlotCreate: 🪟成功创建地皮 §3
-PlotExist: 🪟同名称地皮已经存在
-PlotUpperLimit: 🪟已到达数量上限
-PlotWorldUnknown: 🪟无法在这个世界占有地皮
-PlotInDomain: 🪟该区块已被他人占领
-PlotInLeague: 🪟该区块已被联盟占领
-PlotServerProtect: 🪟无法在服务器保护区域创建
-PlotInRoad: 🪟无法在道路上创建
-PlotNonExistent: 🪟地皮不存在
-PlotNull: 🪟你还没有地皮
-PlotExpandNull: 🪟距离要扩张的地皮过于遥远
-PlotExpandFail: 🪟过于邻近他人地皮
-PlotExpandCost: 🪟无法承担地皮扩张费用 §3
-PlotOutside: 🪟请在地皮内执行此操作
-PlotForbid: 🪟你没有权力这样做
-PlotAbandonCenter: 🪟初始地皮无法抛弃
-PlotAbandon: 🪟地皮已被抛弃
-PlotRemove: 🪟地皮删除成功
-PlotGive: 🪟地皮转让成功
-PlotBeGiven: 🪟接收到他人转让的地皮 §3
+PlotCreate: 🛖成功创建地皮 §3
+PlotExist: 🛖同名称地皮已经存在
+PlotUpperLimit: 🛖已到达数量上限
+PlotWorldUnknown: 🛖无法在这个世界占有地皮
+PlotInDomain: 🛖该区块已被他人占领
+PlotInLeague: 🛖该区块已被联盟占领
+PlotServerProtect: 🛖无法在服务器保护区域创建
+PlotInRoad: 🛖无法在道路上创建
+PlotNonExistent: 🛖地皮不存在
+PlotNull: 🛖你还没有地皮
+PlotExpandNull: 🛖距离要扩张的地皮过于遥远
+PlotExpandFail: 🛖过于邻近他人地皮
+PlotExpandCost: 🛖无法承担地皮扩张费用 §3
+PlotOutside: 🛖请在地皮内执行此操作
+PlotForbid: 🛖你没有权限这样做
+PlotAbandonCenter: 🛖初始地皮无法抛弃
+PlotAbandon: 🛖地皮已被抛弃
+PlotRemove: 🛖地皮删除成功
+PlotGive: 🛖地皮转让成功
+PlotBeGiven: 🛖接收到他人转让的地皮 §3
+PlotPvp: 🛖区域内PVP未开启
+PlotProtectRoad: 🛖道路保护
+PlotProtectWorld: 🛖世界保护
+PlotSetCenter: 🛖已重新设置领地传送点
+PlotRename: 🛖已重新设置领地名称
+PlotFlag: 🛖你没有地皮§3%domain%§f的§3%flag%§f权限
+PlotFlagSwitch: 🛖地皮§3%domain%§f的§3%flag%§f权限(%scope%)切换为 
 
 CommandConfirm: 🔥请再次输入指令确认
 CommandArgument: 🔥输入的指令缺少必要的参数

@@ -23,6 +23,8 @@ public class Ship {
     // 开始时间
     @Column
     private long outset;
+    @Column
+    private boolean intimate;
 
     // 用来在好友列表排位
     @Skip
@@ -63,6 +65,12 @@ public class Ship {
     }
     public void setOutset(long outset) {
         this.outset = outset;
+    }
+    public boolean isIntimate() {
+        return intimate;
+    }
+    public void setIntimate(boolean intimate) {
+        this.intimate = intimate;
     }
     public int getPos() {
         return pos;

@@ -75,7 +75,7 @@ public class ShipPage extends TemplatePage {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(ship.getBond().split("&")[0]));
 
                 friendItem = new ButtonItemBuilder(Material.PLAYER_HEAD)
-                        .actionPlayerCommand("ship " + offlinePlayer.getName())
+                        .actionPlayerCommand("ship build " + offlinePlayer.getName())
                         .name("§r$<hg=#218c74:#33d9b2>" + offlinePlayer.getName())
                         .lore(this.getRequestString(ship.getRequest()))
                         .lore("§r$<c=#778ca3>点击接受")

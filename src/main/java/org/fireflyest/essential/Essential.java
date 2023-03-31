@@ -57,10 +57,15 @@ import org.fireflyest.essential.command.PlotArgument;
 import org.fireflyest.essential.command.PlotCommand;
 import org.fireflyest.essential.command.PlotCreateCommand;
 import org.fireflyest.essential.command.PlotExpandCommand;
+import org.fireflyest.essential.command.PlotFsetCommand;
 import org.fireflyest.essential.command.PlotGiveCommand;
 import org.fireflyest.essential.command.PlotMapCommand;
 import org.fireflyest.essential.command.PlotRemoveCommand;
+import org.fireflyest.essential.command.PlotRenameCommand;
+import org.fireflyest.essential.command.PlotSetCommand;
+import org.fireflyest.essential.command.PlotIsetCommand;
 import org.fireflyest.essential.command.PlotTpCommand;
+import org.fireflyest.essential.command.PlotTpsetCommand;
 import org.fireflyest.essential.command.PluginsArgument;
 import org.fireflyest.essential.command.PluginsCommand;
 import org.fireflyest.essential.command.PluginsDisableCommand;
@@ -73,6 +78,7 @@ import org.fireflyest.essential.command.RepairCommand;
 import org.fireflyest.essential.command.RideCommand;
 import org.fireflyest.essential.command.SethomeCommand;
 import org.fireflyest.essential.command.SetwarpCommand;
+import org.fireflyest.essential.command.ShipBuildCommand;
 import org.fireflyest.essential.command.ShipCommand;
 import org.fireflyest.essential.command.SkullCommand;
 import org.fireflyest.essential.command.SpawnCommand;
@@ -598,8 +604,10 @@ public class Essential extends JavaPlugin {
     private void setupShipCommand() {
         PluginCommand ship = this.getCommand("ship");
         if (ship != null) {
-            ShipCommand shipCommand = new ShipCommand(service, guide);
-            shipCommand.setArgument(0, new PlayerArgs());
+            ShipCommand shipCommand = new ShipCommand(guide);
+            ShipBuildCommand shipBuildCommand = new ShipBuildCommand(service);
+            shipBuildCommand.setArgument(0, new PlayerArgs());
+            shipCommand.addSubCommand("build", shipBuildCommand);
             ship.setExecutor(shipCommand);
             ship.setTabCompleter(shipCommand);
         }
@@ -608,6 +616,7 @@ public class Essential extends JavaPlugin {
     private void setupPlotCommand() {
         PluginCommand plot = this.getCommand("plot");
         if (plot != null) {
+            StringArgs flags = new StringArgs("use", "destroy", "place", "bucket", "ignite", "build", "pve", "open", "tp", "armor", "pvp", "monster", "explode", "piston", "water", "lava", "flow");
             PlotCommand plotCommand = new PlotCommand();
             PlotCreateCommand plotCreateCommand = new PlotCreateCommand(service, worldMap);
             plotCreateCommand.setArgument(0, new StringArgs("[name]"));
@@ -618,13 +627,30 @@ public class Essential extends JavaPlugin {
             PlotGiveCommand plotGiveCommand = new PlotGiveCommand(service, cache, worldMap);
             plotGiveCommand.setArgument(0, new PlotArgument(service));
             plotGiveCommand.setArgument(1, new PlayerArgs());
+            PlotSetCommand plotSetCommand = new PlotSetCommand(service, worldMap);
+            plotSetCommand.setArgument(0, flags);
+            PlotFsetCommand plotFsetCommand = new PlotFsetCommand(service, worldMap);
+            plotFsetCommand.setArgument(0, flags);
+            PlotIsetCommand plotIsetCommand = new PlotIsetCommand(service, worldMap);
+            plotIsetCommand.setArgument(0, flags);
+            // PlotPsetCommand plotPsetCommand = new PlotPsetCommand(service, worldMap);
+            // plotPsetCommand.setArgument(0, new PlayerArgs());
+            // plotPsetCommand.setArgument(1, flags);
+            PlotRenameCommand plotRenameCommand = new PlotRenameCommand(service, worldMap);
+            plotRenameCommand.setArgument(0, new StringArgs("[new_name]"));
             plotCommand.addSubCommand("create", plotCreateCommand);
             plotCommand.addSubCommand("tp", plotTpCommand);
             plotCommand.addSubCommand("remove", plotRemoveCommand);
             plotCommand.addSubCommand("give", plotGiveCommand);
+            plotCommand.addSubCommand("set", plotSetCommand);
+            plotCommand.addSubCommand("fset", plotFsetCommand);
+            plotCommand.addSubCommand("iset", plotIsetCommand);
+            // plotCommand.addSubCommand("pset", plotPsetCommand);
+            plotCommand.addSubCommand("rename", plotRenameCommand);
             plotCommand.addSubCommand("expand", new PlotExpandCommand(economy, worldMap));
             plotCommand.addSubCommand("abandon", new PlotAbandonCommand(economy, worldMap));
             plotCommand.addSubCommand("map", new PlotMapCommand(service, economy, worldMap));
+            plotCommand.addSubCommand("tpset", new PlotTpsetCommand(service, worldMap));
             plot.setExecutor(plotCommand);
             plot.setTabCompleter(plotCommand);
         }

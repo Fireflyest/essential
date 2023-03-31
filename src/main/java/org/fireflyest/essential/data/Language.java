@@ -92,6 +92,13 @@ public class Language {
     public static String PLOT_REMOVE;
     public static String PLOT_GIVE;
     public static String PLOT_BE_GIVEN;
+    public static String PLOT_PVP;
+    public static String PLOT_PROTECT_ROAD;
+    public static String PLOT_PROTECT_WORLD;
+    public static String PLOT_SET_CENTER;
+    public static String PLOT_RENAME;
+    public static String PLOT_FLAG;
+    public static String PLOT_FLAG_SWITCH;
 
     public static String COMMAND_CONFIRM;
     public static String COMMAND_ARGUMENT;

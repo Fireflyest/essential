@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Location;
 import org.bukkit.util.NumberConversions;
 import org.fireflyest.essential.bean.Domain;
+import org.fireflyest.essential.bean.Ship;
 import org.fireflyest.essential.service.EssentialService;
 
 public class Dimension {
@@ -23,18 +24,20 @@ public class Dimension {
     public static final int PERMISSION_USE =              0b00000000000000000000000000000001; // 使用
     
     public static final int PERMISSION_DESTROY =      0b00000000000000000000000000001000; // 破坏
-    public static final int PERMISSION_PLACE =          0b00000000000000000000000000010000; // 放置
+    public static final int PERMISSION_PLACE =           0b00000000000000000000000000010000; // 放置
     public static final int PERMISSION_BUCKET =        0b00000000000000000000000000100000; // 水桶
-    public static final int PERMISSION_BUILD =           0b00000000000000000000000000111000; // 建筑
+    public static final int PERMISSION_IGNITE =          0b00000000000000000000000001000000; // 点燃
+    public static final int PERMISSION_BUILD =           0b00000000000000000000000001111000; // 建筑
     
-    public static final int PERMISSION_PVE =               0b00000000000000000000000001000000; // 杀怪
-    public static final int PERMISSION_OPEN =           0b00000000000000000000000010000000; // 容器
-    public static final int PERMISSION_TP =                 0b00000000000000000000000100000000; // 传送
+    public static final int PERMISSION_PVE =               0b00000000000000000000000010000000; // 杀生
+    public static final int PERMISSION_OPEN =            0b00000000000000000000000100000000; // 容器
+    public static final int PERMISSION_TP =                 0b00000000000000000000001000000000; // 传送
+    public static final int PERMISSION_ARMOR =        0b00000000000000000000010000000000; // 框甲
 
-    public static final int FLAG_PVP =                           0b10000000000000000000000000000000; // 对决
+    public static final int FLAG_PVP =                            0b10000000000000000000000000000000; // 对决
     public static final int FLAG_MONSTER =                 0b01000000000000000000000000000000; // 刷怪
-    public static final int FLAG_EXPLODE =                  0b00100000000000000000000000000000; // 爆炸
-    public static final int FLAG_PISTON =                     0b00010000000000000000000000000000; // 活塞
+    public static final int FLAG_EXPLODE =                   0b00100000000000000000000000000000; // 爆炸
+    public static final int FLAG_PISTON =                      0b00010000000000000000000000000000; // 活塞
 
     public static final int FLAG_FLOW_WATER =          0b00001000000000000000000000000000; // 水流动
     public static final int FLAG_FLOW_LAVA =             0b00000100000000000000000000000000; // 岩浆流动
@@ -319,6 +322,14 @@ public class Dimension {
     }
 
     /**
+     * 世界名称
+     * @return 名称
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * 获取保护判断
      * @return 是否保护
      */
@@ -327,71 +338,159 @@ public class Dimension {
     }
 
     /**
-     * 获取对决许可
-     * @return 是否允许对决
+     * 爆炸保护
+     * @return 是否保护
      */
-    public EventResult pvp(String loc) {
-        EventResult result = new EventResult();
+    public boolean isExplode() {
+        return explode;
+    }
 
+    /**
+     * 玩家伤害
+     * @return 是否可以伤害
+     */
+    public boolean isPvp() {
+        return pvp;
+    }
+
+    /**
+     * 是否允许做某个操作
+     * @param setting 当前设置
+     * @param permit 权限
+     * @return 是否允许
+     */
+    public boolean isPermit(long setting, long permit) {
+        return (setting & permit) != 0;
+    }
+
+    /**
+     * 开启允许
+     * @param setting 当前设置
+     * @param permit 权限
+     * @return 开启结果
+     */
+    public long onPermit(long setting, long permit) {
+        return setting | permit;
+    }
+
+    /**
+     * 关闭允许
+     * @param setting 当前设置
+     * @param permit 权限
+     * @return 关闭结果
+     */
+    public long offPermit(long setting, long permit) {
+        return setting & (~permit);
+    }
+
+    /**
+     * 切换权限
+     * @param setting 当前设置
+     * @param permit 权限
+     * @return 切换结果
+     */
+    public long switchPermit(long setting, long permit) {
+        return this.isPermit(setting, permit) ? this.offPermit(setting, permit) : this.onPermit(setting, permit);
+    }
+
+     /**
+     * 触发某个规则
+     * @param loc 位置
+     * @param setting 权限设置
+     * @return 触发结果
+     */
+    public EventResult triggerFlag(String loc, long setting) {
+        return triggerFlag(loc, setting, true);
+    }
+
+    /**
+     * 触发某个规则
+     * @param loc 位置
+     * @param setting 权限设置
+     * @param worldSetting 世界权限设置
+     * @return 触发结果
+     */
+    public EventResult triggerFlag(String loc, long setting, boolean worldSetting) {
+        EventResult result = new EventResult();
+        // 领地
+        Plot plot = plotMap.get(loc);
+        if (plot != null) {
+            Domain domain = plot.getDomain();
+            result.setAllow(this.isPermit(domain.getGlobe(), setting));
+            result.setType(domain.getType());
+            return result;
+        }
+        // 道路上的爆炸活塞流水
+       List<Domain> roadBelong;
+       if ((roadBelong = roadMap.get(loc)) != null && !roadBelong.isEmpty() && (setting & (FLAG_FLOW | FLAG_EXPLODE | FLAG_PISTON)) != 0) {
+           result.setAllow(false);
+           result.setType(roadBelong.size() > 1 ? EventResult.IN_SHARE_ROAD : EventResult.IN_ROAD);
+           return result;
+       }
+         // 世界
+        result.setAllow(worldSetting);
+        result.setType(EventResult.WORLD_PROTECT);
         return result;
     }
 
     /**
-     * 获取杀怪许可
-     * @return 是否允许杀怪
+     * 触发某个权限
+     * @param loc 位置
+     * @param uid 触发玩家
+     * @param setting 权限设置
+     * @return 触发结果
      */
-    public EventResult pve(String loc) {
-        EventResult result = new EventResult();
-
-        return result;
+    public EventResult triggerPermit(String loc, String uid, long setting) {        
+        return triggerPermit(loc, uid, setting, true);
     }
 
     /**
-     * 爆炸许可
-     * @return 是否允许爆炸
+     * 触发某个权限
+     * @param loc 位置
+     * @param uid 触发玩家
+     * @param setting 权限设置
+     * @param worldSetting 世界权限设置
+     * @return 触发结果
      */
-    public EventResult explode(String loc) {
+    public EventResult triggerPermit(String loc, String uid, long setting, boolean worldSetting) {
         EventResult result = new EventResult();
-
+        // 领地
+        Plot plot = plotMap.get(loc);
+        if (plot != null) {
+            Domain domain = plot.getDomain();
+            Ship ship = null;
+            if (domain.getOwner().equals(uid)) {
+                // 本人
+                return result;
+            } else if ((ship = service.selectShip(UUID.fromString(domain.getOwner()), UUID.fromString(uid))) != null) {
+                // 好友
+                if (ship.isIntimate()) {
+                    result.setAllow(this.isPermit(domain.getIntimate(), setting));
+                    result.setType(domain.getType());
+                } else {
+                    result.setAllow(this.isPermit(domain.getFriend(), setting));
+                    result.setType(domain.getType());
+                }
+                return result;
+            } else {
+                // 陌生人
+                result.setAllow(this.isPermit(domain.getGlobe(), setting));
+                result.setType(domain.getType());
+                return result;
+            }
+        }
+        // 道路上不能建筑
+        List<Domain> roadBelong;
+        if ((roadBelong = roadMap.get(loc)) != null && !roadBelong.isEmpty() && (setting & PERMISSION_BUILD) != 0) {
+            result.setAllow(false);
+            result.setType(roadBelong.size() > 1 ? EventResult.IN_SHARE_ROAD : EventResult.IN_ROAD);
+            return result;
+        }
+        // 世界
+        result.setAllow(worldSetting);
+        result.setType(EventResult.WORLD_PROTECT);
         return result;
     }
-
-    public EventResult place(String loc, String uid) {
-        EventResult result = new EventResult();
-
-        return result;
-    }
-    
-    public EventResult destroy(String loc, String uid) {
-        EventResult result = new EventResult();
-
-        return result;
-    }
-
-    public EventResult use(String loc, String uid) {
-        EventResult result = new EventResult();
-
-        return result;
-    }
-
-    public EventResult bucket(String loc, String uid) {
-        EventResult result = new EventResult();
-
-        return result;
-    }
-
-    public EventResult open(String loc, String uid) {
-        EventResult result = new EventResult();
-
-        return result;
-    }
-
-    public EventResult tp(String loc, String uid) {
-        EventResult result = new EventResult();
-
-        return result;
-    }
-
 
     public static class EventResult {
 
@@ -405,6 +504,7 @@ public class Dimension {
 
         private boolean allow;
         private int type;
+        private String domain;
 
         /**
          * 操作结果
@@ -438,6 +538,14 @@ public class Dimension {
 
         public void setType(int type) {
             this.type = type;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
         }
         
     }

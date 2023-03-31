@@ -3,13 +3,18 @@ package org.fireflyest.essential.listener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -19,17 +24,22 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseArmorEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.structure.Structure;
 import org.bukkit.structure.StructureManager;
 import org.fireflyest.essential.Essential;
@@ -38,6 +48,7 @@ import org.fireflyest.essential.data.EssentialYaml;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.world.Dimension;
+import org.fireflyest.essential.world.Dimension.EventResult;
 
 public class WorldEventListener implements Listener {
 
@@ -107,53 +118,39 @@ public class WorldEventListener implements Listener {
         if ((event.getCause() == BlockIgniteEvent.IgniteCause.SPREAD && !Config.IGNITE_SPREAD)
                 || (event.getCause() == BlockIgniteEvent.IgniteCause.ARROW && !Config.IGNITE_ARROW)) {
             event.setCancelled(true);
+            return;
         }
-    }
 
-    
-    /**
-     * 爆炸破坏
-     * @param event 事件
-     */
-    @EventHandler
-    public void onBlockExplode(BlockExplodeEvent event) {
-        String worldName = event.getBlock().getWorld().getName();
-        Dimension dimension = worldMap.get(worldName);
-        if (dimension != null) {
-            String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.explode(loc);
-            if  (!result.isAllow()) {
-                event.blockList().clear();
+        if (event.getCause() == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL) {
+            Player player = event.getPlayer();
+            if (player == null) {
+                return;
             }
-        }
-    }
-
-    /**
-     * 红石监听
-     * @param event 事件
-     */
-    @EventHandler
-    public void onBlockRedstone(BlockRedstoneEvent event) {
-        // 
-    }
-
-    /**
-     * 方块破坏
-     * @param event 事件
-     */
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
-        String worldName = event.getBlock().getWorld().getName();
-        Dimension dimension = worldMap.get(worldName);
-        Player player = event.getPlayer();
-        String uid = player.getUniqueId().toString();
-        if (dimension != null) {
-            String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.destroy(loc, uid);
-            if  (!result.isAllow()) {
-                event.setCancelled(true);
-                // TODO: 
-                player.sendMessage(Language.TITLE + "这个世界已被保护");
+            String worldName = event.getBlock().getWorld().getName();
+            Dimension dimension = worldMap.get(worldName);
+            String uid = player.getUniqueId().toString();
+            if (dimension != null) {
+                String loc = this.getLoc(event.getBlock().getChunk());
+                Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_IGNITE, dimension.isProtect());
+                if  (!result.isAllow()) {
+                    event.setCancelled(true);
+                    switch (result.getType()) {
+                        case EventResult.IN_DOMAIN:
+                        case EventResult.IN_LEAGUE:
+                        case EventResult.SERVER_PROTECT:
+                            this.sendPermitMessage(player, result.getDomain(), "ignite");
+                            break;
+                        case EventResult.WORLD_PROTECT:
+                            player.sendMessage(Language.PLOT_PROTECT_WORLD);
+                            break;
+                        case EventResult.IN_ROAD:
+                        case EventResult.IN_SHARE_ROAD:
+                            player.sendMessage(Language.PLOT_PROTECT_ROAD);
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
     }
@@ -167,128 +164,6 @@ public class WorldEventListener implements Listener {
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         if (dimension != null && dimension.isProtect()) {
-            event.setCancelled(true);
-        }
-    }
-
-    /**
-     * 框甲架交互
-     * @param event 事件
-     */
-    @EventHandler
-    public void onBlockDispenseArmor(BlockDispenseArmorEvent event) {
-        String worldName = event.getBlock().getWorld().getName();
-        Dimension dimension = worldMap.get(worldName);
-        Player player = ((Player) event.getTargetEntity());
-        String uid = player.getUniqueId().toString();
-        if (dimension != null) {
-            String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.use(loc, uid);
-            if  (!result.isAllow()) {
-                event.setCancelled(true);
-                // TODO: 
-                player.sendMessage(Language.TITLE + "你不能给框架物品");
-            }
-        }
-    }
-
-    /**
-     * 框甲架交互
-     * @param event 事件
-     */
-    @EventHandler
-    public void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent event) {
-        String worldName = event.getPlayer().getWorld().getName();
-        Dimension dimension = worldMap.get(worldName);
-        Player player = event.getPlayer();
-        String uid = player.getUniqueId().toString();
-        if (dimension != null) {
-            String loc = this.getLoc(player.getLocation().getChunk());
-            Dimension.EventResult result = dimension.use(loc, uid);
-            if  (!result.isAllow()) {
-                event.setCancelled(true);
-                // TODO: 
-                player.sendMessage(Language.TITLE + "你不能和框架交互");
-            }
-        }
-    }
-
-    /**
-     * 桶
-     * @param event 事件
-     */
-    @EventHandler
-    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
-        String worldName = event.getBlock().getWorld().getName();
-        Dimension dimension = worldMap.get(worldName);
-        Player player = event.getPlayer();
-        String uid = player.getUniqueId().toString();
-        if (dimension != null) {
-            String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.bucket(loc, uid);
-            if  (!result.isAllow()) {
-                event.setCancelled(true);
-                // TODO: 
-                player.sendMessage(Language.TITLE + "你不能在这用桶");
-            }
-        }
-    }
-
-    /**
-     * 桶
-     * @param event 事件
-     */
-    @EventHandler
-    public void onPlayerFillEmpty(PlayerBucketFillEvent event) {
-        String worldName = event.getBlock().getWorld().getName();
-        Dimension dimension = worldMap.get(worldName);
-        Player player = event.getPlayer();
-        String uid = player.getUniqueId().toString();
-        if (dimension != null) {
-            String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.bucket(loc, uid);
-            if  (!result.isAllow()) {
-                event.setCancelled(true);
-                // TODO: 
-                player.sendMessage(Language.TITLE + "你不能在这用桶");
-            }
-        }
-    }
-
-    /**
-     * 放置
-     * @param event 事件
-     */
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
-        String worldName = event.getBlock().getWorld().getName();
-        Dimension dimension = worldMap.get(worldName);
-        Player player = event.getPlayer();
-        String uid = player.getUniqueId().toString();
-        if (dimension != null) {
-            String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.place(loc, uid);
-            if  (!result.isAllow()) {
-                event.setCancelled(true);
-                // TODO: 
-                player.sendMessage(Language.TITLE + "你不能放置物品！");
-            }
-        }
-    }
-
-
-    /**
-     * 生物生成
-     * @param event 事件
-     */
-    @EventHandler
-    public void onCreatureSpawn(CreatureSpawnEvent event) {
-        Chunk chunk = event.getEntity().getLocation().getChunk();
-        int amount = chunk.getEntities().length;
-        
-        if (amount > 1000) {
-            String msg = String.format("区块实体超载 §3%s§7[§3%s, %s§7]", chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
-            Essential.getPlugin().getLogger().warning(msg);
             event.setCancelled(true);
         }
     }
@@ -309,39 +184,40 @@ public class WorldEventListener implements Listener {
     }
 
     /**
-     * pvp
+     * 红石监听
      * @param event 事件
      */
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
-            return;
-        }
-        // 战斗时不允许飞行
-        Player player = ((Player)event.getEntity());
-        player.setFlying(false);
-        // 判断是否pvp
-        if (event.getCause() == DamageCause.ENTITY_ATTACK && !(event.getDamager() instanceof Player)) {
-            return;
-        } else if (event.getCause() == DamageCause.PROJECTILE) {
-            Projectile projectile = ((Projectile)event.getDamager());
-            if (!(projectile.getShooter() instanceof Player)) {
-                return;
-            }
-        }
-        
-        String worldName = event.getEntity().getWorld().getName();
+    public void onBlockRedstone(BlockRedstoneEvent event) {
+        // 
+    }
+    
+    /**
+     * 爆炸破坏
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockExplode(BlockExplodeEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         if (dimension != null) {
-            String loc = this.getLoc(event.getEntity().getLocation().getChunk());
-            Dimension.EventResult result = dimension.pvp(loc);
-            if  (!result.isAllow()) {
-                event.setCancelled(true);
+            Map<String, Boolean> protectLoc = new HashMap<>();
+            Iterator<Block> iterator = event.blockList().iterator();
+            while (iterator.hasNext()) {
+                Block block = iterator.next();
+                String loc = this.getLoc(block.getLocation().getChunk());
+                protectLoc.computeIfAbsent(loc, k -> {
+                    Dimension.EventResult result = dimension.triggerFlag(loc, Dimension.FLAG_EXPLODE, dimension.isExplode());
+                    return result.isAllow();
+                });
+                if (protectLoc.containsKey(loc) && Boolean.FALSE.equals(protectLoc.get(loc))) {
+                    iterator.remove();
+                }
             }
         }
     }
 
-    /**
+      /**
      * 生物爆炸
      * @param event 事件
      */
@@ -350,10 +226,401 @@ public class WorldEventListener implements Listener {
         String worldName = event.getEntity().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         if (dimension != null) {
-            String loc = this.getLoc(event.getEntity().getLocation().getChunk());
-            Dimension.EventResult result = dimension.explode(loc);
+            Map<String, Boolean> protectLoc = new HashMap<>();
+            Iterator<Block> iterator = event.blockList().iterator();
+            while (iterator.hasNext()) {
+                Block block = iterator.next();
+                String loc = this.getLoc(block.getLocation().getChunk());
+                protectLoc.computeIfAbsent(loc, k -> {
+                    Dimension.EventResult result = dimension.triggerFlag(loc, Dimension.FLAG_EXPLODE, dimension.isExplode());
+                    return result.isAllow();
+                });
+                if (protectLoc.containsKey(loc) && Boolean.FALSE.equals(protectLoc.get(loc))) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockFromTo(BlockFromToEvent event) {
+        boolean isLava = event.getBlock().getType().equals(Material.LAVA);
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        if (dimension != null) {
+            String loc = this.getLoc(event.getBlock().getChunk());
+            Dimension.EventResult result = 
+                isLava ? dimension.triggerFlag(loc, Dimension.FLAG_FLOW_LAVA) : dimension.triggerFlag(loc, Dimension.FLAG_FLOW_WATER);
             if  (!result.isAllow()) {
-                event.blockList().clear();
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        if (dimension != null) {
+            String loc = this.getLoc(event.getBlock().getChunk());
+            Dimension.EventResult result = dimension.triggerFlag(loc, Dimension.FLAG_PISTON);
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    /**
+     * 框甲架交互
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockDispenseArmor(BlockDispenseArmorEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        Player player = ((Player) event.getTargetEntity());
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(event.getBlock().getChunk());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_ARMOR, dimension.isProtect());
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                switch (result.getType()) {
+                    case EventResult.IN_DOMAIN:
+                    case EventResult.IN_LEAGUE:
+                    case EventResult.SERVER_PROTECT:
+                        this.sendPermitMessage(player, result.getDomain(), "armor");
+                        break;
+                    case EventResult.WORLD_PROTECT:
+                        player.sendMessage(Language.PLOT_PROTECT_WORLD);
+                        break;
+                    case EventResult.IN_ROAD:
+                    case EventResult.IN_SHARE_ROAD:
+                        player.sendMessage(Language.PLOT_PROTECT_ROAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 框甲架交互
+     * @param event 事件
+     */
+    @EventHandler
+    public void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent event) {
+        String worldName = event.getPlayer().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        Player player = event.getPlayer();
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(player.getLocation().getChunk());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_ARMOR, dimension.isProtect());
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                switch (result.getType()) {
+                    case EventResult.IN_DOMAIN:
+                    case EventResult.IN_LEAGUE:
+                    case EventResult.SERVER_PROTECT:
+                        this.sendPermitMessage(player, result.getDomain(), "armor");
+                        break;
+                    case EventResult.WORLD_PROTECT:
+                        player.sendMessage(Language.PLOT_PROTECT_WORLD);
+                        break;
+                    case EventResult.IN_ROAD:
+                    case EventResult.IN_SHARE_ROAD:
+                        player.sendMessage(Language.PLOT_PROTECT_ROAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 桶
+     * @param event 事件
+     */
+    @EventHandler
+    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        Player player = event.getPlayer();
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(event.getBlock().getChunk());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_BUCKET, dimension.isProtect());
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                switch (result.getType()) {
+                    case EventResult.IN_DOMAIN:
+                    case EventResult.IN_LEAGUE:
+                    case EventResult.SERVER_PROTECT:
+                        this.sendPermitMessage(player, result.getDomain(), "bucket");
+                        break;
+                    case EventResult.WORLD_PROTECT:
+                        player.sendMessage(Language.PLOT_PROTECT_WORLD);
+                        break;
+                    case EventResult.IN_ROAD:
+                    case EventResult.IN_SHARE_ROAD:
+                        player.sendMessage(Language.PLOT_PROTECT_ROAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 桶
+     * @param event 事件
+     */
+    @EventHandler
+    public void onPlayerFillEmpty(PlayerBucketFillEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        Player player = event.getPlayer();
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(event.getBlock().getChunk());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_BUCKET, dimension.isProtect());
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                switch (result.getType()) {
+                    case EventResult.IN_DOMAIN:
+                    case EventResult.IN_LEAGUE:
+                    case EventResult.SERVER_PROTECT:
+                        this.sendPermitMessage(player, result.getDomain(), "bucket");
+                        break;
+                    case EventResult.WORLD_PROTECT:
+                        player.sendMessage(Language.PLOT_PROTECT_WORLD);
+                        break;
+                    case EventResult.IN_ROAD:
+                    case EventResult.IN_SHARE_ROAD:
+                        player.sendMessage(Language.PLOT_PROTECT_ROAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 放置
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        Player player = event.getPlayer();
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(event.getBlock().getChunk());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_PLACE, dimension.isProtect());
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                switch (result.getType()) {
+                    case EventResult.IN_DOMAIN:
+                    case EventResult.IN_LEAGUE:
+                    case EventResult.SERVER_PROTECT:
+                        this.sendPermitMessage(player, result.getDomain(), "place");
+                        break;
+                    case EventResult.WORLD_PROTECT:
+                        player.sendMessage(Language.PLOT_PROTECT_WORLD);
+                        break;
+                    case EventResult.IN_ROAD:
+                    case EventResult.IN_SHARE_ROAD:
+                        player.sendMessage(Language.PLOT_PROTECT_ROAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 方块破坏
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        Player player = event.getPlayer();
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(event.getBlock().getChunk());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_DESTROY, dimension.isProtect());
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                switch (result.getType()) {
+                    case EventResult.IN_DOMAIN:
+                    case EventResult.IN_LEAGUE:
+                    case EventResult.SERVER_PROTECT:
+                        this.sendPermitMessage(player, result.getDomain(), "destroy");
+                        break;
+                    case EventResult.WORLD_PROTECT:
+                        player.sendMessage(Language.PLOT_PROTECT_WORLD);
+                        break;
+                    case EventResult.IN_ROAD:
+                    case EventResult.IN_SHARE_ROAD:
+                        player.sendMessage(Language.PLOT_PROTECT_ROAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        Player player = event.getPlayer();
+        String worldName = player.getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(player.getLocation().getChunk());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_TP);
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                this.sendPermitMessage(player, result.getDomain(), "tp");
+            }
+        }
+    }
+
+    /**
+     * 生物生成
+     * @param event 事件
+     */
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        // TODO: Bukkit.selectEntities
+
+        // Chunk chunk = event.getEntity().getLocation().getChunk();
+        // int amount = chunk.getEntities().length;
+        
+        // if (amount > 1000) {
+        //     String msg = String.format("区块实体超载 §3%s§7[§3%s, %s§7]", chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
+        //     Essential.getPlugin().getLogger().warning(msg);
+        //     event.setCancelled(true);
+        // }
+
+        if (event.getSpawnReason().equals(SpawnReason.NATURAL)) {
+            String worldName = event.getLocation().getWorld().getName();
+            Dimension dimension = worldMap.get(worldName);
+            if (dimension != null) {
+                String loc = this.getLoc(event.getLocation().getChunk());
+                Dimension.EventResult result = dimension.triggerFlag(loc, Dimension.FLAG_MONSTER);
+                if  (!result.isAllow()) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * 伤害事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        Entity target = event.getEntity();
+        Entity damager = event.getDamager();
+
+        Player targetPlayer = null;
+        Player damagerPlayer = null;
+        // 目标是否玩家
+        if (target instanceof Player) {
+            // 战斗时不允许飞行
+            targetPlayer = ((Player)target);
+            targetPlayer.setFlying(false);
+        }
+
+        // 判断攻击方是否玩家
+        if (event.getCause() == DamageCause.ENTITY_ATTACK) {
+            if (!(damager instanceof Player)) {
+                return;
+            }
+            damagerPlayer = ((Player)damager);
+        } else if (event.getCause() == DamageCause.PROJECTILE) {
+            Projectile projectile = ((Projectile)event.getDamager());
+            if (!(projectile.getShooter() instanceof Player)) {
+                return;
+            }
+            damagerPlayer = ((Player)projectile.getShooter());
+        }
+        // 攻击方不是玩家则不管
+        if (damagerPlayer == null) {
+            return;
+        }
+        damagerPlayer.setFlying(false);
+        // 是否PVP
+        boolean pvp = targetPlayer != null;
+        
+        String worldName = event.getEntity().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        if (dimension != null) {
+            String loc = this.getLoc(event.getEntity().getLocation().getChunk());
+            Dimension.EventResult result = 
+                pvp ? dimension.triggerFlag(loc, Dimension.FLAG_PVP, dimension.isPvp()) : dimension.triggerPermit(loc, damagerPlayer.getUniqueId().toString(), Dimension.PERMISSION_PVE);
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                switch (result.getType()) {
+                    case EventResult.IN_DOMAIN:
+                    case EventResult.IN_LEAGUE:
+                    case EventResult.SERVER_PROTECT:
+                        if (pvp) {
+                            damagerPlayer.sendMessage(Language.PLOT_PVP);
+                        } else {
+                            this.sendPermitMessage(damagerPlayer, result.getDomain(), "pve");
+                        }
+                        break;
+                    case EventResult.WORLD_PROTECT:
+                        damagerPlayer.sendMessage(Language.PLOT_PROTECT_WORLD);
+                        break;
+                    case EventResult.IN_ROAD:
+                    case EventResult.IN_SHARE_ROAD:
+                        damagerPlayer.sendMessage(Language.PLOT_PROTECT_ROAD);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (!event.hasBlock()) {
+            return;
+        }
+        Block block = event.getClickedBlock();
+        
+        // 方块是否可交互
+        if (!block.getType().isInteractable()) {
+            return;
+        }
+        // 是否容器
+        boolean isContainer = block.getState() instanceof Container;
+
+        Player player = event.getPlayer();
+        String worldName = player.getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        String uid = player.getUniqueId().toString();
+        if (dimension != null) {
+            String loc = this.getLoc(player.getLocation().getChunk());
+            Dimension.EventResult result =  isContainer ? dimension.triggerPermit(loc, uid, Dimension.PERMISSION_OPEN) : dimension.triggerPermit(loc, uid, Dimension.PERMISSION_USE);
+            if  (!result.isAllow()) {
+                event.setCancelled(true);
+                this.sendPermitMessage(player, result.getDomain(), isContainer ? "open" : "use");
             }
         }
     }
@@ -365,6 +632,18 @@ public class WorldEventListener implements Listener {
      */
     private String getLoc(Chunk chunk) {
         return chunk.getX() + ":" + chunk.getZ();
+    }
+
+    /**
+     * 权限提示
+     * @param player 玩家
+     * @param domain 领地
+     * @param permission 权限
+     */
+    private void sendPermitMessage(Player player, String domain, String permission) {
+        player.sendMessage(Language.PLOT_FLAG
+            .replace("%domain%", domain)
+            .replace("%flag%", permission));
     }
 
 }

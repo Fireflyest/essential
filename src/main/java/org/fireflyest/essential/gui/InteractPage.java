@@ -52,7 +52,7 @@ public class InteractPage extends TemplatePage {
                     .build();
         } else {
             shipItem = new ButtonItemBuilder(Material.EMERALD)
-                    .actionPlayerCommand("ship " + targetName)
+                    .actionPlayerCommand("ship build " + targetName)
                     .name("§f[§a添加好友§f]")
                     .build();
         }

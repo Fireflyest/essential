@@ -49,10 +49,10 @@ public class Domain {
     @Column(defaultValue = "0")
     private long globe;
 
-    @Column(defaultValue = "967")
+    @Column(defaultValue = "1927")
     private long friend;
 
-    @Column(defaultValue = "1023")
+    @Column(defaultValue = "2047")
     private long intimate;
 
     public String getName() {

@@ -469,8 +469,27 @@ public class EssentialService extends SQLService {
         return domainDao.domainLevelDown(name);
     }
 
+    public long updateDomainCenter(String center, String name) {
+        return domainDao.updateDomainCenter(center, name);
+    }
+    
+    public long updateDomainGlobe(long globe, String name) {
+        return domainDao.updateDomainGlobe(globe, name);
+    }
+    
+    public long updateDomainFriend(long friend, String name) {
+        return domainDao.updateDomainFriend(friend, name);
+    }
+    
+    public long updateDomainIntimate(long intimate, String name) {
+        return domainDao.updateDomainIntimate(intimate, name);
+    }
+    
+    public long updateDomainName(String newName, String name) {
+        return domainDao.updateDomainName(newName, name);
+    }
+
     public long deleteDomain(String name) {
         return domainDao.deleteDomain(name);
     }
-
 }

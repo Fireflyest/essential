@@ -43,6 +43,21 @@ public interface DomainDao {
     @Update("UPDATE `essential_domain` SET `level`=`level`-1 WHERE `name`='${name}';")
     long domainLevelDown(String name);
 
+    @Update("UPDATE `essential_domain` SET `center`='${center}' WHERE `name`='${name}';")
+    long updateDomainCenter(String center, String name);
+
+    @Update("UPDATE `essential_domain` SET `globe`='${globe}' WHERE `name`='${name}';")
+    long updateDomainGlobe(long globe, String name);
+
+    @Update("UPDATE `essential_domain` SET `friend`='${friend}' WHERE `name`='${name}';")
+    long updateDomainFriend(long friend, String name);
+
+    @Update("UPDATE `essential_domain` SET `intimate`='${intimate}' WHERE `name`='${name}';")
+    long updateDomainIntimate(long intimate, String name);
+
+    @Update("UPDATE `essential_domain` SET `name`='${newName}' WHERE `name`='${name}';")
+    long updateDomainName(String newName, String name);
+
     @Delete("DELETE FROM `essential_domain` WHERE `name`='${name}';")
     long deleteDomain(String name);
 

@@ -148,7 +148,7 @@ public class PlayerEventListener implements Listener {
                         guide.openView(player, Essential.VIEW_ACCOUNT, player.getName());
                     }
                 }
-            }.runTaskTimer(Essential.getPlugin(), 100, 60);
+            }.runTaskTimer(Essential.getPlugin(), 60, 60);
         }
 
         // 刷新权限
