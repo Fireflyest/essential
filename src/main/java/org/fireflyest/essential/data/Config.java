@@ -19,8 +19,8 @@ public class Config {
     public static int MAX_CHUNK;
     public static int BASE_CHUNK_PRICE;
 
-    public static int MAX_FRIENDS;
-    public static int MAX_INTIMATE;
+    public static int MAX_MASTER;
+    public static int MAX_APPRENTICE;
 
     public static int BASE_MONEY;
     public static String CURRENCY_NAME;

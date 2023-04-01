@@ -40,6 +40,8 @@ public class ShipPage extends TemplatePage {
         levelMap.put(8, (int) ((Math.pow(Math.E,  (8 + 1) * Math.log(10000) / 10) - 1) / 0.5));
         levelMap.put(9, (int) ((Math.pow(Math.E,  (9 + 1) * Math.log(10000) / 10) - 1) / 0.5));
         levelMap.put(10, (int) ((Math.pow(Math.E,  (10 + 1) * Math.log(10000) / 10) - 1) / 0.5));
+
+
     }
 
     @Override
@@ -52,14 +54,16 @@ public class ShipPage extends TemplatePage {
             return asyncButtonMap;
         }
 
+        // 获取好友关系并排序
         List<Ship> shipList = Arrays.asList(service.selectShips(target, player.getUniqueId()));
         shipList.sort((o1,  o2) -> {
             String otherUid = o1.getBond().split("&")[1];
             OfflinePlayer other = Bukkit.getOfflinePlayer(UUID.fromString(otherUid));
-            o1.setPos(o1.getLevel() + (other.isOnline() ? 1000 : -1000));
+            o1.setPos(o1.getLevel() + (other.isOnline() ? 2000 : 0) + (!"".equals(o1.getRequest()) ? 10000 : 0));
             return o1.getPos() < o2.getPos() ? 1 : -1;
         });
 
+        // 放置按钮
         int pos = 0;
         boolean single = true;
         for (int i = index * 2; i < (index + 8) * 2; i++) {

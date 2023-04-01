@@ -405,9 +405,18 @@ public class EssentialService extends SQLService {
         return shipDao.selectShips(target, uid.toString());
     }
 
+    public String[] selectShipBondByTag(String tag, UUID uid) {
+        return shipDao.selectShipBondByTag(tag, uid.toString());
+    }
+
     public long updateShipLevel(int level, String bond) {
         return shipDao.updateShipLevel(level, bond);
     }
+
+    public long updateShipIntimate(boolean intimate, String bond) {
+        return updateShipIntimate(intimate, bond);
+    }
+
 
     public long updateShipTag(String tag, String bond) {
         return shipDao.updateShipTag(tag, bond);

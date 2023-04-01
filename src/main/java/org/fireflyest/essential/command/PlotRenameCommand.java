@@ -10,7 +10,6 @@ import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.world.Dimension;
 import org.fireflyest.essential.world.Plot;
-import org.fireflyest.util.SerializationUtil;
 
 public class PlotRenameCommand extends SubCommand {
 

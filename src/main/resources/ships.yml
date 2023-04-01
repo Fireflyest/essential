@@ -1,0 +1,25 @@
+jiyou:
+  name: 基友
+  limit: 10
+  button: STONE
+  color: <c=#FFFFFF>
+bestie:
+  name: 死党
+  limit: 10
+  button: STONE
+  color: <c=#FFFFFF>
+ladybro:
+  name: 闺蜜
+  limit: 10
+  button: STONE
+  color: <c=#FFFFFF>
+sister:
+  name: 姐妹
+  limit: 10
+  button: STONE
+  color: <c=#FFFFFF>
+brother:
+  name: 兄弟
+  limit: 10
+  button: STONE
+  color: <c=#FFFFFF>

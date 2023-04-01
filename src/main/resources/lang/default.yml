@@ -20,9 +20,23 @@ PermissionAdd: '📗§f授予权限§3%permission%§f，输入§3 /group§f查�
 PrefixAdd: '📗§f授予头衔§3%prefix%§f，输入§3 /prefix§f查看更多信息'
 PrefixChange: '📗§f修改头衔'
 
-ShipApplyFor: '🎭§f已发送好友申请'
-ShipAccept: '🎭§f已接受好友申请'
-ShipExist: '🎭§f已经是对方的好友'
+ShipApplyFor: 🎭§f已发送好友申请
+ShipAccept: 🎭§f已接受好友申请
+ShipExist: 🎭§f已经是对方的好友
+ShipNew: 🎭§f接收到新的好友请求
+ShipNull: 🎭§f请先建立好友关系
+ShipUp: 🎭§f已发送关系变更请求
+ShipUpFail: 🎭§f无法更改亲密关系
+ShipUnknown: 🎭§f未知关系
+ShipLimit: 🎭§f已达到该种关系的最大数量
+ShipMaster: 🎭§f已发送拜师请求
+ShipApprentice: 🎭§f已发送收徒邀请
+ShipLover: 🎭§f已发送交往请求
+ShipCouple: 🎭§f已发送求婚
+ShipRequestNull: 🎭§f没有需要处理的请求
+ShipRefuse: 🎭§f已拒绝对方请求
+ShipBreakIntimate: 🎭§f已决裂为普通好友
+ShipBreak: 🎭§f已断绝好友关系
 
 ItemRepair: '⚒§f手持物品耐久已修复'
 ItemEnchant: '⚒§f手持物品添加附魔'

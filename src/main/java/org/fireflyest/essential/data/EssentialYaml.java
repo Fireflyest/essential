@@ -10,6 +10,7 @@ public class EssentialYaml extends YamlService {
 
     private FileConfiguration world;
     private FileConfiguration group;
+    private FileConfiguration ship;
 
     /**
      * 文件数据
@@ -21,6 +22,7 @@ public class EssentialYaml extends YamlService {
         this.setupLanguage(Language.class, Config.LANGUAGE);
         this.world = this.loadYamlFile("worlds");
         this.group = this.loadYamlFile("groups");
+        this.ship = this.loadYamlFile("ships");
     }
 
     /**
@@ -38,5 +40,13 @@ public class EssentialYaml extends YamlService {
     public FileConfiguration getGroup() {
         return group;
     }
-    
+
+    /**
+     * 好友关系配置
+     * @return 配置文件
+     */
+    public FileConfiguration getShip() {
+        return ship;
+    }
+
 }

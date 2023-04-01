@@ -78,8 +78,11 @@ import org.fireflyest.essential.command.RepairCommand;
 import org.fireflyest.essential.command.RideCommand;
 import org.fireflyest.essential.command.SethomeCommand;
 import org.fireflyest.essential.command.SetwarpCommand;
+import org.fireflyest.essential.command.ShipArgument;
+import org.fireflyest.essential.command.ShipBreakCommand;
 import org.fireflyest.essential.command.ShipBuildCommand;
 import org.fireflyest.essential.command.ShipCommand;
+import org.fireflyest.essential.command.ShipRefuseCommand;
 import org.fireflyest.essential.command.SkullCommand;
 import org.fireflyest.essential.command.SpawnCommand;
 import org.fireflyest.essential.command.StructureArgument;
@@ -605,9 +608,16 @@ public class Essential extends JavaPlugin {
         PluginCommand ship = this.getCommand("ship");
         if (ship != null) {
             ShipCommand shipCommand = new ShipCommand(guide);
-            ShipBuildCommand shipBuildCommand = new ShipBuildCommand(service);
+            ShipBuildCommand shipBuildCommand = new ShipBuildCommand(yaml, service);
             shipBuildCommand.setArgument(0, new PlayerArgs());
+            shipBuildCommand.setArgument(1, new ShipArgument(yaml));
+            ShipRefuseCommand shipRefuseCommand = new ShipRefuseCommand(service);
+            shipRefuseCommand.setArgument(0, new PlayerArgs());
+            ShipBreakCommand shipBreakCommand = new ShipBreakCommand(service);
+            shipBreakCommand.setArgument(0, new PlayerArgs());
             shipCommand.addSubCommand("build", shipBuildCommand);
+            shipCommand.addSubCommand("refuse", shipRefuseCommand);
+            shipCommand.addSubCommand("break", shipBreakCommand);
             ship.setExecutor(shipCommand);
             ship.setTabCompleter(shipCommand);
         }

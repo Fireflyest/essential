@@ -31,6 +31,20 @@ public class Language {
     public static String SHIP_APPLY_FOR;
     public static String SHIP_ACCEPT;
     public static String SHIP_EXIST;
+    public static String SHIP_NEW;
+    public static String SHIP_NULL;
+    public static String SHIP_UP;
+    public static String SHIP_UP_FAIL;
+    public static String SHIP_UNKNOWN;
+    public static String SHIP_LIMIT;
+    public static String SHIP_MASTER;
+    public static String SHIP_APPRENTICE;
+    public static String SHIP_LOVER;
+    public static String SHIP_COUPLE;
+    public static String SHIP_REQUEST_NULL;
+    public static String SHIP_REFUSE;
+    public static String SHIP_BREAK_INTIMATE;
+    public static String SHIP_BREAK;
     
     public static String ITEM_REPAIR;
     public static String ITEM_ENCHANT;

@@ -37,8 +37,14 @@ public interface ShipDao {
     @Select("SELECT * FROM `essential_ship` WHERE `target`='${target}' AND `tag`='' OR `bond` LIKE '${uid}&%';")
     Ship[] selectShips(String target, String uid);
 
+    @Select("SELECT `bond` FROM `essential_ship` WHERE `tag`='${tag}' AND `bond` LIKE '${uid}&%';")
+    String[] selectShipBondByTag(String tag, String uid);
+
     @Update("UPDATE `essential_ship` SET `level`=`level`+${level} WHERE `bond`='${bond}';")
     long updateShipLevel(int level, String bond);
+
+    @Update("UPDATE `essential_ship` SET `intimate`=intimate WHERE `bond`='${bond}';")
+    long updateShipIntimate(boolean intimate, String bond);
 
     /**
      * 更新关系标签
