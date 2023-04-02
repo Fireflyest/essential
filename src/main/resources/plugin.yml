@@ -105,6 +105,11 @@ commands:
     permission: essential.einv
     usage: /einv <name>
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.einv"
+  timing:
+    description: 性能监控
+    permission: essential.timing
+    usage: /timing
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.timing"
   table:
     description: 移动工作台
     permission: essential.table

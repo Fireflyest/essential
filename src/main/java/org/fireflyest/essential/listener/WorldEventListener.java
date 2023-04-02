@@ -175,10 +175,7 @@ public class WorldEventListener implements Listener {
     @EventHandler
     public void onEntityPortalEnter(EntityPortalEnterEvent event) {
         EntityType type = event.getEntityType();
-        if (!type.isAlive()) {
-            return;
-        }
-        if (type == EntityType.TRADER_LLAMA || type == EntityType.WANDERING_TRADER) {
+        if (type.isAlive() && (type == EntityType.TRADER_LLAMA || type == EntityType.WANDERING_TRADER)) {
             event.getEntity().remove();
         }
     }

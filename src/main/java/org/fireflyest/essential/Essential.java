@@ -16,7 +16,6 @@ import org.fireflyest.craftcommand.argument.PlayerArgs;
 import org.fireflyest.craftcommand.argument.StringArgs;
 import org.fireflyest.craftdatabase.sql.SQLConnector;
 import org.fireflyest.craftgui.api.ViewGuide;
-import org.fireflyest.essential.bean.Ship;
 import org.fireflyest.essential.command.AccountCommand;
 import org.fireflyest.essential.command.BackCommand;
 import org.fireflyest.essential.command.ChangepwCommand;
@@ -57,6 +56,7 @@ import org.fireflyest.essential.command.PlotArgument;
 import org.fireflyest.essential.command.PlotCommand;
 import org.fireflyest.essential.command.PlotCreateCommand;
 import org.fireflyest.essential.command.PlotExpandCommand;
+import org.fireflyest.essential.command.PlotFlatCommand;
 import org.fireflyest.essential.command.PlotFsetCommand;
 import org.fireflyest.essential.command.PlotGiveCommand;
 import org.fireflyest.essential.command.PlotMapCommand;
@@ -96,6 +96,7 @@ import org.fireflyest.essential.command.SudoCommand;
 import org.fireflyest.essential.command.SuicideCommand;
 import org.fireflyest.essential.command.SunCommand;
 import org.fireflyest.essential.command.TableCommand;
+import org.fireflyest.essential.command.TimingCommand;
 import org.fireflyest.essential.command.TopCommand;
 import org.fireflyest.essential.command.TpaCommand;
 import org.fireflyest.essential.command.TpacceptCommand;
@@ -120,6 +121,7 @@ import org.fireflyest.essential.gui.PermissionView;
 import org.fireflyest.essential.gui.PluginView;
 import org.fireflyest.essential.gui.PrefixView;
 import org.fireflyest.essential.gui.ShipView;
+import org.fireflyest.essential.gui.TimingView;
 import org.fireflyest.essential.gui.WorldsView;
 import org.fireflyest.essential.listener.PlayerEventListener;
 import org.fireflyest.essential.listener.WorldEventListener;
@@ -128,6 +130,7 @@ import org.fireflyest.essential.service.EssentialEconomy;
 import org.fireflyest.essential.service.EssentialPermission;
 import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.world.Dimension;
+import org.fireflyest.essential.world.EssentialTimings;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -145,12 +148,14 @@ public class Essential extends JavaPlugin {
     public static final String VIEW_PREFIX = "essential.prefix";
     public static final String VIEW_SHIP = "essential.ship";
     public static final String VIEW_INTERACT = "essential.interact";
+    public static final String VIEW_TIMING = "essential.timing";
 
     private EssentialService service;
     private EssentialYaml yaml;
     private EssentialProtocol protocol;
     private EssentialEconomy economy;
     private EssentialPermission permissions;
+    private EssentialTimings timings;
     private StateCache cache;
     private ViewGuide guide;
     private String url;
@@ -178,6 +183,8 @@ public class Essential extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        this.timings = new EssentialTimings();
 
         // 经济服务
         this.economy = new EssentialEconomy(service);
@@ -251,6 +258,7 @@ public class Essential extends JavaPlugin {
         guide.addView(VIEW_PREFIX, new PrefixView(service));
         guide.addView(VIEW_SHIP, new ShipView(service));
         guide.addView(VIEW_INTERACT, new InteractView(service));
+        guide.addView(VIEW_TIMING, new TimingView(timings));
     }
 
     /**
@@ -572,6 +580,12 @@ public class Essential extends JavaPlugin {
             structure.setExecutor(structureCommand);
             structure.setTabCompleter(structureCommand);
         }
+        PluginCommand timing = this.getCommand("timing");
+        if (timing != null) {
+            TimingCommand timingCommand = new TimingCommand(timings, guide);
+            timing.setExecutor(timingCommand);
+            timing.setTabCompleter(timingCommand);
+        }
     }
 
     private void setupGroupCommand() {
@@ -646,6 +660,8 @@ public class Essential extends JavaPlugin {
             // PlotPsetCommand plotPsetCommand = new PlotPsetCommand(service, worldMap);
             // plotPsetCommand.setArgument(0, new PlayerArgs());
             // plotPsetCommand.setArgument(1, flags);
+            PlotFlatCommand plotFlatCommand = new PlotFlatCommand(cache, worldMap);
+            plotFlatCommand.setArgument(0, new NumberArgs());
             PlotRenameCommand plotRenameCommand = new PlotRenameCommand(service, worldMap);
             plotRenameCommand.setArgument(0, new StringArgs("[new_name]"));
             plotCommand.addSubCommand("create", plotCreateCommand);
@@ -656,6 +672,7 @@ public class Essential extends JavaPlugin {
             plotCommand.addSubCommand("fset", plotFsetCommand);
             plotCommand.addSubCommand("iset", plotIsetCommand);
             // plotCommand.addSubCommand("pset", plotPsetCommand);
+            plotCommand.addSubCommand("flat", plotFlatCommand);
             plotCommand.addSubCommand("rename", plotRenameCommand);
             plotCommand.addSubCommand("expand", new PlotExpandCommand(economy, worldMap));
             plotCommand.addSubCommand("abandon", new PlotAbandonCommand(economy, worldMap));

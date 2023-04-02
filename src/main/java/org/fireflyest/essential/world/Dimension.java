@@ -2,9 +2,11 @@ package org.fireflyest.essential.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -274,6 +276,23 @@ public class Dimension {
         // 删除领地
         domainMap.remove(domain.getName());
         service.deleteDomain(domain.getName());
+    }
+
+    /**
+     * 获取领地附近的道路
+     * @param domain 领地
+     * @return 道路
+     */
+    public Set<String> nearRoads(Domain domain) {
+        Set<String> nearRoads = new HashSet<>();
+        for (Plot plot : domain.getPlotList()) {
+            for (String nearChunk : this.getNearChunk(plot.getLoc())) {
+                if (roadMap.containsKey(nearChunk)) {
+                    nearRoads.add(nearChunk);
+                }
+            }
+        }
+        return nearRoads;
     }
 
     /**

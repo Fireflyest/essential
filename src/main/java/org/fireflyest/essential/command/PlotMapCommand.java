@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -68,10 +67,10 @@ public class PlotMapCommand extends SubCommand {
             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§f占领脚下地皮")))
             .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/plot create " + player.getName() + "的地皮"));
         player.spigot().sendMessage(buttonBuilder.create());
-        sender.sendMessage("§7\uf600§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf602");
+        sender.sendMessage("§7\uf600§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf601§f\uf601\uf601\uf601§7\uf602");
         for (int i = z - 7; i <= z + 7; i++) {
             ComponentBuilder componentBuilder = new ComponentBuilder((z == i || z + 4 == i || z - 4 == i) ? "§7\uf603" : "§f\uf603").reset();
-            for (int j = x - 15; j <= x + 15; j++) {
+            for (int j = x - 11; j <= x + 11; j++) {
                 String loc = j + ":" + i;
                 // 地图显示方块
                 String biomeKey = player.getWorld().getName() + loc;
@@ -230,7 +229,7 @@ public class PlotMapCommand extends SubCommand {
             componentBuilder.append((z == i || z + 4 == i || z - 4 == i) ? "§7\uf604" : "§f\uf604").reset();
             player.spigot().sendMessage(componentBuilder.create());
         }
-        sender.sendMessage("§7\uf605§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf607");
+        sender.sendMessage("§7\uf605§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf606§f\uf606\uf606\uf606§7\uf607");
         sender.sendMessage("§2⬜私人地皮 §6⬜联盟地皮 §c⬜服务器占有 §7⬜独占道路 §8⬜共享道路");
         return true;
     }

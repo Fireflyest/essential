@@ -13,6 +13,7 @@ public class StructureTypeArgument implements Argument {
     private Set<String> stringSet = new HashSet<>();
 
     public StructureTypeArgument() {
+        stringSet.add("road");
         stringSet.add("cottage");
         stringSet.add("tree");
         stringSet.add("ornament");

@@ -102,8 +102,8 @@ PlotBeGiven: 🛖接收到他人转让的地皮 §3
 PlotPvp: 🛖区域内PVP未开启
 PlotProtectRoad: 🛖道路保护
 PlotProtectWorld: 🛖世界保护
-PlotSetCenter: 🛖已重新设置领地传送点
-PlotRename: 🛖已重新设置领地名称
+PlotSetCenter: 🛖已重新设置传送点
+PlotRename: 🛖已更新地皮名称
 PlotFlag: 🛖你没有地皮§3%domain%§f的§3%flag%§f权限
 PlotFlagSwitch: 🛖地皮§3%domain%§f的§3%flag%§f权限(%scope%)切换为 
 
