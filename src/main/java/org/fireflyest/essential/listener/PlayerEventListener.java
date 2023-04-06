@@ -170,17 +170,28 @@ public class PlayerEventListener implements Listener {
         String chatRangeColor;
         // 聊天范围
         String range = cache.get(player.getName() + ".chat.range");
-        if ("globe".equals(range) || message.contains("%room%")) { // 全部可见
+        if (message.startsWith("?")) {
+            chatRangeName = "求助";
+            chatRangeColor = "c=#8c7ae6";
+            // 附近人可接收 TODO 
+            Iterator<Player> iterator = event.getRecipients().iterator();
+            while (iterator.hasNext()) {
+                Player p = iterator.next();
+                if (!p.getWorld().equals(world) || p.getLocation().distance(player.getLocation()) > 100) {
+                    iterator.remove();
+                }
+            }
+        } else if ("globe".equals(range) || message.startsWith("!")) { // 全部可见
             chatRangeName = yaml.getWorld().getString(world.getName() + ".display");
             chatRangeColor = yaml.getWorld().getString(world.getName() + ".color");
-        } else if (range == null) { // 附近可见
+        } else if (range == null  || message.contains("%room%")) { // 附近可见
             chatRangeName = "附近";
             chatRangeColor = "c=#747d8c";
             // 附近人可接收
             Iterator<Player> iterator = event.getRecipients().iterator();
             while (iterator.hasNext()) {
                 Player p = iterator.next();
-                if (!p.getWorld().equals(world) || p.getLocation().distance(player.getLocation()) > 180) {
+                if (!p.getWorld().equals(world) || p.getLocation().distance(player.getLocation()) > 200) {
                     iterator.remove();
                 }
             }
@@ -349,10 +360,11 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
+        // 保存死亡地点
         Location loc = player.getLocation();
         cache.set(player.getName() + ".base.back", SerializationUtil.serialize(loc));
         player.sendMessage(Language.SAVE_POINT);
-
+        // 死亡信息
         String name = event.getEntity().getName();
         String msg = event.getDeathMessage();
         EntityDamageEvent entityDamageEvent = event.getEntity().getLastDamageCause();
@@ -364,6 +376,15 @@ public class PlayerEventListener implements Listener {
         }
         event.getEntity().setBedSpawnLocation(Objects.requireNonNull(Bukkit.getWorld(Config.MAIN_WORLD)).getSpawnLocation(), true);
 
+        // 死亡掉落方块和食物
+        Iterator<ItemStack> iterator = event.getDrops().iterator();
+        while (iterator.hasNext()) {
+            ItemStack item = iterator.next();
+            if (!item.getType().isBlock() || !item.getType().isEdible()) {
+                iterator.remove();
+            }
+        }
+        // 自动复活
         new BukkitRunnable() {
             @Override
             public void run() {

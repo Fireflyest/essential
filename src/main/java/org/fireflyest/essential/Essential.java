@@ -62,6 +62,7 @@ import org.fireflyest.essential.command.PlotGiveCommand;
 import org.fireflyest.essential.command.PlotMapCommand;
 import org.fireflyest.essential.command.PlotRemoveCommand;
 import org.fireflyest.essential.command.PlotRenameCommand;
+import org.fireflyest.essential.command.PlotRoadCommand;
 import org.fireflyest.essential.command.PlotSetCommand;
 import org.fireflyest.essential.command.PlotIsetCommand;
 import org.fireflyest.essential.command.PlotTpCommand;
@@ -662,6 +663,9 @@ public class Essential extends JavaPlugin {
             // plotPsetCommand.setArgument(1, flags);
             PlotFlatCommand plotFlatCommand = new PlotFlatCommand(cache, worldMap);
             plotFlatCommand.setArgument(0, new NumberArgs());
+            PlotRoadCommand plotRoadCommand = new PlotRoadCommand(cache, worldMap);
+            plotRoadCommand.setArgument(0, new NumberArgs());
+            plotRoadCommand.setArgument(1, new StringArgs("none"));
             PlotRenameCommand plotRenameCommand = new PlotRenameCommand(service, worldMap);
             plotRenameCommand.setArgument(0, new StringArgs("[new_name]"));
             plotCommand.addSubCommand("create", plotCreateCommand);
@@ -673,6 +677,7 @@ public class Essential extends JavaPlugin {
             plotCommand.addSubCommand("iset", plotIsetCommand);
             // plotCommand.addSubCommand("pset", plotPsetCommand);
             plotCommand.addSubCommand("flat", plotFlatCommand);
+            plotCommand.addSubCommand("road", plotRoadCommand);
             plotCommand.addSubCommand("rename", plotRenameCommand);
             plotCommand.addSubCommand("expand", new PlotExpandCommand(economy, worldMap));
             plotCommand.addSubCommand("abandon", new PlotAbandonCommand(economy, worldMap));

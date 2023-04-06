@@ -2,9 +2,11 @@ package org.fireflyest.essential.command;
 
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,12 +19,12 @@ import org.fireflyest.essential.data.StateCache;
 import org.fireflyest.essential.world.Dimension;
 import org.fireflyest.essential.world.Plot;
 
-public class PlotFlatCommand extends SubCommand {
+public class PlotRoadCommand extends SubCommand {
 
     private Map<String, Dimension> worldMap;
     private StateCache cache;
 
-    public PlotFlatCommand(StateCache cache, Map<String, Dimension> worldMap) {
+    public PlotRoadCommand(StateCache cache, Map<String, Dimension> worldMap) {
         this.cache = cache;
         this.worldMap = worldMap;
     }
@@ -34,6 +36,11 @@ public class PlotFlatCommand extends SubCommand {
 
     @Override
     protected boolean execute(CommandSender sender, String arg1) {
+        return execute(sender, arg1, "none");
+    }
+
+    @Override
+    protected boolean execute(CommandSender sender, String arg1, String arg2) {
         Player player = (sender instanceof Player) ? (Player)sender : null;
         if (player == null) {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
@@ -66,8 +73,8 @@ public class PlotFlatCommand extends SubCommand {
 
         // 再次确认
         String key = player.getName() + ".command.confirm";
-        if (!cache.exist(key) || !"flat".equals(cache.get(key))) {
-            cache.setex(key, 30, "flat");
+        if (!cache.exist(key) || !"road".equals(cache.get(key))) {
+            cache.setex(key, 30, "road");
             sender.sendMessage(Language.COMMAND_CONFIRM);
             return true;
         }
@@ -75,14 +82,17 @@ public class PlotFlatCommand extends SubCommand {
         // 平整
         int height = NumberConversions.toInt(arg1);
         int num = 0;
-        for (Plot aPlot : domain.getPlotList()) {
-            Chunk chunk = player.getWorld().getChunkAt(aPlot.getX(), aPlot.getZ());
+        for (String nearRoad : dimension.nearRoads(domain)) {
+            String[] xz = nearRoad.split(":");
+            Chunk chunk = player.getWorld().getChunkAt(NumberConversions.toInt(xz[0]), NumberConversions.toInt(xz[1]));
             this.flat(chunk, height, num++);
         }
 
+        // 道路
+
         return true;
     }
-
+    
     private void flat(Chunk chunk, int height, int delay) {
         int worldX = chunk.getX() * 16;
         int worldZ = chunk.getZ() * 16;
@@ -103,5 +113,5 @@ public class PlotFlatCommand extends SubCommand {
             }
         }.runTaskLater(Essential.getPlugin(), delay * 20L);
     }
-    
+
 }

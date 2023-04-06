@@ -21,11 +21,6 @@ public class TimingCommand extends SimpleCommand {
 
     @Override
     protected boolean execute(CommandSender sender) {
-        timings.refresh();
-        for (Line line : timings.getLines()) {
-            Essential.getPlugin().getLogger().info(line.name);
-        }
-        
         Player player = (sender instanceof Player) ? (Player)sender : null;
         if (player == null) {
             sender.sendMessage(Language.ONLY_PLAYER_USE);

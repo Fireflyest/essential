@@ -46,7 +46,7 @@ public class TimingPage extends TemplatePage {
 
         for (Line line : timings.getLines()) {
             String color = line.star ? "$<hg=#e17055:#fab1a0>" : "$<hg=#00b894:#55efc4>";
-            String end = "$<c=#74b9ff>Avg§7: §f" + line.avg + ((line.violations > 0) ? " $<c=#a29bfe>Violations§7: §f" + line.violations : "");
+            String end = "$<c=#74b9ff>Avg§7: §f" + line.avg + ((line.violations > 0) ? " $<c=#a29bfe>V§7: §f" + line.violations : "");
             if (line.name.startsWith("Task")) {
                 Matcher matcher = pattern.matcher(line.name);
                 String name = "";
