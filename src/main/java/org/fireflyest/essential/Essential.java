@@ -45,6 +45,7 @@ import org.fireflyest.essential.command.LosepwCommand;
 import org.fireflyest.essential.command.MessageCommand;
 import org.fireflyest.essential.command.ModeCommand;
 import org.fireflyest.essential.command.MoneyCommand;
+import org.fireflyest.essential.command.MotdCommand;
 import org.fireflyest.essential.command.MuteArgument;
 import org.fireflyest.essential.command.MuteCommand;
 import org.fireflyest.essential.command.NameCommand;
@@ -197,7 +198,7 @@ public class Essential extends JavaPlugin {
         // 界面
         this.setupGuide();
 
-        this.protocol = new EssentialProtocol(guide);
+        this.protocol = new EssentialProtocol(guide, cache);
         
         // 监听
         this.getLogger().info("Lunching listener.");
@@ -446,6 +447,13 @@ public class Essential extends JavaPlugin {
             holdCommand.setArgument(0, new PlayerArgs());
             hold.setExecutor(holdCommand);
             hold.setTabCompleter(holdCommand);
+        }
+        PluginCommand motd = this.getCommand("motd");
+        if (motd != null) {
+            MotdCommand motdCommand = new MotdCommand(cache);
+            // motdCommand.setArgument(0, new StringArgs());
+            motd.setExecutor(motdCommand);
+            motd.setTabCompleter(motdCommand);
         }
     }
 

@@ -19,6 +19,8 @@ public class Language {
     public static String PLUGIN_ENABLE;
     public static String PLUGIN_ENABLE_FAIL;
     public static String PLUGIN_DISABLE;
+    public static String MOTD_MAINTAIN;
+    public static String MOTD_UPDATE;
 
     public static String WORLD_CREATE;
     public static String WORLD_UNLOAD;

@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -26,6 +27,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.fireflyest.craftgui.api.ViewGuide;
@@ -148,7 +150,7 @@ public class PlayerEventListener implements Listener {
                         guide.openView(player, Essential.VIEW_ACCOUNT, player.getName());
                     }
                 }
-            }.runTaskTimer(Essential.getPlugin(), 60, 60);
+            }.runTaskTimer(Essential.getPlugin(), 60, 80);
         }
 
         // 刷新权限
@@ -278,6 +280,21 @@ public class PlayerEventListener implements Listener {
      */
     @EventHandler
     public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
+        // 维护的时候不给进
+        if ("maintain".equals(cache.get("motd.type"))) {
+            Set<OfflinePlayer> operators = Bukkit.getOperators();
+            boolean isAllow = false;
+            for (OfflinePlayer offlinePlayer : operators) {
+                if (offlinePlayer.getName().equals(event.getName())) {
+                    isAllow = true;
+                    break;
+                }
+            }
+            if (!isAllow) {
+                event.disallow(Result.KICK_OTHER, "服务器维护中\n请留意官网或者群消息");
+            }
+        }
+
         // 保存地址自动登录
         String key = event.getName() + ".account.address";
         // 当前登录ip

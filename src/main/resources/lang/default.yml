@@ -11,6 +11,8 @@ PluginLoad: '🔔§f成功加载插件§3'
 PluginEnable: '🔔§f成功启用插件§3'
 PluginEnableFail: '🔔§f无法启用插件§3'
 PluginDisable: '🔔§f成功关闭插件§3'
+MotdMaintain: '🔔§f服务器设置为维护状态'
+MotdUpdate: '🔔§f已更新motd'
 
 WorldCreate: '🌏正在创建世界§3'
 WorldUnload: '🌏卸载世界§3'

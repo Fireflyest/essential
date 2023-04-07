@@ -115,6 +115,11 @@ commands:
     permission: essential.table
     usage: /table
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.table"
+  motd:
+    description: 展示
+    permission: essential.motd
+    usage: /motd
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.motd"
   skull:
     description: 获取玩家头颅
     permission: essential.skull
