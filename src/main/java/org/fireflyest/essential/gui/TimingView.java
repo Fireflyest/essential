@@ -13,7 +13,7 @@ public class TimingView implements View<TimingPage> {
 
     @Override
     public TimingPage getFirstPage(String target) {
-        return new TimingPage(timings);
+        return new TimingPage(0, timings);
     }
 
     @Override

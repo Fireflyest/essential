@@ -9,6 +9,10 @@ Url: 'jdbc:mysql://localhost:3306/mc_market?useSSL=false&serverTimezone=UTC'
 User: 'root'
 Password: '123456'
 
+DefaultPrefix: $<hg=#b2b9be:#5f7082>初来乍到
+Website: "craftedge.cn"
+ServerName: EdgeCraft
+
 ###############################################
 #
 # 世界管理

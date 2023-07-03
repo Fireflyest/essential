@@ -24,6 +24,8 @@ public class WorldsPage extends TemplatePage {
     public WorldsPage(EssentialYaml yaml, int page, int size) {
         super("§9§l世界管理", null, page, size);
         this.yaml = yaml;
+
+        this.refreshPage();
     }
 
     @Override

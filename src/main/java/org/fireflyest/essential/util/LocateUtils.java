@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -25,23 +23,25 @@ public class LocateUtils {
     }
 
     public static String locate(String ip) {
+        // 缓存
         if (locMap.containsKey(ip)) {
             return locMap.get(ip);
         }
+        // 获取地址
         new BukkitRunnable() {
             public void run() {
                 try {
                     String resultString = doGet(ip);
                     if (resultString != null) {
                         Result result = new Gson().fromJson(resultString, Result.class);
-                        locMap.put(ip, "".equals(result.province) ? "中国" : result.province);
+                        locMap.put(ip, null == result.province || "".equals(result.province) ? "麦块" : result.province);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }.runTaskAsynchronously(Essential.getPlugin());
-        return "中国";
+        return "麦块";
     }
 
     private static String doGet(String ip) throws IOException {

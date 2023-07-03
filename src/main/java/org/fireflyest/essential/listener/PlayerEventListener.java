@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,7 +30,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.fireflyest.craftgui.api.ViewGuide;
-import org.fireflyest.craftgui.util.TranslateUtils;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.bean.Steve;
 import org.fireflyest.essential.data.Config;
@@ -56,9 +54,9 @@ public class PlayerEventListener implements Listener {
     private final Pattern varPattern = Pattern.compile("%([^%]*)%");
 
     private final String motdHeader = 
-            "   .·*ᄽ´¯`§7*·.¸¸ᄿ*·.  §e§l◎  §6§lEdgeCraft§r  §e§l◎ §7 .·*ᄽ¸¸.·*§f´¯`ᄿ*·.   \n"
+            "   .·*ᄽ´¯`§7*·.¸¸ᄿ*·.  §e§l◎  §6§l%s§r  §e§l◎ §7 .·*ᄽ¸¸.·*§f´¯`ᄿ*·.   \n"
             + "\n"
-            + "§f[ §amc.craftedge.cn §f]\n"
+            + "§f[ §a%s §f]\n"
             + "";
 
     /**
@@ -72,6 +70,10 @@ public class PlayerEventListener implements Listener {
         this.permission = permission;
         this.cache = cache;
         this.guide = guide;
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            cache.set(player.getName() + ".account.state", StateCache.LOGIN);
+        }
     }
 
     /**
@@ -81,7 +83,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onLogin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        player.setPlayerListHeader(motdHeader);
+        player.setPlayerListHeader(String.format(motdHeader, Config.SERVER_NAME, Config.WEBSITE));
     }
 
     /**
@@ -101,26 +103,12 @@ public class PlayerEventListener implements Listener {
 
         // 进入提示
         event.setJoinMessage("§6[§a+§6]§f" + player.getName());
-        
-        
-        // 玩家数据是否为空
-        Steve steve = service.selectSteveByUid(uid);
-        if (steve == null) {
-            Bukkit.broadcastMessage(Language.NEW_PLAYER.replace("%player%", player.getName()));
-            service.insertSteve(player.getName(), uid, Instant.now().toEpochMilli(), yaml.getGroup().getString("default.prefix"), Config.BASE_MONEY);
-            steve = service.selectSteveByUid(uid);
-        }
-
+        // 玩家数据
+        Steve steve = service.selectSteveByUid(player.getUniqueId());
         // 是否已经注册
-        if ("".equals(steve.getPassword())) {
-            cache.set(player.getName() + ".account.state", StateCache.UN_REGISTER);
-            player.sendMessage(Language.REGISTER);
-        } else {
-            cache.set(player.getName() + ".account.state", StateCache.UN_LOGIN);
-            player.sendMessage(Language.DON_LOGIN);
-        }
+        cache.set(player.getName() + ".account.state", "".equals(steve.getPassword()) ? StateCache.UN_REGISTER : StateCache.UN_LOGIN);
         
-        if (cache.exist(player.getName() + ".account.auto")) {
+        if ((steve.isLegal() && "".equals(steve.getPassword())) || cache.exist(player.getName() + ".account.auto") || Bukkit.getOnlineMode()) {
             // 自动登录
             new BukkitRunnable() {
                 @Override
@@ -172,10 +160,10 @@ public class PlayerEventListener implements Listener {
         String chatRangeColor;
         // 聊天范围
         String range = cache.get(player.getName() + ".chat.range");
-        if (message.startsWith("?")) {
+        if (message.length() > 3 && message.startsWith("?")) {
             chatRangeName = "求助";
             chatRangeColor = "c=#8c7ae6";
-            // 附近人可接收 TODO 
+            // TODO 附近人可接收  聊天机器人
             Iterator<Player> iterator = event.getRecipients().iterator();
             while (iterator.hasNext()) {
                 Player p = iterator.next();
@@ -216,11 +204,11 @@ public class PlayerEventListener implements Listener {
 
         // 处理聊天格式
         String prefix = service.selectStevePrefix(player.getUniqueId());
-        prefix = prefix.replace("<", "<he=show_text•点击切换头衔|ce=run_command•/prefix|");
-        event.setFormat("§f[$<he=show_text•点击切换聊天范围|ce=run_command•/chat|"
-                 + chatRangeColor + ">" + chatRangeName + "§f]§f[" // 聊天范围显示
-                 + prefix + "§f]$<he=show_text•点击交互|ce=run_command•/interact " // 点击头衔切换
-                 + player.getName() + "|c=#b8e994>%1$s §7▷§r %2$s"); // 点击名称交互
+        prefix = prefix.replace("<", "<he=show_text•头衔|ce=run_command•/prefix|"); // 点击头衔切换
+        event.setFormat("§f[$<he=show_text•切换|ce=run_command•/chat|" // 聊天范围显示
+                 + chatRangeColor + ">" + chatRangeName + "§f]§f[" 
+                 + prefix + "§f]$<he=show_text•交互|ce=run_command•/interact "  // 点击名称交互
+                 + player.getName() + "|c=#b8e994>%1$s §7▷§r %2$s"); 
 
         // 处理聊天内容
         if (message.contains("@")) {
@@ -308,7 +296,7 @@ public class PlayerEventListener implements Listener {
         // 保存新的ip
         cache.set(key, event.getAddress().toString());
         //名称是否合法
-        if (!event.getName().matches("[0-9a-zA-Z_]+") || event.getName().length() > 30) {
+        if (!event.getName().matches("[0-9a-zA-Z_]{1,30}") || event.getName().length() > 30) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Language.ILLEGAL_NAME);
         }
     }
@@ -327,8 +315,8 @@ public class PlayerEventListener implements Listener {
         if (!StateCache.LOGIN.equals(cache.get(name + ".account.state"))) {
             return;
         }
-        // 记录最后在线，五分钟内自动登录
-        cache.setex(name + ".account.auto", 300, name);
+        // 记录最后在线，5分钟内自动登录
+        cache.setex(name + ".account.auto", 600, name);
         // 保存下线位置
         new BukkitRunnable() {
             @Override

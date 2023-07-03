@@ -33,6 +33,8 @@ public class PrefixPage extends TemplatePage {
     protected PrefixPage(EssentialService service, String target) {
         super("§9§l个人头衔", target, 0, 54);
         this.service = service;
+
+        this.refreshPage();
     }
 
     @Override

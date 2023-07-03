@@ -58,6 +58,12 @@ public interface DomainDao {
     @Update("UPDATE `essential_domain` SET `name`='${newName}' WHERE `name`='${name}';")
     long updateDomainName(String newName, String name);
 
+    @Update("UPDATE `essential_domain` SET `share`='${share}' WHERE `name`='${name}';")
+    long updateDomainShare(String share, String name);
+
+    @Update("UPDATE `essential_domain` SET `type`=${type} WHERE `name`='${name}';")
+    long updateDomainType(int type, String name);
+
     @Delete("DELETE FROM `essential_domain` WHERE `name`='${name}';")
     long deleteDomain(String name);
 

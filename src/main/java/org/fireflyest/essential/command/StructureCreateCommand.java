@@ -19,12 +19,17 @@ import org.bukkit.util.RayTraceResult;
 import org.fireflyest.craftcommand.command.SubCommand;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.data.Language;
-import org.fireflyest.essential.util.ParticleUtils;
+import org.fireflyest.essential.data.StateCache;
+import org.fireflyest.util.ParticleUtils;
+import org.fireflyest.util.SerializationUtil;
 
 public class StructureCreateCommand extends SubCommand {
 
-    private int step = 0;
-    private Location[] corners = new Location[2];
+    private StateCache cache;
+
+    public StructureCreateCommand(StateCache cache) {
+        this.cache = cache;
+    }
 
     @Override
     protected boolean execute(CommandSender sender) {
@@ -34,44 +39,27 @@ public class StructureCreateCommand extends SubCommand {
             return false;
         }
 
-        RayTraceResult result = null;
-        Block hitBlock = null;
-        String point;
-        switch (step) {
-            case 0: // 开始选择
-                corners[0] = null;
-                corners[1] = null;
-                sender.sendMessage(Language.STRUCTURE_CREATE_TIP);
-                step++;
-                break;
-            case 1: // 第一个点
-                result = player.rayTraceBlocks(100);
-                if (result != null) {
-                    hitBlock = result.getHitBlock();
-                    corners[0] = hitBlock.getLocation().add(.5, .5, .5);
-                    step++;
-                    point = String.format("[%s,%s,%s]", corners[0].getX(), corners[0].getY(), corners[0].getZ());
-                    sender.sendMessage(Language.STRUCTURE_CREATE_FIRST.replace("%point%", point));
-                } else {
-                    sender.sendMessage(Language.STRUCTURE_CREATE_FAIL);
-                }
-                break;
-            case 2: // 第二个点
-                result = player.rayTraceBlocks(100);
-                if (result != null) {
-                    hitBlock = result.getHitBlock();
-                    corners[1] = hitBlock.getLocation().add(.5, .5, .5);
-                    step = 0;
-                    point = String.format("[%s,%s,%s]", corners[1].getX(), corners[1].getY(), corners[1].getZ());
-                    sender.sendMessage(Language.STRUCTURE_CREATE_SECOND.replace("%point%", point));
+        String cornerKey1 = player.getName() + StateCache.STRUCTURE_CORNER_1;
+        String cornerKey2= player.getName() + StateCache.STRUCTURE_CORNER_2;
+        RayTraceResult result = player.rayTraceBlocks(100);
+        Block hitBlock = result == null ? null : result.getHitBlock();
+        Location point = hitBlock == null ? player.getLocation() : hitBlock.getLocation().add(.5, .5, .5);
+        String pointString = String.format("%s,%s,%s", point.getX(), point.getY(), point.getZ());
 
-                    this.sizeDisplay();
-                } else {
-                    sender.sendMessage(Language.STRUCTURE_CREATE_FAIL);
-                }
-                break;
-            default:
-                break;
+        String corner1 = cache.get(cornerKey1);
+        String corner2 = cache.get(cornerKey2);
+
+        if (corner1 == null) {
+            cache.setex(cornerKey1, 120, SerializationUtil.serialize(point));
+            sender.sendMessage(Language.STRUCTURE_CREATE_FIRST.replace("%point%", pointString));
+        } else if (corner2 == null) {
+            cache.setex(cornerKey2, 120, SerializationUtil.serialize(point));
+            sender.sendMessage(Language.STRUCTURE_CREATE_SECOND.replace("%point%", pointString));
+            this.sizeDisplay(player.getName());
+        } else {
+            cache.del(cornerKey1);
+            cache.del(cornerKey2);
+            sender.sendMessage(Language.STRUCTURE_CREATE_TIP);
         }
         return true;
     }
@@ -83,14 +71,21 @@ public class StructureCreateCommand extends SubCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
-        if (corners[0] == null || corners[1] == null) {
+
+        String cornerKey1 = player.getName() + StateCache.STRUCTURE_CORNER_1;
+        String cornerKey2= player.getName() + StateCache.STRUCTURE_CORNER_2;
+        String corner1 = cache.get(cornerKey1);
+        String corner2 = cache.get(cornerKey2);
+        if (corner1 == null || corner2 == null) {
             sender.sendMessage(Language.STRUCTURE_CREATE_FAIL);
             return true;
         }
+        Location point1 = SerializationUtil.deserialize(corner1, Location.class);
+        Location point2 = SerializationUtil.deserialize(corner2, Location.class);
         StructureManager manager = Bukkit.getServer().getStructureManager();
         Structure structure = manager.createStructure();
-        this.fixLocation(corners[0], corners[1]);
-        structure.fill(corners[0], corners[1], true);
+        this.fixLocation(point1, point2);
+        structure.fill(point1, point2, true);
         manager.registerStructure(NamespacedKey.fromString(arg1), structure);
 
         File folder = new File(Essential.getPlugin().getDataFolder(), "structures");
@@ -104,8 +99,8 @@ public class StructureCreateCommand extends SubCommand {
             e.printStackTrace();
         }
 
-        corners[0] = null;
-        corners[1] = null;
+        cache.del(cornerKey1);
+        cache.del(cornerKey2);
         
         sender.sendMessage(Language.STRUCTURE_CREATE_FINISH + "§3" + arg1);
         return true;
@@ -134,21 +129,25 @@ public class StructureCreateCommand extends SubCommand {
         }
     }
 
-    private void sizeDisplay() {
+    private void sizeDisplay(final String playerName) {
         new BukkitRunnable() {
             // 次数
             int time = 0;
             @Override
             public void run() {
-                    // 到次数或清空取消
-                    time++;
-                    if (time > 100 || corners[0] == null || corners[1] == null) {
-                        cancel();
-                        return;
-                    }
-                    ParticleUtils.cuboid(Particle.END_ROD, corners[0].clone(), corners[1].clone());
+                String cornerKey1 = playerName + StateCache.STRUCTURE_CORNER_1;
+                String cornerKey2= playerName + StateCache.STRUCTURE_CORNER_2;
+                String corner1 = cache.get(cornerKey1);
+                String corner2 = cache.get(cornerKey2);
+                // 到次数或清空取消
+                time++;
+                if (time > 50 || corner1 == null || corner2 == null) {
+                    cancel();
+                    return;
+                }
+                ParticleUtils.cuboid(Particle.END_ROD, SerializationUtil.deserialize(corner1, Location.class), SerializationUtil.deserialize(corner2, Location.class));
             } 
-        }.runTaskTimer(Essential.getPlugin(), 0, 10);
+        }.runTaskTimer(Essential.getPlugin(), 0, 30);
     }
     
 }

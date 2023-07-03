@@ -96,8 +96,8 @@ public class EssentialService extends SQLService {
      * @param prefix 头衔
      * @return id
      */
-    public long insertSteve(String name, UUID uid, long register, String prefix, int money) {
-        return steveDao.insertSteve(name, uid.toString(), register, prefix, money);
+    public long insertSteve(String name, String uid, long register, String prefix, int money, boolean legal) {
+        return steveDao.insertSteve(name, uid, register, prefix, money, legal);
     }
 
     /**
@@ -235,6 +235,23 @@ public class EssentialService extends SQLService {
     public long updateGender(int gender, UUID uid) {
         return steveDao.updateGender(gender, uid.toString());
     }
+
+    public boolean selectLegal(UUID uid) {
+        return steveDao.selectLegal(uid.toString());
+    }
+
+    public long updateLegal(boolean legal, UUID uid) {
+        return steveDao.updateLegal(legal, uid.toString());
+    }
+
+    public long updateSteveUid(String newUid, String uid) {
+        return steveDao.updateSteveUid(newUid, uid);
+    }
+
+    public long updateSteveName(String name, String uid) {
+        return steveDao.updateSteveName(name, uid);
+    }
+
 
     /*****************************************************************************/
 
@@ -496,6 +513,14 @@ public class EssentialService extends SQLService {
     
     public long updateDomainName(String newName, String name) {
         return domainDao.updateDomainName(newName, name);
+    }
+
+    public long updateDomainShare(String share, String name) {
+        return domainDao.updateDomainShare(share, name);
+    }
+
+    public long updateDomainType(int type, String name) {
+        return domainDao.updateDomainType(type, name);
     }
 
     public long deleteDomain(String name) {

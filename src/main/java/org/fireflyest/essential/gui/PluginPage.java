@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -33,6 +32,8 @@ public class PluginPage extends TemplatePage {
 
     protected PluginPage(int page, int size) {
         super("§9§l插件管理", null, page, size);
+
+        this.refreshPage();
     }
 
     @Override
@@ -78,8 +79,6 @@ public class PluginPage extends TemplatePage {
         return asyncButtonMap;
     }
 
-    
-
     @Override
     public @Nullable ViewPage getNext() {
         if (next == null && page < 10) {
@@ -121,7 +120,7 @@ public class PluginPage extends TemplatePage {
                 .actionEdit()
                 .name("§r刷新")
                 .build();
-        buttonMap.put(47, refresh);
+        buttonMap.put(52, refresh);
 
         this.pluginFiles = new ArrayList<>();
         // 文件夹
@@ -170,6 +169,7 @@ public class PluginPage extends TemplatePage {
 class PluginFile {
     public PluginFile(String file) {
         this.file = file;
+        this.name = file.replace(".jar", "");
     }
     public String name;
     public String file;

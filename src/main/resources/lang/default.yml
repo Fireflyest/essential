@@ -108,6 +108,9 @@ PlotSetCenter: 🛖已重新设置传送点
 PlotRename: 🛖已更新地皮名称
 PlotFlag: 🛖你没有地皮§3%domain%§f的§3%flag%§f权限
 PlotFlagSwitch: 🛖地皮§3%domain%§f的§3%flag%§f权限(%scope%)切换为 
+PlotEnter: 🛖进入地皮§3%domain% 
+PlotLeave: 🛖离开地皮§3%domain%
+PlotReserve: 已将地皮划为服务器保留地
 
 CommandConfirm: 🔥请再次输入指令确认
 CommandArgument: 🔥输入的指令缺少必要的参数

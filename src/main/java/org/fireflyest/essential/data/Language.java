@@ -115,6 +115,9 @@ public class Language {
     public static String PLOT_RENAME;
     public static String PLOT_FLAG;
     public static String PLOT_FLAG_SWITCH;
+    public static String PLOT_RESERVE;
+    public static String PLOT_ENTER;
+    public static String PLOT_LEAVE;
 
     public static String COMMAND_CONFIRM;
     public static String COMMAND_ARGUMENT;

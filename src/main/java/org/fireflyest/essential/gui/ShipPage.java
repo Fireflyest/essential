@@ -41,7 +41,7 @@ public class ShipPage extends TemplatePage {
         levelMap.put(9, (int) ((Math.pow(Math.E,  (9 + 1) * Math.log(10000) / 10) - 1) / 0.5));
         levelMap.put(10, (int) ((Math.pow(Math.E,  (10 + 1) * Math.log(10000) / 10) - 1) / 0.5));
 
-
+        this.refreshPage();
     }
 
     @Override

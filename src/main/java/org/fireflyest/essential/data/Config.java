@@ -7,9 +7,14 @@ public class Config {
     public static String LANGUAGE;
 
     public static boolean SQL;
+
     public static String URL;
     public static String USER;
     public static String PASSWORD;
+
+    public static String DEFAULT_PREFIX;
+    public static String WEBSITE;
+    public static String SERVER_NAME;
 
     public static String MAIN_WORLD;
     public static boolean IGNITE_SPREAD;

@@ -1,6 +1,8 @@
 package org.fireflyest.essential.gui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.fireflyest.craftgui.api.ViewPage;
 import org.fireflyest.craftgui.button.ButtonItemBuilder;
 import org.fireflyest.craftgui.view.TemplatePage;
 import org.fireflyest.craftitem.builder.ItemBuilder;
@@ -20,12 +23,15 @@ import org.fireflyest.essential.world.EssentialTimings.Line;
 public class TimingPage extends TemplatePage {
 
     private final Pattern pattern = Pattern.compile("[a-zA-Z0-9]+: [0-9a-zA-Z ]+([v ]?)+[\\-0-9a-zA-Z.:\\(\\)\\$]+");
+    private final List<ItemStack> temps = new ArrayList<>();
     private Map<String, String> commands;
     private EssentialTimings timings;
 
-    protected TimingPage(EssentialTimings timings) {
-        super("§9§l性能监控", null, 0, 54);
+    protected TimingPage(int page, EssentialTimings timings) {
+        super("§9§l性能监控", null, page, 54);
         this.timings = timings;
+
+        this.refreshPage();
     }
 
     @Override
@@ -33,6 +39,40 @@ public class TimingPage extends TemplatePage {
         asyncButtonMap.clear();
         asyncButtonMap.putAll(buttonMap);
 
+        if (temps.isEmpty()) {
+            this.prepare();
+        }
+
+        int pos = 0;
+        for (int i = page * 45; i < (page + 1) * 45; i++) {
+            if (i >= temps.size()) {
+                break;
+            }
+            asyncButtonMap.put(pos++, temps.get(i));
+        }
+
+        return asyncButtonMap;
+    }
+
+    @Override
+    public @Nullable ItemStack getItem(int slot) {
+        switch (slot) {
+            case 45:
+                timings.refresh();
+                temps.clear();
+                break;
+            case 46:
+                timings.reload();
+                timings.refresh();
+                temps.clear();
+                break;
+            default:
+                break;
+        }
+        return super.getItem(slot);
+    }
+
+    public void prepare() {
         ItemBuilder serverBuilder = new ButtonItemBuilder(Material.WATER_BUCKET)
             .name("§e§l服务器")
             .colorful();
@@ -98,39 +138,29 @@ public class TimingPage extends TemplatePage {
             }
         }
 
-        asyncButtonMap.put(0, serverBuilder.build());
-        asyncButtonMap.put(1, entityBuilder.build());
-        int pos = 2;
+        temps.add(serverBuilder.build());
+        temps.add(entityBuilder.build());
         for (ItemBuilder value : worldMap.values()) {
-            asyncButtonMap.put(pos++, value.build());
+            temps.add(value.build());
         }
         for (ItemBuilder value : taskMap.values()) {
-            asyncButtonMap.put(pos++, value.build());
+            temps.add(value.build());
         }
         for (ItemBuilder value : pluginMap.values()) {
-            asyncButtonMap.put(pos++, value.build());
+            temps.add(value.build());
         }
         for (ItemBuilder value : commandMap.values()) {
-            asyncButtonMap.put(pos++, value.build());
+            temps.add(value.build());
         }
-
-        return asyncButtonMap;
     }
 
     @Override
-    public @Nullable ItemStack getItem(int slot) {
-        switch (slot) {
-            case 45:
-                timings.refresh();
-                break;
-            case 46:
-                timings.reload();
-                timings.refresh();
-                break;
-            default:
-                break;
+    public @Nullable ViewPage getNext() {
+        if (next == null && page < 10) {
+            next = new TimingPage(page + 1, timings);
+            next.setPre(this);
         }
-        return super.getItem(slot);
+        return next;
     }
 
     @Override
@@ -144,12 +174,25 @@ public class TimingPage extends TemplatePage {
                 .actionEdit()
                 .name("§e刷新")
                 .build();
-        buttonMap.put(45, refresh);
+        buttonMap.put(51, refresh);
         ItemStack reload = new ButtonItemBuilder(Material.FEATHER)
                 .actionEdit()
                 .name("§e重计")
                 .build();
-        buttonMap.put(46, reload);
+        buttonMap.put(52, reload);
+
+        ItemStack pre = new ButtonItemBuilder(Material.PAPER)
+                .actionPagePre()
+                .name("§r◀")
+                .build();
+        if (page > 0) {
+            buttonMap.put(45, pre);
+        }
+        ItemStack next = new ButtonItemBuilder(Material.PAPER)
+                .actionPageNext()
+                .name("§r▶")
+                .build();
+        buttonMap.put(46, next);
 
         // 获取所有指令对应的插件
         commands = new HashMap<>();

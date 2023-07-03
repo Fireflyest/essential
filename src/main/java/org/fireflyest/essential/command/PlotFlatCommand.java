@@ -101,7 +101,7 @@ public class PlotFlatCommand extends SubCommand {
                     }
                 }
             }
-        }.runTaskLater(Essential.getPlugin(), delay * 20L);
+        }.runTaskLater(Essential.getPlugin(), delay * 5L);
     }
     
 }

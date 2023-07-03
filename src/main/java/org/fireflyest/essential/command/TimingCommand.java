@@ -7,7 +7,6 @@ import org.fireflyest.craftgui.api.ViewGuide;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.world.EssentialTimings;
-import org.fireflyest.essential.world.EssentialTimings.Line;
 
 public class TimingCommand extends SimpleCommand {
 

@@ -20,6 +20,8 @@ public class InteractPage extends TemplatePage {
     protected InteractPage(EssentialService service, String target) {
         super("§9§l交互", target, 0, 18);
         this.service = service;
+
+        this.refreshPage();
     }
 
     @Override

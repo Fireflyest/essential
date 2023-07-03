@@ -34,6 +34,8 @@ public class PermissionPage extends TemplatePage {
         super("§9§l权限信息", target, 0, 54);
         this.service =service;
         this.yaml = yaml;
+
+        this.refreshPage();
     }
 
     @Override

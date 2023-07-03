@@ -36,6 +36,8 @@ public class AccountPage implements ViewPage {
         this.isRegister = StateCache.UN_REGISTER.equals(cache.get(target + ".account.state"));
 
         this.updateTitle(isRegister ? "§9§l注册账号" : "§9§l登录账号");
+
+        this.refreshPage();
     }
 
     @Override

@@ -2,7 +2,6 @@ package org.fireflyest.essential.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,14 +23,12 @@ import net.milkbowl.vault.permission.Permission;
 
 public class EssentialPermission extends Permission  {
 
-    private EssentialYaml yaml;
     private EssentialService service;
 
     private final HashMap<String, Group> groupMap = new HashMap<>();
     private final List<String> groupList  = new ArrayList<>();
 
     public EssentialPermission(EssentialYaml yaml, EssentialService service) {
-        this.yaml = yaml;
         this.service = service;
 
         // 读取所有权限组信息

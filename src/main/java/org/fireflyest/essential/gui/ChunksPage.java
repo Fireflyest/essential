@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -35,6 +34,8 @@ public class ChunksPage extends TemplatePage {
         super("§9§l区块管理", target, -1, size);
         this.centerX = 0;
         this.centerZ = 0;
+
+        this.refreshPage();
     }
 
     @Override

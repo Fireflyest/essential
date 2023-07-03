@@ -1,7 +1,9 @@
 package org.fireflyest.essential.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.fireflyest.craftdatabase.annotation.Column;
 import org.fireflyest.craftdatabase.annotation.Primary;
@@ -40,10 +42,16 @@ public class Domain {
     @Skip
     private final List<Plot> plotList = new ArrayList<>();
 
+    @Column(defaultValue = "")
+    private String share;
+
+    @Skip
+    private final Map<String, Long> shareMap = new HashMap<>();
+
     @Column(defaultValue = "0")
     private boolean finish;
 
-    @Column
+    @Column(defaultValue = "")
     private String msg;
 
     @Column(defaultValue = "0")
@@ -113,6 +121,18 @@ public class Domain {
 
     public List<Plot> getPlotList() {
         return plotList;
+    }
+
+    public String getShare() {
+        return share;
+    }
+
+    public void setShare(String share) {
+        this.share = share;
+    }
+
+    public Map<String, Long> getShareMap() {
+        return shareMap;
     }
 
     public boolean isFinish() {

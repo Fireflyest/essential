@@ -45,6 +45,7 @@ import org.fireflyest.essential.command.LosepwCommand;
 import org.fireflyest.essential.command.MessageCommand;
 import org.fireflyest.essential.command.ModeCommand;
 import org.fireflyest.essential.command.MoneyCommand;
+import org.fireflyest.essential.command.MotdArgument;
 import org.fireflyest.essential.command.MotdCommand;
 import org.fireflyest.essential.command.MuteArgument;
 import org.fireflyest.essential.command.MuteCommand;
@@ -61,6 +62,7 @@ import org.fireflyest.essential.command.PlotFlatCommand;
 import org.fireflyest.essential.command.PlotFsetCommand;
 import org.fireflyest.essential.command.PlotGiveCommand;
 import org.fireflyest.essential.command.PlotMapCommand;
+import org.fireflyest.essential.command.PlotPsetCommand;
 import org.fireflyest.essential.command.PlotRemoveCommand;
 import org.fireflyest.essential.command.PlotRenameCommand;
 import org.fireflyest.essential.command.PlotRoadCommand;
@@ -198,12 +200,13 @@ public class Essential extends JavaPlugin {
         // 界面
         this.setupGuide();
 
-        this.protocol = new EssentialProtocol(guide, cache);
+        // 协议包监听
+        this.protocol = new EssentialProtocol(guide, service, cache, worldMap);
         
-        // 监听
+        // 事件监听
         this.getLogger().info("Lunching listener.");
         this.getServer().getPluginManager().registerEvents(new PlayerEventListener(service, yaml, permissions, cache, guide), this);
-        this.getServer().getPluginManager().registerEvents(new WorldEventListener(yaml, service, worldMap), this);
+        this.getServer().getPluginManager().registerEvents(new WorldEventListener(yaml, service, cache, worldMap), this);
 
         // 指令
         this.setupAccountCommand();
@@ -223,8 +226,6 @@ public class Essential extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (StateCache.LOGIN.equals(cache.get(player.getName() + ".account.state"))) {
                 service.updateQuit(player.getLocation(), player.getUniqueId());
-                player.sendMessage(Language.LOGIN);
-                player.setGameMode(GameMode.SPECTATOR);
             } else {
                 player.kickPlayer("Reloading...");
             }
@@ -451,7 +452,7 @@ public class Essential extends JavaPlugin {
         PluginCommand motd = this.getCommand("motd");
         if (motd != null) {
             MotdCommand motdCommand = new MotdCommand(cache);
-            // motdCommand.setArgument(0, new StringArgs());
+            motdCommand.setArgument(0, new MotdArgument());
             motd.setExecutor(motdCommand);
             motd.setTabCompleter(motdCommand);
         }
@@ -578,7 +579,7 @@ public class Essential extends JavaPlugin {
         PluginCommand structure = this.getCommand("structure");
         if (structure != null) {
             StructureCommand structureCommand = new StructureCommand();
-            StructureCreateCommand structureCreateCommand = new StructureCreateCommand();
+            StructureCreateCommand structureCreateCommand = new StructureCreateCommand(cache);
             structureCreateCommand.setArgument(0, new StructureTypeArgument());
             StructurePlaceCommand structurePlaceCommand = new StructurePlaceCommand();
             structurePlaceCommand.setArgument(0, new StructureArgument());
@@ -666,9 +667,9 @@ public class Essential extends JavaPlugin {
             plotFsetCommand.setArgument(0, flags);
             PlotIsetCommand plotIsetCommand = new PlotIsetCommand(service, worldMap);
             plotIsetCommand.setArgument(0, flags);
-            // PlotPsetCommand plotPsetCommand = new PlotPsetCommand(service, worldMap);
-            // plotPsetCommand.setArgument(0, new PlayerArgs());
-            // plotPsetCommand.setArgument(1, flags);
+            PlotPsetCommand plotPsetCommand = new PlotPsetCommand(service, worldMap);
+            plotPsetCommand.setArgument(0, new PlayerArgs());
+            plotPsetCommand.setArgument(1, flags);
             PlotFlatCommand plotFlatCommand = new PlotFlatCommand(cache, worldMap);
             plotFlatCommand.setArgument(0, new NumberArgs());
             PlotRoadCommand plotRoadCommand = new PlotRoadCommand(cache, worldMap);
@@ -683,7 +684,7 @@ public class Essential extends JavaPlugin {
             plotCommand.addSubCommand("set", plotSetCommand);
             plotCommand.addSubCommand("fset", plotFsetCommand);
             plotCommand.addSubCommand("iset", plotIsetCommand);
-            // plotCommand.addSubCommand("pset", plotPsetCommand);
+            plotCommand.addSubCommand("pset", plotPsetCommand);
             plotCommand.addSubCommand("flat", plotFlatCommand);
             plotCommand.addSubCommand("road", plotRoadCommand);
             plotCommand.addSubCommand("rename", plotRenameCommand);

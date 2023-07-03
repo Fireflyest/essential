@@ -38,6 +38,9 @@ public class Steve {
     @Column
     private String quit;
 
+    @Column
+    private boolean legal;
+
     /**
      * 玩家数据
      */
@@ -127,6 +130,14 @@ public class Steve {
 
     public void setQuit(String quit) {
         this.quit = quit;
+    }
+
+    public boolean isLegal() {
+        return legal;
+    }
+
+    public void setLegal(boolean legal) {
+        this.legal = legal;
     }
 
 }

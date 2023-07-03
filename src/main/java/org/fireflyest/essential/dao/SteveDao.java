@@ -33,7 +33,7 @@ public interface SteveDao {
     @Select("SELECT `uid` FROM `essential_steve` WHERE `name`='${name}' LIMIT 1;")
     String selectSteveUid(String name);
 
-        /**
+    /**
      * 获取名称
      * @param uid uid
      * @return 游戏名
@@ -45,8 +45,8 @@ public interface SteveDao {
      * 插入玩家数据
      * @return id
      */
-    @Insert("INSERT INTO `essential_steve` (`name`,`uid`,`register`,`prefix`,`money`) VALUES ('${name}','${uid}',${register},'${prefix}',${money});")
-    long insertSteve(String name, String uid, long register, String prefix, int money);
+    @Insert("INSERT INTO `essential_steve` (`name`,`uid`,`register`,`prefix`,`money`,`legal`) VALUES ('${name}','${uid}',${register},'${prefix}',${money},${legal});")
+    long insertSteve(String name, String uid, long register, String prefix, int money, boolean legal);
 
     /**
      * 更新离开位置
@@ -164,4 +164,16 @@ public interface SteveDao {
     @Update("UPDATE `essential_steve` SET `gender`=${gender} WHERE `uid`='${uid}';")
     long updateGender(int gender, String uid);
     
+    @Select("SELECT `legal` FROM `essential_steve` WHERE `uid`='${uid}';")
+    boolean selectLegal(String uid);
+
+    @Update("UPDATE `essential_steve` SET `legal`=${legal} WHERE `uid`='${uid}';")
+    long updateLegal(boolean legal, String uid);
+
+    @Update("UPDATE `essential_steve` SET `uid`=${newUid} WHERE `uid`='${uid}';")
+    long updateSteveUid(String newUid, String uid);
+
+    @Update("UPDATE `essential_steve` SET `name`=${name} WHERE `uid`='${uid}';")
+    long updateSteveName(String name, String uid);
+
 }

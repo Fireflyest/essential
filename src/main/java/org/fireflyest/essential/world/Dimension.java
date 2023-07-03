@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.util.NumberConversions;
 import org.fireflyest.essential.bean.Domain;
 import org.fireflyest.essential.bean.Ship;
+import org.fireflyest.essential.data.StateCache;
 import org.fireflyest.essential.service.EssentialService;
 
 public class Dimension {
@@ -41,12 +42,13 @@ public class Dimension {
     public static final int FLAG_EXPLODE =                   0b00100000000000000000000000000000; // 爆炸
     public static final int FLAG_PISTON =                      0b00010000000000000000000000000000; // 活塞
 
-    public static final int FLAG_FLOW_WATER =          0b00001000000000000000000000000000; // 水流动
-    public static final int FLAG_FLOW_LAVA =             0b00000100000000000000000000000000; // 岩浆流动
-    public static final int FLAG_FLOW =                       0b00001100000000000000000000000000; // 液体流动
+    public static final int FLAG_FLOW_WATER =           0b00001000000000000000000000000000; // 水流动
+    public static final int FLAG_FLOW_LAVA =              0b00000100000000000000000000000000; // 岩浆流动
+    public static final int FLAG_FLOW =                         0b00001100000000000000000000000000; // 液体流动
 
     private final Pattern chunkPattern = Pattern.compile("-?\\d+:-?\\d+");
-
+    private final Pattern sharePattern = Pattern.compile("[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}:-?\\d{1,10}");
+    
     private String name;
 
     private String title;
@@ -58,6 +60,7 @@ public class Dimension {
     private boolean explode;
 
     private EssentialService service;
+    private StateCache cache;
 
     private Map<String, Plot> plotMap = new HashMap<>();
 
@@ -74,46 +77,18 @@ public class Dimension {
      * @param explode 爆炸破坏
      * @param service 数据服务
      */
-    public Dimension(String name, String title, boolean protect, boolean pvp, boolean explode, EssentialService service) {
+    public Dimension(String name, String title, boolean protect, boolean pvp, boolean explode, EssentialService service, StateCache cache) {
         this.name = name;
         this.title = title;
         this.protect = protect;
         this.pvp = pvp;
         this.explode = explode;
         this.service = service;
+        this.cache = cache;
 
-        // 遍历该世界所有领地
+        // 初始化该维度所有领地
         for (Domain domain : service.selectDomainsByWorld(name)) {
-            // 获取领地的所有区块
-            Matcher matcher = chunkPattern.matcher(domain.getPlots());
-            while (matcher.find()) {
-                // 领地区块
-                String loc = matcher.group();
-                String[] xz = loc.split(":");
-                Plot plot = new Plot(loc, NumberConversions.toInt(xz[0]), NumberConversions.toInt(xz[1]), domain);
-                
-                plotMap.put(loc, plot);
-                domain.getPlotList().add(plot);
-                roadMap.remove(loc);
-
-                // 道路区块
-                for (String nearChunk : this.getNearChunk(loc)) {
-                    // 是否领地
-                    if (plotMap.containsKey(nearChunk)) { 
-                        continue;
-                    }
-                    // 道路是否共享
-                    List<Domain> roadBelong = roadMap.get(nearChunk);
-                    if (roadBelong == null) { 
-                        List<Domain> domains = new ArrayList<>();
-                        domains.add(domain);
-                        roadMap.put(nearChunk, domains);
-                    } else if (!roadBelong.contains(domain)) { 
-                        roadBelong.add(domain);
-                    }
-                }
-            }
-            domainMap.put(domain.getName(), domain);
+            this.initialDomain(domain);
         }
     }
 
@@ -296,6 +271,31 @@ public class Dimension {
     }
 
     /**
+     * 道路走向
+     * @param loc 位置
+     * @return 走向
+     */
+    public String roadDirection(String loc) {
+        String[] xz = loc.split(":");
+        int x = NumberConversions.toInt(xz[0]);
+        int z = NumberConversions.toInt(xz[1]);
+        StringBuilder builder = new StringBuilder();
+        if (roadMap.containsKey((x + 1) + ":" + z)) {
+            builder.append("e");
+        }
+        if (roadMap.containsKey(x + ":" + (z + 1))) {
+            builder.append("s");
+        }
+        if (roadMap.containsKey((x - 1) + ":" + z)) {
+            builder.append("w");
+        }
+        if (roadMap.containsKey(x + ":" + (z - 1))) {
+            builder.append("n");
+        }
+        return builder.toString();
+    }
+
+    /**
      * 地皮转让
      * @param domain 领地
      * @param target 对方
@@ -430,13 +430,20 @@ public class Dimension {
      * @return 触发结果
      */
     public EventResult triggerFlag(String loc, long setting, boolean worldSetting) {
-        EventResult result = new EventResult();
+        String cacheKey = "plot." + loc + setting + worldSetting;
+        EventResult result = EventResult.fromString(cache.get(cacheKey));
+        if (result != null) {
+            cache.expire(cacheKey, 1);
+            return result;
+        }
+        result = new EventResult();
         // 领地
         Plot plot = plotMap.get(loc);
         if (plot != null) {
             Domain domain = plot.getDomain();
             result.setAllow(this.isPermit(domain.getGlobe(), setting));
             result.setType(domain.getType());
+            cache.setex(cacheKey, 2, result.toString());
             return result;
         }
         // 道路上的爆炸活塞流水
@@ -444,11 +451,13 @@ public class Dimension {
        if ((roadBelong = roadMap.get(loc)) != null && !roadBelong.isEmpty() && (setting & (FLAG_FLOW | FLAG_EXPLODE | FLAG_PISTON)) != 0) {
            result.setAllow(false);
            result.setType(roadBelong.size() > 1 ? EventResult.IN_SHARE_ROAD : EventResult.IN_ROAD);
+           cache.setex(cacheKey, 2, result.toString());
            return result;
        }
          // 世界
         result.setAllow(worldSetting);
         result.setType(EventResult.WORLD_PROTECT);
+        cache.setex(cacheKey, 2, result.toString());
         return result;
     }
 
@@ -472,7 +481,13 @@ public class Dimension {
      * @return 触发结果
      */
     public EventResult triggerPermit(String loc, String uid, long setting, boolean worldSetting) {
-        EventResult result = new EventResult();
+        String cacheKey = "plot." + loc + setting + worldSetting;
+        EventResult result = EventResult.fromString(cache.get(cacheKey));
+        if (result != null) {
+            cache.expire(cacheKey, 1);
+            return result;
+        }
+        result = new EventResult();
         // 领地
         Plot plot = plotMap.get(loc);
         if (plot != null) {
@@ -480,36 +495,90 @@ public class Dimension {
             Ship ship = null;
             if (domain.getOwner().equals(uid)) {
                 // 本人
+                cache.setex(cacheKey, 2, result.toString());
                 return result;
-            } else if ((ship = service.selectShip(UUID.fromString(domain.getOwner()), UUID.fromString(uid))) != null) {
-                // 好友
-                if (ship.isIntimate()) {
-                    result.setAllow(this.isPermit(domain.getIntimate(), setting));
-                    result.setType(domain.getType());
-                } else {
-                    result.setAllow(this.isPermit(domain.getFriend(), setting));
-                    result.setType(domain.getType());
-                }
-                return result;
-            } else {
-                // 陌生人
-                result.setAllow(this.isPermit(domain.getGlobe(), setting));
+            } else if (domain.getShareMap().size() > 0 && domain.getShareMap().containsKey(uid)) {
+                // 单独权限
+                result.setAllow(this.isPermit(domain.getShareMap().get(uid), setting));
                 result.setType(domain.getType());
+                cache.setex(cacheKey, 2, result.toString());
+                return result;
+            } else if (domain.getType() == PLAYER && (ship = service.selectShip(UUID.fromString(domain.getOwner()), UUID.fromString(uid))) != null) {
+                result.setAllow(this.isPermit(ship.isIntimate() ? domain.getIntimate() : domain.getFriend(), setting));
+                result.setType(domain.getType());
+                cache.setex(cacheKey, 2, result.toString());
+                return result;
+            } else if (domain.getType() == LEAGUE) {
+                // TODO: 联盟
+
+                result.setType(domain.getType());
+                cache.setex(cacheKey, 2, result.toString());
                 return result;
             }
+            // 陌生人
+            result.setAllow(this.isPermit(domain.getGlobe(), setting));
+            result.setType(domain.getType());
+            cache.setex(cacheKey, 2, result.toString());
+            return result;
         }
         // 道路上不能建筑
         List<Domain> roadBelong;
         if ((roadBelong = roadMap.get(loc)) != null && !roadBelong.isEmpty() && (setting & PERMISSION_BUILD) != 0) {
             result.setAllow(false);
             result.setType(roadBelong.size() > 1 ? EventResult.IN_SHARE_ROAD : EventResult.IN_ROAD);
+            cache.setex(cacheKey, 2, result.toString());
             return result;
         }
         // 世界
         result.setAllow(worldSetting);
         result.setType(EventResult.WORLD_PROTECT);
+        cache.setex(cacheKey, 2, result.toString());
         return result;
     }
+
+    /**
+     * 初始化该世界的所有领地
+     */
+    private void initialDomain(Domain domain) {
+        // 获取领地的所有个人权限
+        Matcher shareMatcher = sharePattern.matcher(domain.getShare());
+        while (shareMatcher.find()) {
+            String[] kv = shareMatcher.group().split(":");
+            domain.getShareMap().put(kv[0], NumberConversions.toLong(kv[1]));
+        }
+        // 获取领地的所有区块
+        Matcher plotMatcher = chunkPattern.matcher(domain.getPlots());
+        while (plotMatcher.find()) {
+            // 领地区块
+            String loc = plotMatcher.group();
+            String[] xz = loc.split(":");
+            Plot plot = new Plot(loc, NumberConversions.toInt(xz[0]), NumberConversions.toInt(xz[1]), domain);
+            
+            plotMap.put(loc, plot);
+            domain.getPlotList().add(plot);
+            roadMap.remove(loc);
+
+            // 道路区块
+            for (String nearChunk : this.getNearChunk(loc)) {
+                // 是否领地
+                if (plotMap.containsKey(nearChunk)) { 
+                    continue;
+                }
+                // 道路是否共享
+                List<Domain> roadBelong = roadMap.get(nearChunk);
+                if (roadBelong == null) { 
+                    List<Domain> domains = new ArrayList<>();
+                    domains.add(domain);
+                    roadMap.put(nearChunk, domains);
+                } else if (!roadBelong.contains(domain)) { 
+                    roadBelong.add(domain);
+                }
+            }
+        }
+        domainMap.put(domain.getName(), domain);
+    }
+
+  
 
     public static class EventResult {
 
@@ -543,6 +612,18 @@ public class Dimension {
             this.type = type;
         }
 
+        /**
+         * 操作结果
+         * @param allow 是否允许
+         * @param type 结果类型
+         * @param domain 所在领地
+         */
+        public EventResult(boolean allow, int type, String domain) {
+            this.allow = allow;
+            this.type = type;
+            this.domain = domain;
+        }
+
         public boolean isAllow() {
             return allow;
         }
@@ -565,6 +646,24 @@ public class Dimension {
 
         public void setDomain(String domain) {
             this.domain = domain;
+        }
+
+        @Override
+        public String toString() {
+            return domain + "," + type +"," + allow;
+        }
+
+        /**
+         * 从文本获取
+         * @param result 结果文本
+         * @return 操作结果
+         */
+        public static EventResult fromString(String result) {
+            if (result == null || !result.contains(",")) {
+                return null;
+            }
+            String[] value = result.split(",");
+            return new EventResult(Boolean.parseBoolean(value[2]), NumberConversions.toInt(value[1]), value[0]);
         }
         
     }

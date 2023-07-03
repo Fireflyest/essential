@@ -46,6 +46,7 @@ import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.data.Config;
 import org.fireflyest.essential.data.EssentialYaml;
 import org.fireflyest.essential.data.Language;
+import org.fireflyest.essential.data.StateCache;
 import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.world.Dimension;
 import org.fireflyest.essential.world.Dimension.EventResult;
@@ -59,7 +60,7 @@ public class WorldEventListener implements Listener {
      * @param yaml 数据
      * @param service 数据
      */
-    public WorldEventListener(EssentialYaml yaml, EssentialService service, Map<String, Dimension> worldMap) {
+    public WorldEventListener(EssentialYaml yaml, EssentialService service, StateCache cache, Map<String, Dimension> worldMap) {
         this.worldMap = worldMap;
         // 加载主城
         WorldCreator creator = new WorldCreator(Config.MAIN_WORLD);
@@ -78,7 +79,7 @@ public class WorldEventListener implements Listener {
                     yaml.getWorld().getBoolean(String.format("%s.protect", key)),
                     yaml.getWorld().getBoolean(String.format("%s.pvp", key)),
                     yaml.getWorld().getBoolean(String.format("%s.explode", key)),
-                    service);
+                    service, cache);
             worldMap.put(key, dimension);
             // 边界
             int border = yaml.getWorld().getInt(String.format("%s.border", key));
@@ -123,7 +124,7 @@ public class WorldEventListener implements Listener {
 
         if (event.getCause() == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL) {
             Player player = event.getPlayer();
-            if (player == null) {
+            if (player == null || player.hasPermission("essential.build")) {
                 return;
             }
             String worldName = event.getBlock().getWorld().getName();
@@ -276,6 +277,9 @@ public class WorldEventListener implements Listener {
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         Player player = ((Player) event.getTargetEntity());
+        if (player.hasPermission("essential.build")) {
+            return;
+        }
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
@@ -311,6 +315,9 @@ public class WorldEventListener implements Listener {
         String worldName = event.getPlayer().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         Player player = event.getPlayer();
+        if (player.hasPermission("essential.build")) {
+            return;
+        }
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(player.getLocation().getChunk());
@@ -346,6 +353,9 @@ public class WorldEventListener implements Listener {
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         Player player = event.getPlayer();
+        if (player.hasPermission("essential.build")) {
+            return;
+        }
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
@@ -381,6 +391,9 @@ public class WorldEventListener implements Listener {
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         Player player = event.getPlayer();
+        if (player.hasPermission("essential.build")) {
+            return;
+        }
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
@@ -416,6 +429,9 @@ public class WorldEventListener implements Listener {
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         Player player = event.getPlayer();
+        if (player.hasPermission("essential.build")) {
+            return;
+        }
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
@@ -451,6 +467,9 @@ public class WorldEventListener implements Listener {
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         Player player = event.getPlayer();
+        if (player.hasPermission("essential.build")) {
+            return;
+        }
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
@@ -480,6 +499,9 @@ public class WorldEventListener implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
+        if (player.hasPermission("essential.admin")) {
+            return;
+        }
         String worldName = player.getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         String uid = player.getUniqueId().toString();
@@ -609,6 +631,9 @@ public class WorldEventListener implements Listener {
         boolean isContainer = block.getState() instanceof Container;
 
         Player player = event.getPlayer();
+        if (player.hasPermission("essential.admin")) {
+            return;
+        }
         String worldName = player.getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         String uid = player.getUniqueId().toString();
