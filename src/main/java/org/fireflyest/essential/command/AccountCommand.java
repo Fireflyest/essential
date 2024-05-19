@@ -11,6 +11,7 @@ public class AccountCommand extends ComplexCommand {
         sender.sendMessage("§b/account changepw 旧密码 新密码  §f - 修改密码");
         sender.sendMessage("§b/account email 邮箱                   §f - 绑定邮箱");
         sender.sendMessage("§b/account prove 认证码                 §f - 认证邮箱");
+        sender.sendMessage("§b/account legal                           §f - 正版免登录");
         return true;
     }
     

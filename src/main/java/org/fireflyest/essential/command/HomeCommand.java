@@ -45,11 +45,12 @@ public class HomeCommand extends SimpleCommand {
             return true;
         }
         cache.set(player.getName() + ".base.back", SerializationUtil.serialize(player.getLocation()));
-        player.sendMessage(Language.SAVE_POINT);
 
         Location loc = SerializationUtil.deserialize(home.getLoc(), Location.class);
-        TeleportUtils.teleportTo(player, loc, player.hasPermission("essential.vip"));
-        player.sendMessage(Language.TELEPORT_POINT.replace("%point%", "home(" + arg1 + ")"));
+        TeleportUtils.teleportTo(player, loc, player.hasPermission("essential.vip"), "家" + arg1);
+
+        player.closeInventory();
+
         return true;
     }
 

@@ -34,6 +34,7 @@ public class PlotTpsetCommand extends SubCommand {
         Dimension dimension = worldMap.get(worldName);
         if (dimension == null) {
             sender.sendMessage(Language.PLOT_WORLD_UNKNOWN);
+            player.closeInventory();
             return true;
         }
         String loc = player.getLocation().getChunk().getX() + ":" + player.getLocation().getChunk().getZ();
@@ -41,12 +42,14 @@ public class PlotTpsetCommand extends SubCommand {
         Plot plot = dimension.getPlot(loc);
         if (plot == null) {
             sender.sendMessage(Language.PLOT_OUTSIDE);
+            player.closeInventory();
             return true;
         }
 
         Domain domain = plot.getDomain();
         if (domain == null) {
             sender.sendMessage(Language.PLOT_NON_EXISTENT);
+            player.closeInventory();
             return true;
         }
         if (!domain.getOwner().equals(player.getUniqueId().toString())) {
@@ -57,6 +60,8 @@ public class PlotTpsetCommand extends SubCommand {
         domain.setCenter(SerializationUtil.serialize(player.getLocation()));
         service.updateDomainCenter(domain.getCenter(), domain.getName());
         sender.sendMessage(Language.PLOT_SET_CENTER);
+
+        player.closeInventory();
 
         return true;
     }

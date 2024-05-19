@@ -14,5 +14,14 @@ public class StateCache extends CacheService<String> {
 
     public static final String DOMAIN_STAY = ".domain.stay";
 
+    public static final String ACCOUNT_LEGAL = ".account.legal";
+    public static final String ACCOUNT_AUTO = ".account.auto";
+    public static final String ACCOUNT_STATE = ".account.state";
+
+    public static final String SERVER_MAINTAIN = "server.maintain";
+
+    public static final String CHAT_RANGE = ".chat.range";
+
+    public static final String SERVERS_CHANGE = ".servers.change";
 
 }

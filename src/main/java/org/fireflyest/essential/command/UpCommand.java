@@ -38,7 +38,6 @@ public class UpCommand extends SimpleCommand {
         }
 
         cache.set(player.getName() + ".base.back", SerializationUtil.serialize(player.getLocation()));
-        player.sendMessage(Language.SAVE_POINT);
         
         Location loc = player.getLocation().add(0, Double.parseDouble(arg1), 0);
         Location f = loc.clone().add(0, -1, 0);

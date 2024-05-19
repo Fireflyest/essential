@@ -2,13 +2,15 @@ package org.fireflyest.essential.listener;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
+import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -18,17 +20,20 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseArmorEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -40,6 +45,8 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.ChunkPopulateEvent;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.structure.Structure;
 import org.bukkit.structure.StructureManager;
 import org.fireflyest.essential.Essential;
@@ -62,14 +69,19 @@ public class WorldEventListener implements Listener {
      */
     public WorldEventListener(EssentialYaml yaml, EssentialService service, StateCache cache, Map<String, Dimension> worldMap) {
         this.worldMap = worldMap;
-        // 加载主城
-        WorldCreator creator = new WorldCreator(Config.MAIN_WORLD);
-        creator.createWorld();
 
         worldMap.clear();
+        List<String> files = Arrays.asList(Bukkit.getWorldContainer().list());
+        
         // 加载世界数据
         for (String key : yaml.getWorld().getKeys(false)) {
             World world = Bukkit.getWorld(key);
+            if (world == null && files.contains(key)) {
+                ChunkGenerator chunkGenerator = Essential.getPlugin().getDefaultWorldGenerator(key, key);
+                WorldCreator creator = new WorldCreator(key)
+                    .generator(chunkGenerator);
+                world = creator.createWorld();
+            }
             if (world == null) {
                 continue;
             }
@@ -84,29 +96,33 @@ public class WorldEventListener implements Listener {
             // 边界
             int border = yaml.getWorld().getInt(String.format("%s.border", key));
             world.getWorldBorder().setSize(border);
+
+            // 死亡保护
+            if (Config.KEEP_INVENTORY) {
+                world.setGameRule(GameRule.KEEP_INVENTORY, true);
+            }
+
+            // 地皮世界生物生成限制
+            if (world.getName().equals(Config.PLOT_WORLD)) {
+                world.setSpawnLimit(SpawnCategory.MONSTER, 10);
+                world.setTicksPerSpawns(SpawnCategory.MONSTER, 400);
+                world.setSpawnLimit(SpawnCategory.ANIMAL, 10);
+                world.setTicksPerSpawns(SpawnCategory.ANIMAL, 600);
+                world.setSpawnLimit(SpawnCategory.WATER_ANIMAL, 10);
+                world.setTicksPerSpawns(SpawnCategory.WATER_ANIMAL, 400);
+                world.setSpawnLimit(SpawnCategory.WATER_AMBIENT, 10);
+                world.setTicksPerSpawns(SpawnCategory.WATER_AMBIENT, 400);
+                world.setSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE, 10);
+                world.setTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE, 600);
+                world.setSpawnLimit(SpawnCategory.AMBIENT, 10);
+                world.setTicksPerSpawns(SpawnCategory.AMBIENT, 600);
+                world.setSpawnLimit(SpawnCategory.AXOLOTL, 10);
+                world.setTicksPerSpawns(SpawnCategory.AXOLOTL, 600);
+            }
         }
 
         // 结构体
-        if (Config.STRUCTURE_ENABLE) {
-            StructureManager manager = Bukkit.getServer().getStructureManager();
-            File folder = new File(Essential.getPlugin().getDataFolder(), "structures");
-                folder.mkdirs();
-                for (String structName : folder.list()) {
-                    if (!structName.endsWith(".struct")) {
-                        continue;
-                    }
-                    File structFile = new File(folder, structName);
-                    try {
-                        Structure loadStructure = manager.loadStructure(structFile);
-                        NamespacedKey key = NamespacedKey.fromString(structName.replace(".struct", ""));
-                        manager.registerStructure(key, loadStructure);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            String info = Language.STRUCTURE_LOAD.replace("%num%", String.valueOf(manager.getStructures().size()));
-            Essential.getPlugin().getLogger().info(info);
-        }
+        this.loadStructure();
     }
 
     /**
@@ -132,7 +148,7 @@ public class WorldEventListener implements Listener {
             String uid = player.getUniqueId().toString();
             if (dimension != null) {
                 String loc = this.getLoc(event.getBlock().getChunk());
-                Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_IGNITE, dimension.isProtect());
+                Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_IGNITE, !dimension.isProtect());
                 if  (!result.isAllow()) {
                     event.setCancelled(true);
                     switch (result.getType()) {
@@ -162,6 +178,32 @@ public class WorldEventListener implements Listener {
      */
     @EventHandler
     public void onBlockBurn(BlockBurnEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        if (dimension != null && dimension.isProtect()) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 融化
+     * @param event 事件
+     */
+    @EventHandler
+    public void onBlockFade(BlockFadeEvent event) {
+        String worldName = event.getBlock().getWorld().getName();
+        Dimension dimension = worldMap.get(worldName);
+        if (dimension != null && dimension.isProtect()) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 凋落
+     * @param event 事件
+     */
+    @EventHandler
+    public void onLeavesDecay(LeavesDecayEvent event) {
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         if (dimension != null && dimension.isProtect()) {
@@ -242,13 +284,22 @@ public class WorldEventListener implements Listener {
 
     @EventHandler
     public void onBlockFromTo(BlockFromToEvent event) {
-        boolean isLava = event.getBlock().getType().equals(Material.LAVA);
         String worldName = event.getBlock().getWorld().getName();
         Dimension dimension = worldMap.get(worldName);
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = 
-                isLava ? dimension.triggerFlag(loc, Dimension.FLAG_FLOW_LAVA) : dimension.triggerFlag(loc, Dimension.FLAG_FLOW_WATER);
+            Dimension.EventResult result;
+            switch (event.getBlock().getType()) {
+                case LAVA:
+                    result = dimension.triggerFlag(loc, Dimension.FLAG_FLOW_LAVA);
+                    break;
+                case WATER:
+                    result = dimension.triggerFlag(loc, Dimension.FLAG_FLOW_WATER);
+                    break;
+                default:
+                    result = dimension.triggerFlag(loc, Dimension.PERMISSION_DESTROY);
+                    break;
+            }
             if  (!result.isAllow()) {
                 event.setCancelled(true);
             }
@@ -283,7 +334,7 @@ public class WorldEventListener implements Listener {
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_ARMOR, dimension.isProtect());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_ARMOR, !dimension.isProtect());
             if  (!result.isAllow()) {
                 event.setCancelled(true);
                 switch (result.getType()) {
@@ -321,7 +372,7 @@ public class WorldEventListener implements Listener {
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(player.getLocation().getChunk());
-            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_ARMOR, dimension.isProtect());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_ARMOR, !dimension.isProtect());
             if  (!result.isAllow()) {
                 event.setCancelled(true);
                 switch (result.getType()) {
@@ -359,7 +410,7 @@ public class WorldEventListener implements Listener {
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_BUCKET, dimension.isProtect());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_BUCKET, !dimension.isProtect());
             if  (!result.isAllow()) {
                 event.setCancelled(true);
                 switch (result.getType()) {
@@ -397,7 +448,7 @@ public class WorldEventListener implements Listener {
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_BUCKET, dimension.isProtect());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_BUCKET, !dimension.isProtect());
             if  (!result.isAllow()) {
                 event.setCancelled(true);
                 switch (result.getType()) {
@@ -435,7 +486,7 @@ public class WorldEventListener implements Listener {
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_PLACE, dimension.isProtect());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_PLACE, !dimension.isProtect());
             if  (!result.isAllow()) {
                 event.setCancelled(true);
                 switch (result.getType()) {
@@ -473,7 +524,7 @@ public class WorldEventListener implements Listener {
         String uid = player.getUniqueId().toString();
         if (dimension != null) {
             String loc = this.getLoc(event.getBlock().getChunk());
-            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_DESTROY, dimension.isProtect());
+            Dimension.EventResult result = dimension.triggerPermit(loc, uid, Dimension.PERMISSION_DESTROY, !dimension.isProtect());
             if  (!result.isAllow()) {
                 event.setCancelled(true);
                 switch (result.getType()) {
@@ -646,6 +697,27 @@ public class WorldEventListener implements Listener {
             }
         }
     }
+
+
+    @EventHandler
+    public void onChunkPopulate(ChunkPopulateEvent event) {
+        // Chunk chunk = event.getChunk();
+        // World world = chunk.getWorld();
+        // if (!world.getName().equals(Config.PLOT_WORLD)) {
+        //     return;
+        // }
+        // ChunkGenerator generator = Essential.getPlugin().getDefaultWorldGenerator(world.getName(), "plot");
+        // ChunkData chunkData = Bukkit.createChunkData(world);
+        // for (int i = 0; i < 16; i++) {
+        //     for (int j = 0; j < 16; j++) {
+        //         for (int k = 3; k < 59; k++) {
+        //             chunkData.setBlock(i, j, k, Material.DIRT);
+        //         }
+        //     }
+        // }
+        // generator.generateBedrock(world, new Random(world.getSeed()), chunk.getX(), chunk.getZ(), chunkData);
+    }
+
     
     /**
      * 区块转化为键
@@ -666,6 +738,32 @@ public class WorldEventListener implements Listener {
         player.sendMessage(Language.PLOT_FLAG
             .replace("%domain%", domain)
             .replace("%flag%", permission));
+    }
+
+    /**
+     * 加载结构体
+     */
+    private void loadStructure() {
+        if (Config.STRUCTURE_ENABLE) {
+            StructureManager manager = Bukkit.getServer().getStructureManager();
+            File folder = new File(Essential.getPlugin().getDataFolder(), "structures");
+                folder.mkdirs();
+                for (String structName : folder.list()) {
+                    if (!structName.endsWith(".struct")) {
+                        continue;
+                    }
+                    File structFile = new File(folder, structName);
+                    try {
+                        Structure loadStructure = manager.loadStructure(structFile);
+                        NamespacedKey key = NamespacedKey.fromString(structName.replace(".struct", ""));
+                        manager.registerStructure(key, loadStructure);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            String info = Language.STRUCTURE_LOAD.replace("%num%", String.valueOf(manager.getStructures().size()));
+            Essential.getPlugin().getLogger().info(info);
+        }
     }
 
 }

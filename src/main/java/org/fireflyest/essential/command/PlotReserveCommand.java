@@ -4,14 +4,14 @@ import java.util.Map;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.fireflyest.craftcommand.command.SimpleCommand;
+import org.fireflyest.craftcommand.command.SubCommand;
 import org.fireflyest.essential.bean.Domain;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.world.Dimension;
 import org.fireflyest.essential.world.Plot;
 
-public class PlotReserveCommand extends SimpleCommand {
+public class PlotReserveCommand extends SubCommand {
 
     private Map<String, Dimension> worldMap;
     private EssentialService service;

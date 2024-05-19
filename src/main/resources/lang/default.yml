@@ -1,147 +1,153 @@
+Version: '${project.version}'
 PluginName: "§f§l[§c§lEssential§f§l]"
 
 Title: '🔔§f'
-Reloading: '🛠§f配置文件重载中...'
-Reloaded: '🛠§f配置文件重载完成!'
-OnlyPlayerUse: '🔔§f该指令仅限玩家输入'
-NotPermission: '🔔§f你没有使用该指令的权限 §3%permission%'
-OfflinePlayer: '🔔§f玩家§3%player%§f不在线或不存在'
-SucceedSwitch: '🔔§f成功切换状态'
-PluginLoad: '🔔§f成功加载插件§3'
-PluginEnable: '🔔§f成功启用插件§3'
-PluginEnableFail: '🔔§f无法启用插件§3'
-PluginDisable: '🔔§f成功关闭插件§3'
-MotdMaintain: '🔔§f服务器设置为维护状态'
-MotdUpdate: '🔔§f已更新motd'
+Reloading: '§e§l#§f配置文件重载中...'
+Reloaded: '§e§l#§f配置文件重载完成!'
+OnlyPlayerUse: '§c§l#§f该指令仅限玩家输入'
+NotPermission: '§c§l#§f你没有使用该指令的权限 §3%permission%'
+OfflinePlayer: '§c§l#§f玩家§3%player%§f不在线或不存在'
+SucceedSwitch: '§a§l#§f成功切换状态'
+PluginLoad: '§a§l#§f成功加载插件§3'
+PluginEnable: '§a§l#§f成功启用插件§3'
+PluginEnableFail: '§4§l#§f无法启用插件§3'
+PluginDisable: '§e§l#§f成功关闭插件§3'
+MotdMaintain: '§4§l#§f服务器设置为维护状态'
+MotdUpdate: '§a§l#§f已更新motd'
 
-WorldCreate: '🌏正在创建世界§3'
-WorldUnload: '🌏卸载世界§3'
+WorldClean: '服务器清理倒计时'
+WorldCreate: '§e§l#§f正在创建世界§3'
+WorldUnload: '§e§l#§f卸载世界§3'
 
-GroupAdd: '📗§f已被添加到权限组§3%group%§f，输入§3 /group§f查看更多信息'
-PermissionAdd: '📗§f授予权限§3%permission%§f，输入§3 /group§f查看更多信息'
-PrefixAdd: '📗§f授予头衔§3%prefix%§f，输入§3 /prefix§f查看更多信息'
-PrefixChange: '📗§f修改头衔'
+GroupAdd: '§a§l#§f已被添加到权限组§3%group%§f，输入§3 /group§f查看更多信息'
+PermissionAdd: '§a§l#§f授予权限§3%permission%§f，输入§3 /group§f查看更多信息'
+PrefixAdd: '§a§l#§f授予头衔§3%prefix%§f，输入§3 /prefix§f查看更多信息'
+PrefixChange: '§e§l#§f修改头衔'
 
-ShipApplyFor: 🎭§f已发送好友申请
-ShipAccept: 🎭§f已接受好友申请
-ShipExist: 🎭§f已经是对方的好友
-ShipNew: 🎭§f接收到新的好友请求
-ShipNull: 🎭§f请先建立好友关系
-ShipUp: 🎭§f已发送关系变更请求
-ShipUpFail: 🎭§f无法更改亲密关系
-ShipUnknown: 🎭§f未知关系
-ShipLimit: 🎭§f已达到该种关系的最大数量
-ShipMaster: 🎭§f已发送拜师请求
-ShipApprentice: 🎭§f已发送收徒邀请
-ShipLover: 🎭§f已发送交往请求
-ShipCouple: 🎭§f已发送求婚
-ShipRequestNull: 🎭§f没有需要处理的请求
-ShipRefuse: 🎭§f已拒绝对方请求
-ShipBreakIntimate: 🎭§f已决裂为普通好友
-ShipBreak: 🎭§f已断绝好友关系
+ShipApplyFor: '§b§l#§f已发送好友申请'
+ShipAccept: '§a§l#§f已接受好友申请'
+ShipExist: '§c§l#§f已经是对方的好友'
+ShipNew: '§b§l#§f接收到新的好友请求'
+ShipNull: '§c§l#§f请先建立好友关系'
+ShipUp: '§b§l#§f已发送关系变更请求'
+ShipUpFail: '§c§l#§f无法更改亲密关系'
+ShipUnknown: '§c§l#§f未知关系'
+ShipLimit: '§c§l#§f已达到该种关系的最大数量'
+ShipMaster: '§b§l#§f已发送拜师请求'
+ShipApprentice: '§b§l#§f已发送收徒邀请'
+ShipLover: '§b§l#§f已发送交往请求'
+ShipCouple: '§b§l#§f已发送求婚'
+ShipRequestNull: '§7§l#§f没有需要处理的请求'
+ShipRefuse: '§e§l#§f已拒绝对方请求'
+ShipBreakIntimate: '§e§l#§f已决裂为普通好友'
+ShipBreak: '§e§l#§f已断绝好友关系'
 
-ItemRepair: '⚒§f手持物品耐久已修复'
-ItemEnchant: '⚒§f手持物品添加附魔'
+ItemRepair: '§a§l#§f手持物品耐久已修复'
+ItemEnchant: '§a§l#§f手持物品添加附魔'
 
 KitsNewPlayer: '🎁'
 
-MaximumAmount: '🏡§f你已经设置了太多家了'
-SucceedSettle: '🏡§f成功设置家§3%home%'
-SucceedDelete: '🏡§f成功删除家§3%home%'
-HaveNotSettle: '🏡§f没有设置家§3%home%'
+MaximumAmount: '§c§l#§f你已经设置了太多家了'
+SucceedSettle: '§a§l#§f成功设置家§3%home%'
+SucceedDelete: '§e§l#§f成功删除家§3%home%'
+HaveNotSettle: '§c§l#§f没有设置家§3%home%'
 
-HaveNotSetKit: '🔔§f工具包§3%kit%§f不存在'
-DisposableKit: '🔔§f工具包§3%kit%§f只能使用一次'
+HaveNotSetKit: '§c§l#§f工具包§3%kit%§f不存在'
+DisposableKit: '§c§l#§f工具包§3%kit%§f只能使用一次'
+GiveKit: '§a§l#§f工具包§3%kit%§f已发放'
 
-ChatGlobal: '📢聊天范围切换为全部可见'
-ChatNear: '📢聊天范围切换为附近可见'
-ChatRoom: '📢已加入聊天室'
-ChatRoomFail: '📢加入失败，密码错误'
+ChatGlobal: '§a§l#§f聊天范围切换为全部可见'
+ChatNear: '§a§l#§f聊天范围切换为附近可见'
+ChatRoom: '§a§l#§f已加入聊天室'
+ChatRoomFail: '§c§l#§f加入失败，密码错误'
 
-CooldownToUse: '⏳§f冷却中§3%time%'
+CooldownToUse: '§c§l#§f冷却中§3%time%'
 
-HaveNotSetPoi: '🧿§f没有设置点§3%point%'
-TeleportPoint: '🧿§f正在传送到§3%point%'
-SavePoint: '🧿§f已保存返回点'
-CancelWaiting: '🧿§f你取消了传送'
-AlreadyHasTper: '🧿§f对方有一条未处理的申请'
-SucceedSendTp: '🧿§f成功发出传送请求'
-TeleportApply: '🧿§f玩家§3%player%§f请求传送到你身边'
-TeleportIvttp: '🧿§f玩家§3%player%§f邀请你传送到他身边'
-TpApplyRefuse: '🧿§f对方拒绝了你的请求'
-ApplyRefuse: '🧿§f已拒绝传送请求'
-ApplyAccept: '🧿§f已接受传送请求'
+HaveNotSetPoi: '§c§l#§f没有设置点§3%point%'
+TeleportPoint: '§a§l#§f正在传送到§3%point%'
+CancelWaiting: '§e§l#§f你取消了传送'
+AlreadyHasTper: '§c§l#§f对方有一条未处理的申请'
+SucceedSendTp: '§b§l#§f成功发出传送请求'
+TeleportApply: '§b§l#§f玩家§3%player%§f请求传送到你身边'
+TeleportIvttp: '§b§l#§f玩家§3%player%§f邀请你传送到他身边'
+TpApplyRefuse: '§c§l#§f对方拒绝了你的请求'
+ApplyRefuse: '§e§l#§f已拒绝传送请求'
+ApplyAccept: '§a§l#§f已接受传送请求'
 
-StructureCreateTip: ⚒角点已清除，请开始选择第一个点
-StructureCreateFirst: ⚒成功选择第一个点 §3%point%§f，请接着选择第二个点
-StructureCreateSecond: ⚒成功选择第二个点 §3%point%§f，输入 §3/structure create [name] §f完成创建
-StructureCreateFinish: ⚒已创建结构
-StructureCreateFail: ⚒范围选择失败，请重新选择
-StructurePlaceFail: ⚒请选择有效建筑地点
-StructurePlaceNull: ⚒建筑结构体不存在
-StructureLoad: 成功加载结构体%num%个
+StructureCreateTip: '§b§l#§f角点已清除，请开始选择第一个点'
+StructureCreateFirst: '§a§l#§f成功选择第一个点 §3%point%§f，请接着选择第二个点'
+StructureCreateSecond: '§a§l#§f成功选择第二个点 §3%point%§f，输入 §3/structure create [name] §f完成创建'
+StructureCreateFinish: '§a§l#§f已创建结构'
+StructureCreateFail: '§c§l#§f范围选择失败，请重新选择'
+StructurePlaceFail: '§c§l#§f请选择有效建筑地点'
+StructurePlaceNull: '§c§l#§f建筑结构体不存在'
+StructureLoad: '成功加载结构体%num%个'
 
-PlotCreate: 🛖成功创建地皮 §3
-PlotExist: 🛖同名称地皮已经存在
-PlotUpperLimit: 🛖已到达数量上限
-PlotWorldUnknown: 🛖无法在这个世界占有地皮
-PlotInDomain: 🛖该区块已被他人占领
-PlotInLeague: 🛖该区块已被联盟占领
-PlotServerProtect: 🛖无法在服务器保护区域创建
-PlotInRoad: 🛖无法在道路上创建
-PlotNonExistent: 🛖地皮不存在
-PlotNull: 🛖你还没有地皮
-PlotExpandNull: 🛖距离要扩张的地皮过于遥远
-PlotExpandFail: 🛖过于邻近他人地皮
-PlotExpandCost: 🛖无法承担地皮扩张费用 §3
-PlotOutside: 🛖请在地皮内执行此操作
-PlotForbid: 🛖你没有权限这样做
-PlotAbandonCenter: 🛖初始地皮无法抛弃
-PlotAbandon: 🛖地皮已被抛弃
-PlotRemove: 🛖地皮删除成功
-PlotGive: 🛖地皮转让成功
-PlotBeGiven: 🛖接收到他人转让的地皮 §3
-PlotPvp: 🛖区域内PVP未开启
-PlotProtectRoad: 🛖道路保护
-PlotProtectWorld: 🛖世界保护
-PlotSetCenter: 🛖已重新设置传送点
-PlotRename: 🛖已更新地皮名称
-PlotFlag: 🛖你没有地皮§3%domain%§f的§3%flag%§f权限
-PlotFlagSwitch: 🛖地皮§3%domain%§f的§3%flag%§f权限(%scope%)切换为 
-PlotEnter: 🛖进入地皮§3%domain% 
-PlotLeave: 🛖离开地皮§3%domain%
+PlotCreate: '§a§l#§f成功创建地皮 §3'
+PlotExist: '§c§l#§f同名称地皮已经存在'
+PlotUpperLimit: '§c§l#§f已到达数量上限'
+PlotWorldUnknown: '§c§l#§f无法在这个世界占有地皮'
+PlotInDomain: '§c§l#§f该区块已被他人占领'
+PlotInLeague: '§c§l#§f该区块已被联盟占领'
+PlotServerProtect: '§c§l#§f无法在服务器保护区域创建'
+PlotInRoad: '§c§l#§f无法在道路上创建'
+PlotNonExistent: '§c§l#§f地皮不存在'
+PlotNull: '§e§l#§f你还没有地皮'
+PlotExpandNull: '§c§l#§f距离要扩张的地皮过于遥远或已占领'
+PlotExpandFail: '§c§l#§f过于邻近他人地皮'
+PlotExpandCost: '§c§l#§f无法承担地皮扩张费用 §3'
+PlotOutside: '§e§l#§f请在地皮内执行此操作'
+PlotForbid: '§c§l#§f你没有权限这样做'
+PlotAbandonCenter: '§c§l#§f初始地皮无法抛弃'
+PlotAbandon: '§e§l#§f地皮已被抛弃'
+PlotRemove: '§e§l#§f地皮删除成功'
+PlotGive: '§e§l#§f地皮转让成功'
+PlotBeGiven: '§a§l#§f接收到他人转让的地皮 §3'
+PlotPvp: '§e§l#§f区域内PVP未开启'
+PlotProtectRoad: '§c§l#§f道路保护'
+PlotProtectWorld: '§c§l#§f世界保护'
+PlotSetCenter: '§a§l#§f已重新设置传送点'
+PlotRename: '§a§l#§f已更新地皮名称'
+PlotFlag: '§c§l#§f你没有地皮§3%domain%§f的§3%flag%§f权限'
+PlotFlagSwitch: '§a§l#§f地皮§3%domain%§f的§3%flag%§f权限(%scope%)切换为 '
+PlotEnter: '§b§l#§f进入地皮§3%domain%§f归属于§3%player%'
+PlotLeave: '§b§l#§f离开地皮§3%domain%'
 PlotReserve: 已将地皮划为服务器保留地
+PlotHelp: |
+  §b§l#§f按§3F3+Q§f开启区块范围显示
+  §b§l#§f右键地块占领工具创建地皮或扩张地皮
+  §b■私人占有 §6■联盟占有 §c■服务器占有
 
-CommandConfirm: 🔥请再次输入指令确认
-CommandArgument: 🔥输入的指令缺少必要的参数
+CommandConfirm: '§b§l#§f请再次输入指令确认'
+CommandArgument: '§c§l#§f输入的指令缺少必要的参数'
 
-EconomyPlayer: '💰§3%player%§f拥有: §3%money%'
+EconomyPlayer: '§e§l#§3%player%§f拥有: §3%money%'
 
 # 登录插件
-Register: '👻§f欢迎加入我们，输入§3/reg [密码] §f注册一个账户吧'
-DonRegister: '👻§f你还没有注册账户呢，输入§3/reg [密码] §f注册一个账户吧'
-HasRegister: '👻§f抱歉，这个游戏名已经被别人抢先注册啦'
-SucRegister: '👻§f成功注册账户，和大家交个朋友吧'
-BlankPassword: '👻§f密码不能包含空格哦'
-NamePassword: '👻§f你不能使用游戏名作为密码，因为容易被人盗号哦'
-SimplePassword: '👻§f你的密码太简单啦，这样不安全的'
-ShortPassword: '👻§f你的密码太短了，这样不安全的'
-Login: '👻§f很高兴你再次回来，输入§3/l [密码] §f登录吧'
-AutoLogin: '👻§f欢迎回来，已为您自动登录'
-HasLogin: '👻§f你已经登录过啦，输入§3/account §f了解更多哦'
-ErrorPassword: '👻§f密码错了，再重新输入吧,累计错误:§3%amount%'
-ErrorTooMuch: '👻§f密码错误次数过多'
-SucLogin: '👻§f成功登录，祝您游戏愉快'
-DonLogin: '👻§f你还没有登录，输入§3/l [密码] §f登录吧'
-SucChangePw: '👻§f成功修改密码'
-RemindEmail: '👻§f输入§3/account email [邮箱] §f绑定邮箱吧!'
-DonHasEmail: '👻§f该账号未绑定邮箱'
-SucSetEmail: '👻§f成功设置邮箱'
-InvalidEmail: '👻§f无效的邮箱'
-SucSendEmail: '👻§f邮件已成功发送到§3%email%'
-AlreadyProve: '👻§f你已经认证了邮箱'
-NewPlayer: '👻§f欢迎新玩家§3%player%§f加入ヾ(•ω•`)o'
-CommandError: '👻§f指令出错啦'
+Register: '§b§l#§f欢迎加入我们，输入§3/reg [密码] §f注册一个账户吧'
+DonRegister: '§b§l#§f你还没有注册账户呢，输入§3/reg [密码] §f注册一个账户吧'
+HasRegister: '§b§l#§f抱歉，这个游戏名已经被别人抢先注册啦'
+SucRegister: '§a§l#§f成功注册账户，和大家交个朋友吧'
+BlankPassword: '§c§l#§f密码不能包含空格哦'
+NamePassword: '§c§l#§f你不能使用游戏名作为密码，因为容易被人盗号哦'
+SimplePassword: '§c§l#§f你的密码太简单啦，这样不安全的'
+ShortPassword: '§c§l#§f你的密码太短了，这样不安全的'
+Login: '§b§l#§f很高兴你再次回来，输入§3/l [密码] §f登录吧'
+AutoLogin: '§a§l#§f欢迎回来，已为您自动登录'
+HasLogin: '§e§l#§f你已经登录过啦，输入§3/account §f了解更多哦'
+ErrorPassword: '§c§l#§f密码错了，再重新输入吧,累计错误:§3%amount%'
+ErrorTooMuch: '§c§l#§f密码错误次数过多'
+SucLogin: '§a§l#§f成功登录，祝您游戏愉快'
+DonLogin: '§c§l#§f你还没有登录，输入§3/l [密码] §f登录吧'
+SucChangePw: '§a§l#§f成功修改密码'
+RemindEmail: '§b§l#§f输入§3/account email [邮箱] §f绑定邮箱吧!'
+DonHasEmail: '§c§l#§f该账号未绑定邮箱'
+SucSetEmail: '§a§l#§f成功设置邮箱'
+InvalidEmail: '§c§l#§f无效的邮箱'
+SucSendEmail: '§a§l#§f邮件已成功发送到§3%email%'
+AlreadyProve: '§e§l#§f你已经认证了邮箱'
+NewPlayer: '§b§l#§f欢迎新玩家§3%player%§f加入ヾ(•ω•`)o'
+CommandError: '§c§l#§f指令出错啦'
 IllegalName: '游戏名仅限字母、数字和下划线哦'
 
 Motd: '§f§m =  ==§b§l✧§e§l『§6§l边 缘 之 境§e§l』§b§l✧§f§m==  = §r        §b§emc.craftedge.cn   §3§l QQ群§f: §a§l643351215§7'

@@ -115,7 +115,6 @@ public class PermissionPage extends TemplatePage {
         ItemStack prefix = new ButtonItemBuilder(Material.NAME_TAG)
                 .actionOpenPage(Essential.VIEW_PREFIX + "." + target)
                 .name("§e个人称号")
-                .lore("§r§f点击跳转")
                 .build();
         buttonMap.put(46, prefix);
     }

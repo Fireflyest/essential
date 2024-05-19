@@ -34,11 +34,9 @@ public class BackCommand extends SimpleCommand {
         String loc = cache.get(player.getName() + ".base.back");
         if (loc != null) {
             cache.set(player.getName() + ".base.back", SerializationUtil.serialize(player.getLocation()));
-            player.sendMessage(Language.SAVE_POINT);
 
             Location location = SerializationUtil.deserialize(loc, Location.class);
-            TeleportUtils.teleportTo(player, location, player.hasPermission("essential.vip"));
-            player.sendMessage(Language.TELEPORT_POINT.replace("%point%", "back"));
+            TeleportUtils.teleportTo(player, location, player.hasPermission("essential.vip"), "上个记录点");
         }
         return true;
     }

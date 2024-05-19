@@ -49,11 +49,9 @@ public class WarpCommand extends SimpleCommand {
         Point point = service.selectPoint(arg1);
         if (point != null) {
             cache.set(player.getName() + ".base.back", SerializationUtil.serialize(player.getLocation()));
-            player.sendMessage(Language.SAVE_POINT);
 
             Location loc = SerializationUtil.deserialize(point.getLoc(), Location.class);
-            TeleportUtils.teleportTo(player, loc, player.hasPermission("essential.vip"));
-            player.sendMessage(Language.TELEPORT_POINT.replace("%point%", arg1));
+            TeleportUtils.teleportTo(player, loc, player.hasPermission("essential.vip"), arg1);
         } else {
             sender.sendMessage(Language.HAVE_NOT_SET_POI.replace("%point%", arg1));
         }

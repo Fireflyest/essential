@@ -7,6 +7,9 @@ depend: [ProtocolLib,CraftGUI]
 authors: [Fireflyest]
 
 commands:
+  test:
+    description: 测试
+    usage: /test
   login:
     description: 登录
     aliases: [l]
@@ -70,6 +73,9 @@ commands:
   plot: 
     description: 地皮
     usage: /plot
+  servers:
+    description: 服务器菜单
+    usage: /servers <server>
   tphere:
     description: 邀请他人传送
     permission: essential.tphere
@@ -226,6 +232,21 @@ commands:
     permission: essential.structure
     usage: /structure
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.structure"
+  tools:
+    description: 工具
+    permission: essential.tools
+    usage: /tools <action> <value>
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.tools"
+  clean:
+    description: 清理
+    permission: essential.clean
+    usage: /clean
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.clean"
+  accelerate:
+    description: 加速
+    usage: /accelerate <time>
+    permission: lobby.accelerate
+    permission-message: "§6✋§f你没有使用该指令的权限§3 lobby.accelerate"
   money:
     description: 查看游戏币
     usage: /money <玩家>
@@ -244,6 +265,11 @@ commands:
     usage: /balance
     permission: essential.balance
     permission-message: "§6✋§f你没有使用该指令的权限§3 essential.balance"
+  tip:
+    description: 提示
+    usage: /tip
+    permission: essential.tip
+    permission-message: "§6✋§f你没有使用该指令的权限§3 essential.tip"
   prefix:
     description: 称号
     usage: /prefix [玩家] [称号] <天数>
@@ -285,6 +311,9 @@ permissions:
   essential.pay:
     default: op
     description: 支付游戏币
+  essential.kit:
+    default: op
+    description: 工具包
   essential.money:
     default: op
     description: 查看他人游戏币

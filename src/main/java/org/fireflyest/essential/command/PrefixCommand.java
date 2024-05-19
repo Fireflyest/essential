@@ -49,6 +49,7 @@ public class PrefixCommand extends SimpleCommand {
         Prefix prefix = service.selectPrefix(id);
         if (prefix.getOwner().equals(player.getUniqueId().toString())) {
             service.updatePrefix(prefix.getValue(), player.getUniqueId());
+            player.closeInventory();
             player.sendMessage(Language.PREFIX_CHANGE);
         }
         return true;

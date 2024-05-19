@@ -7,9 +7,16 @@ import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.fireflyest.craftcommand.command.SimpleCommand;
+import org.fireflyest.craftmsg.MessageService;
 import org.fireflyest.essential.data.Language;
 
 public class ModeCommand extends SimpleCommand {
+
+    private final MessageService message;
+
+    public ModeCommand(MessageService message) {
+        this.message = message;
+    }
 
     @Override
     protected boolean execute(@Nonnull CommandSender sender) {
@@ -40,7 +47,7 @@ public class ModeCommand extends SimpleCommand {
      */
     private void switchMode(Player player) {
         player.setGameMode(GameMode.SURVIVAL.equals(player.getGameMode()) ? GameMode.CREATIVE : GameMode.SURVIVAL);
-        player.sendMessage(Language.TITLE + "模式: §3" + player.getGameMode().name().toLowerCase());
+        message.popMessage(player, GameMode.SURVIVAL.equals(player.getGameMode()) ? "生存模式" : "创造模式");
     }
 
 }

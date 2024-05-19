@@ -57,11 +57,11 @@ public class TimingPage extends TemplatePage {
     @Override
     public @Nullable ItemStack getItem(int slot) {
         switch (slot) {
-            case 45:
+            case 51:
                 timings.refresh();
                 temps.clear();
                 break;
-            case 46:
+            case 52:
                 timings.reload();
                 timings.refresh();
                 temps.clear();
@@ -86,37 +86,52 @@ public class TimingPage extends TemplatePage {
 
         for (Line line : timings.getLines()) {
             String color = line.star ? "$<hg=#e17055:#fab1a0>" : "$<hg=#00b894:#55efc4>";
-            String end = "$<c=#74b9ff>Avg§7: §f" + line.avg + ((line.violations > 0) ? " $<c=#a29bfe>V§7: §f" + line.violations : "");
+            String end = "$<c=#74b9ff>A§f" + line.avg + ((line.violations > 0) ? " $<c=#a29bfe>V§f" + line.violations : "");
+
             if (line.name.startsWith("Task")) {
+                // 任务
                 Matcher matcher = pattern.matcher(line.name);
                 String name = "";
                 String task = "";
                 if (matcher.find()) {
-                    name = matcher.group().substring(6);                    
+                    name = matcher.group().substring(6);
+                    if (name.contains(" ")) {
+                        name = name.substring(0, name.indexOf(" "));
+                    }
                 }
                 if (matcher.find()) {
                     task = matcher.group().substring(10);
                     int lastBrackets = task.lastIndexOf("(");
                     task = task.substring(task.lastIndexOf(".") + 1, lastBrackets == -1 ? task.length() : lastBrackets);
+                    if (task.contains("$")) {
+                        task = task.substring(0, task.indexOf("$"));
+                    }
                 }
                 taskMap.computeIfAbsent(name, k -> new ButtonItemBuilder(Material.BOOK).name("§e§l" + k).colorful());
                 taskMap.get(name).lore(this.getStartString(color, task, line.count, line.time) + end);
             } else if (line.name.startsWith("Plugin") && !line.name.equals("Plugins")) {
+                // 插件
                 Matcher matcher = pattern.matcher(line.name);
                 String name = "";
                 String event = "";
                 if (matcher.find()) {
-                    name = matcher.group().substring(8);                    
+                    name = matcher.group().substring(8);
+                    if (name.contains(" ")) {
+                        name = name.substring(0, name.indexOf(" "));
+                    }                
                 }
                 if (matcher.find()) {
                     event = matcher.group().substring(7);
                     int lastBrackets = event.lastIndexOf("(");
                     event = event.substring(event.lastIndexOf(".") + 1, lastBrackets == -1 ? event.length() : lastBrackets);
-                    event = event.replace("EventListener", "EL");
+                    if (event.contains(":")) {
+                        event = event.substring(event.indexOf("::") + 2);
+                    }   
                 }
                 pluginMap.computeIfAbsent(name, k -> new ButtonItemBuilder(Material.LAVA_BUCKET).name("§e§l" + k).colorful());
                 pluginMap.get(name).lore(this.getStartString(color, event, line.count, line.time) + end);
             } else if (line.name.startsWith("Command") && !line.name.equals("Command Functions")) {
+                // 指令
                 Matcher matcher = pattern.matcher(line.name);
                 String name = "";
                 String plugin = "";
@@ -132,8 +147,10 @@ public class TimingPage extends TemplatePage {
                 worldMap.computeIfAbsent(kv[0], k -> new ButtonItemBuilder(material).name("§e§l" + k).colorful());
                 worldMap.get(kv[0]).lore(this.getStartString(color, kv[1], line.count, line.time) + end);
             } else if (line.name.contains("Entity") || line.name.contains("entity")) {
+                // 实体
                 entityBuilder.lore(this.getStartString(color, line.name, line.count, line.time) + end);
             } else {
+                // 服务器
                 serverBuilder.lore(this.getStartString(color, line.name, line.count, line.time) + end);
             }
         }
@@ -212,7 +229,7 @@ public class TimingPage extends TemplatePage {
      * @return 文本
      */
     private String getStartString(String color, String name, int count, String time) {
-        String start = "§r§7[" + color + name + "§7•§f" + count + "§7] $<c=#ffeaa7>" + time;
+        String start = "§r§7[" + color + name + " §f" + count + "§7] $<c=#ffeaa7>" + time;
         int c = 80 - start.length();
         String blank = " ".repeat(c < 0 ? 0 : c);
         return start + blank;
@@ -231,7 +248,7 @@ public class TimingPage extends TemplatePage {
         } else if (key.equals("world_the_end")) {
             return Material.END_STONE;
         } else if (key.startsWith("world")) {
-            return Material.STONE;
+            return Material.STONE_BRICKS;
         } else if (key.equals("tickTileEntity")) {
             return Material.SPAWNER;
         } else if (key.equals("tickEntity")) {

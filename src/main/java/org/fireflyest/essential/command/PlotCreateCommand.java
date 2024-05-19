@@ -48,7 +48,7 @@ public class PlotCreateCommand extends SubCommand {
             return false;
         }
         // 重名
-        if (!"".equals(service.selectDomainOwner(arg1))) {
+        if (service.selectDomainOwner(arg1) != null) {
             sender.sendMessage(Language.PLOT_EXIST);
             return true;
         }
@@ -64,9 +64,9 @@ public class PlotCreateCommand extends SubCommand {
             sender.sendMessage(Language.NOT_PERMISSION.replace("%permission%", permission));
             return true;
         }
-        // 判断该世界是否记录
+        // 判断该世界是否记录，且是地皮世界
         Dimension dimension = worldMap.get(worldName);
-        if (dimension == null) {
+        if (dimension == null || (!worldName.equals(Config.PLOT_WORLD) && !sender.hasPermission("essential.admin"))) {
             sender.sendMessage(Language.PLOT_WORLD_UNKNOWN);
             return true;
         }
@@ -94,6 +94,13 @@ public class PlotCreateCommand extends SubCommand {
         // 插入领地
         int x = player.getLocation().getChunk().getX();
         int z = player.getLocation().getChunk().getZ();
+
+        // 判断是否在地皮内创建
+        if ((x % 4 == 0 || z % 4 == 0) && !sender.hasPermission("essential.admin")) {
+            sender.sendMessage(Language.PLOT_IN_ROAD);
+            return true;
+        }
+
         String loc = x + ":" + z;
         if (loc.equals(arg2)) {
             dimension.createDomain(arg1, player.getUniqueId(), player.getLocation());

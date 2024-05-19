@@ -261,5 +261,8 @@ public class EssentialEconomy implements Economy {
         throw new UnsupportedOperationException("Unimplemented method 'createPlayerAccount'");
     }
     
+    public static String currencyNameDefault() {
+        return Config.CURRENCY_NAME;
+    }
     
 }

@@ -3,9 +3,16 @@ package org.fireflyest.essential.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.fireflyest.craftcommand.command.SimpleCommand;
+import org.fireflyest.craftmsg.MessageService;
 import org.fireflyest.essential.data.Language;
 
 public class VanishCommand extends SimpleCommand {
+
+    private final MessageService message;
+
+    public VanishCommand(MessageService message) {
+        this.message = message;
+    }
 
     @Override
     protected boolean execute(CommandSender sender) {
@@ -18,11 +25,11 @@ public class VanishCommand extends SimpleCommand {
         if (invisible) {
             player.setInvisible(false);
             player.setPlayerListName(player.getName());
-            player.sendMessage(Language.TITLE + "隐身: §3false");
+            message.popMessage(player, "影身模式开启");
         } else {
             player.setInvisible(true);
             player.setPlayerListName("隐藏玩家");
-            player.sendMessage(Language.TITLE + "隐身: §3true");
+            message.popMessage(player, "影身模式关闭");
         }
         return true;
     }

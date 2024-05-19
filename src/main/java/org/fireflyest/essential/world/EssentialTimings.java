@@ -15,10 +15,9 @@ public class EssentialTimings {
 
     private final Pattern pattern = Pattern.compile("[a-zA-Z]+: \\d+");
     private final List<Line> lines = new ArrayList<>();
-    private boolean enable = false;
-
+    
     public EssentialTimings() {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/timings on");
+        //
     }
 
     /**
@@ -73,6 +72,7 @@ public class EssentialTimings {
      * 重新计算
      */
     public void reload() {
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "timings on");
         CustomTimingsHandler.reload();
     }
 

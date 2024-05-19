@@ -4,123 +4,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.BiomeProvider;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.fireflyest.craftcommand.argument.EmailArgs;
 import org.fireflyest.craftcommand.argument.NumberArgs;
+import org.fireflyest.craftcommand.argument.OfficePlayerArgs;
 import org.fireflyest.craftcommand.argument.PlayerArgs;
 import org.fireflyest.craftcommand.argument.StringArgs;
 import org.fireflyest.craftdatabase.sql.SQLConnector;
 import org.fireflyest.craftgui.api.ViewGuide;
-import org.fireflyest.essential.command.AccountCommand;
-import org.fireflyest.essential.command.BackCommand;
-import org.fireflyest.essential.command.ChangepwCommand;
-import org.fireflyest.essential.command.ChatArgument;
-import org.fireflyest.essential.command.ChatCommand;
-import org.fireflyest.essential.command.DelhomeCommand;
-import org.fireflyest.essential.command.EconomyCommand;
-import org.fireflyest.essential.command.EinvCommand;
-import org.fireflyest.essential.command.EmailCommand;
-import org.fireflyest.essential.command.EnchantArgument;
-import org.fireflyest.essential.command.EnchantCommand;
-import org.fireflyest.essential.command.FlyCommand;
-import org.fireflyest.essential.command.GodCommand;
-import org.fireflyest.essential.command.GradientArgument;
-import org.fireflyest.essential.command.GroupArgument;
-import org.fireflyest.essential.command.GroupCommand;
-import org.fireflyest.essential.command.HatCommand;
-import org.fireflyest.essential.command.HealCommand;
-import org.fireflyest.essential.command.HoldCommand;
-import org.fireflyest.essential.command.HomeArgument;
-import org.fireflyest.essential.command.HomeCommand;
-import org.fireflyest.essential.command.InteractCommand;
-import org.fireflyest.essential.command.InvCommand;
-import org.fireflyest.essential.command.LoginCommand;
-import org.fireflyest.essential.command.LoreCommand;
-import org.fireflyest.essential.command.LosepwCommand;
-import org.fireflyest.essential.command.MessageCommand;
-import org.fireflyest.essential.command.ModeCommand;
-import org.fireflyest.essential.command.MoneyCommand;
-import org.fireflyest.essential.command.MotdArgument;
-import org.fireflyest.essential.command.MotdCommand;
-import org.fireflyest.essential.command.MuteArgument;
-import org.fireflyest.essential.command.MuteCommand;
-import org.fireflyest.essential.command.NameCommand;
-import org.fireflyest.essential.command.PayCommand;
-import org.fireflyest.essential.command.PermissionArgument;
-import org.fireflyest.essential.command.PermissionCommand;
-import org.fireflyest.essential.command.PlotAbandonCommand;
-import org.fireflyest.essential.command.PlotArgument;
-import org.fireflyest.essential.command.PlotCommand;
-import org.fireflyest.essential.command.PlotCreateCommand;
-import org.fireflyest.essential.command.PlotExpandCommand;
-import org.fireflyest.essential.command.PlotFlatCommand;
-import org.fireflyest.essential.command.PlotFsetCommand;
-import org.fireflyest.essential.command.PlotGiveCommand;
-import org.fireflyest.essential.command.PlotMapCommand;
-import org.fireflyest.essential.command.PlotPsetCommand;
-import org.fireflyest.essential.command.PlotRemoveCommand;
-import org.fireflyest.essential.command.PlotRenameCommand;
-import org.fireflyest.essential.command.PlotRoadCommand;
-import org.fireflyest.essential.command.PlotSetCommand;
-import org.fireflyest.essential.command.PlotIsetCommand;
-import org.fireflyest.essential.command.PlotTpCommand;
-import org.fireflyest.essential.command.PlotTpsetCommand;
-import org.fireflyest.essential.command.PluginsArgument;
-import org.fireflyest.essential.command.PluginsCommand;
-import org.fireflyest.essential.command.PluginsDisableCommand;
-import org.fireflyest.essential.command.PluginsEnableCommand;
-import org.fireflyest.essential.command.PluginsLoadArgument;
-import org.fireflyest.essential.command.PluginsLoadCommand;
-import org.fireflyest.essential.command.PrefixCommand;
-import org.fireflyest.essential.command.RegisterCommand;
-import org.fireflyest.essential.command.RepairCommand;
-import org.fireflyest.essential.command.RideCommand;
-import org.fireflyest.essential.command.SethomeCommand;
-import org.fireflyest.essential.command.SetwarpCommand;
-import org.fireflyest.essential.command.ShipArgument;
-import org.fireflyest.essential.command.ShipBreakCommand;
-import org.fireflyest.essential.command.ShipBuildCommand;
-import org.fireflyest.essential.command.ShipCommand;
-import org.fireflyest.essential.command.ShipRefuseCommand;
-import org.fireflyest.essential.command.SkullCommand;
-import org.fireflyest.essential.command.SpawnCommand;
-import org.fireflyest.essential.command.StructureArgument;
-import org.fireflyest.essential.command.StructureTypeArgument;
-import org.fireflyest.essential.command.StructureCommand;
-import org.fireflyest.essential.command.StructureCreateCommand;
-import org.fireflyest.essential.command.StructureMirrorArgument;
-import org.fireflyest.essential.command.StructurePlaceCommand;
-import org.fireflyest.essential.command.StructureRotationArgument;
-import org.fireflyest.essential.command.SudoCommand;
-import org.fireflyest.essential.command.SuicideCommand;
-import org.fireflyest.essential.command.SunCommand;
-import org.fireflyest.essential.command.TableCommand;
-import org.fireflyest.essential.command.TimingCommand;
-import org.fireflyest.essential.command.TopCommand;
-import org.fireflyest.essential.command.TpaCommand;
-import org.fireflyest.essential.command.TpacceptCommand;
-import org.fireflyest.essential.command.TphereCommand;
-import org.fireflyest.essential.command.TprefuseCommand;
-import org.fireflyest.essential.command.UpCommand;
-import org.fireflyest.essential.command.VanishCommand;
-import org.fireflyest.essential.command.WarpCommand;
-import org.fireflyest.essential.command.WorldArgument;
-import org.fireflyest.essential.command.WorldCommand;
-import org.fireflyest.essential.command.WorldCreateCommand;
-import org.fireflyest.essential.command.WorldTpCommand;
-import org.fireflyest.essential.command.WorldUnloadCommand;
+import org.fireflyest.craftitem.interact.InteractAction;
+import org.fireflyest.craftmsg.MessageService;
+import org.fireflyest.craftparticle.ParticleTasks;
+import org.fireflyest.essential.command.*;
 import org.fireflyest.essential.data.Config;
 import org.fireflyest.essential.data.EssentialYaml;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.data.StateCache;
 import org.fireflyest.essential.gui.AccountView;
 import org.fireflyest.essential.gui.ChunksView;
+import org.fireflyest.essential.gui.DomainView;
 import org.fireflyest.essential.gui.InteractView;
+import org.fireflyest.essential.gui.MenuView;
+import org.fireflyest.essential.gui.MineView;
 import org.fireflyest.essential.gui.PermissionView;
 import org.fireflyest.essential.gui.PluginView;
 import org.fireflyest.essential.gui.PrefixView;
@@ -128,6 +42,7 @@ import org.fireflyest.essential.gui.ShipView;
 import org.fireflyest.essential.gui.TimingView;
 import org.fireflyest.essential.gui.WorldsView;
 import org.fireflyest.essential.listener.PlayerEventListener;
+import org.fireflyest.essential.listener.ServerEventListener;
 import org.fireflyest.essential.listener.WorldEventListener;
 import org.fireflyest.essential.protocol.EssentialProtocol;
 import org.fireflyest.essential.service.EssentialEconomy;
@@ -135,12 +50,15 @@ import org.fireflyest.essential.service.EssentialPermission;
 import org.fireflyest.essential.service.EssentialService;
 import org.fireflyest.essential.world.Dimension;
 import org.fireflyest.essential.world.EssentialTimings;
+import org.fireflyest.essential.world.PlotChunkGenerator;
+import org.fireflyest.essential.world.WorldCleaner;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 /**
- * essential.
+ * essential
+ * afk
  */
 public class Essential extends JavaPlugin {
 
@@ -153,6 +71,9 @@ public class Essential extends JavaPlugin {
     public static final String VIEW_SHIP = "essential.ship";
     public static final String VIEW_INTERACT = "essential.interact";
     public static final String VIEW_TIMING = "essential.timing";
+    public static final String VIEW_MENU = "essential.menu";
+    public static final String VIEW_DOMAIN = "essential.domain";
+    public static final String VIEW_MINE = "essential.mine";
 
     private EssentialService service;
     private EssentialYaml yaml;
@@ -161,8 +82,11 @@ public class Essential extends JavaPlugin {
     private EssentialPermission permissions;
     private EssentialTimings timings;
     private StateCache cache;
+    private MessageService msg;
     private ViewGuide guide;
     private String url;
+    private BukkitTask cleanTimer;
+    private ParticleTasks particleTasks;
 
     private Map<String, Dimension> worldMap = new HashMap<>();
 
@@ -175,6 +99,7 @@ public class Essential extends JavaPlugin {
         this.getLogger().info("Enable data service.");
         yaml = new EssentialYaml(this);
         cache = new StateCache();
+        msg = new MessageService(this, "title", Bukkit.getScoreboardManager().getMainScoreboard());
         try {
             if (Config.SQL) {
                 url = Config.URL;
@@ -189,6 +114,7 @@ public class Essential extends JavaPlugin {
         }
 
         this.timings = new EssentialTimings();
+        this.particleTasks = new ParticleTasks(this);
 
         // 经济服务
         this.economy = new EssentialEconomy(service);
@@ -201,15 +127,20 @@ public class Essential extends JavaPlugin {
         this.setupGuide();
 
         // 协议包监听
-        this.protocol = new EssentialProtocol(guide, service, cache, worldMap);
+        this.protocol = new EssentialProtocol(guide, service, yaml, cache, worldMap);
         
         // 事件监听
         this.getLogger().info("Lunching listener.");
-        this.getServer().getPluginManager().registerEvents(new PlayerEventListener(service, yaml, permissions, cache, guide), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerEventListener(service, yaml, permissions, cache, msg, guide), this);
+        this.getServer().getPluginManager().registerEvents(new ServerEventListener(cache), this);
         this.getServer().getPluginManager().registerEvents(new WorldEventListener(yaml, service, cache, worldMap), this);
+
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        // this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 
         // 指令
         this.setupAccountCommand();
+        this.setupAdminCommand();
         this.setupBasicCommand();
         this.setupTeleportCommand();
         this.setupEconomyCommand();
@@ -217,6 +148,10 @@ public class Essential extends JavaPlugin {
         this.setupGroupCommand();
         this.setupShipCommand();
         this.setupPlotCommand();
+        this.setupTipCommand();
+
+        // 清理
+        this.setupCleaner();
         
     }
 
@@ -224,17 +159,44 @@ public class Essential extends JavaPlugin {
     public void onDisable() {
         // 保存玩家位置
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (StateCache.LOGIN.equals(cache.get(player.getName() + ".account.state"))) {
+            if (StateCache.LOGIN.equals(cache.get(player.getName() + StateCache.ACCOUNT_STATE))) {
                 service.updateQuit(player.getLocation(), player.getUniqueId());
             } else {
                 player.kickPlayer("Reloading...");
             }
         }
+       
         
         // 关闭数据库
         if (service != null) {
             SQLConnector.close(url);
         }
+
+        // 关闭清理
+        if (cleanTimer != null) {
+            cleanTimer.cancel();
+        }
+
+        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+        this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
+    }
+
+    
+
+    @Override
+    public BiomeProvider getDefaultBiomeProvider(String worldName, String id) {
+        // TODO Auto-generated method stub
+        return super.getDefaultBiomeProvider(worldName, id);
+    }
+
+    @Override
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+        String info = String.format("Using world generator to generator %s with id:%s", worldName, id);
+        this.getLogger().info(info);
+        if ("world_plot".equals(id)) {
+            return new PlotChunkGenerator();
+        }
+        return null;
     }
 
     /**
@@ -262,6 +224,9 @@ public class Essential extends JavaPlugin {
         guide.addView(VIEW_SHIP, new ShipView(service));
         guide.addView(VIEW_INTERACT, new InteractView(service));
         guide.addView(VIEW_TIMING, new TimingView(timings));
+        guide.addView(VIEW_MENU, new MenuView(service));
+        guide.addView(VIEW_DOMAIN, new DomainView(service, worldMap));
+        guide.addView(VIEW_MINE, new MineView(service));
     }
 
     /**
@@ -284,11 +249,82 @@ public class Essential extends JavaPlugin {
             ChangepwCommand changepwCommand = new ChangepwCommand(service);
             changepwCommand.setArgument(0, new StringArgs("[old_password]"));
             changepwCommand.setArgument(1, new StringArgs("[new_password]"));
+            LegalCommand legalCommand = new LegalCommand(service);
+            legalCommand.setArgument(0, new OfficePlayerArgs());
             accountCommand.addSubCommand("changepw", changepwCommand);
             accountCommand.addSubCommand("email", emailCommand);
             accountCommand.addSubCommand("losepw", new LosepwCommand(service));
+            accountCommand.addSubCommand("legal", legalCommand);
             account.setExecutor(accountCommand);
             account.setTabCompleter(accountCommand);
+        }
+        PluginCommand servers = this.getCommand("servers");
+        if (servers != null) {
+            ServersCommand serversCommand = new ServersCommand(guide, cache, msg);
+            serversCommand.setArgument(0, new StringArgs("survival", "game", "lobby"));
+            servers.setExecutor(serversCommand);
+            servers.setTabCompleter(serversCommand);
+        }
+    }
+
+    private void setupAdminCommand() {
+        PluginCommand plugins = this.getCommand("plugin");
+        if (plugins != null) {
+            PluginsCommand pluginsCommand = new PluginsCommand(guide);
+            PluginsLoadCommand pluginsLoadCommand = new PluginsLoadCommand();
+            pluginsLoadCommand.setArgument(0, new PluginsLoadArgument());
+            PluginsEnableCommand pluginsEnableCommand = new PluginsEnableCommand();
+            pluginsEnableCommand.setArgument(0, new PluginsArgument());
+            PluginsDisableCommand pluginsDisableCommand = new PluginsDisableCommand();
+            pluginsDisableCommand.setArgument(0, new PluginsArgument());
+            pluginsCommand.addSubCommand("load", pluginsLoadCommand);
+            pluginsCommand.addSubCommand("enable", pluginsEnableCommand);
+            pluginsCommand.addSubCommand("disable", pluginsDisableCommand);
+            plugins.setExecutor(pluginsCommand);
+        }
+        PluginCommand sudo = this.getCommand("sudo");
+        if (sudo != null) {
+            SudoCommand sudoCommand = new SudoCommand();
+            sudoCommand.setArgument(0, new PlayerArgs());
+            sudoCommand.setArgument(1, new StringArgs("[command]"));
+            sudo.setExecutor(sudoCommand);
+            sudo.setTabCompleter(sudoCommand);
+        }
+        PluginCommand motd = this.getCommand("motd");
+        if (motd != null) {
+            MotdCommand motdCommand = new MotdCommand(cache);
+            motdCommand.setArgument(0, new MotdArgument());
+            motd.setExecutor(motdCommand);
+            motd.setTabCompleter(motdCommand);
+        }
+        PluginCommand tools = this.getCommand("tools");
+        if (tools != null) {
+            ToolsCommand toolsCommand = new ToolsCommand();
+            toolsCommand.setArgument(0, new StringArgs(
+                InteractAction.ACTION_COMMAND, 
+                InteractAction.ACTION_CONSOLE,
+                InteractAction.ACTION_CONSOLE_DISPOSABLE,
+                InteractAction.ACTION_CUSTOM,
+                InteractAction.ACTION_CUSTOM_DISPOSABLE,
+                InteractAction.ACTION_POTION));
+            toolsCommand.setArgument(1, new StringArgs("<command>", "", ""));
+            tools.setExecutor(toolsCommand);
+            tools.setTabCompleter(toolsCommand);
+        }
+        PluginCommand kit = this.getCommand("kit");
+        if (kit != null) {
+            KitCommand kitCommand = new KitCommand(yaml);
+            kitCommand.setArgument(0, new StringArgs("default", "vip"));
+            kitCommand.setArgument(1, new PlayerArgs());
+            kit.setExecutor(kitCommand);
+            kit.setTabCompleter(kitCommand);
+        }
+        PluginCommand test = this.getCommand("test");
+        if (test != null) {
+            TestCommand testCommand = new TestCommand();
+            testCommand.setArgument(0, new StringArgs("entity", "a"));
+            test.setExecutor(testCommand);
+            test.setTabCompleter(testCommand);
         }
     }
 
@@ -305,7 +341,7 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand fly = this.getCommand("fly");
         if (fly != null) {
-            FlyCommand flyCommand = new FlyCommand();
+            FlyCommand flyCommand = new FlyCommand(msg);
             flyCommand.setArgument(0, new PlayerArgs());
             fly.setExecutor(flyCommand);
             fly.setTabCompleter(flyCommand);
@@ -345,25 +381,11 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand mode = this.getCommand("mode");
         if (mode != null) {
-            mode.setExecutor(new ModeCommand());
+            mode.setExecutor(new ModeCommand(msg));
         }
         PluginCommand name = this.getCommand("name");
         if (name != null) {
             name.setExecutor(new NameCommand());
-        }
-        PluginCommand plugins = this.getCommand("plugin");
-        if (plugins != null) {
-            PluginsCommand pluginsCommand = new PluginsCommand(guide);
-            PluginsLoadCommand pluginsLoadCommand = new PluginsLoadCommand();
-            pluginsLoadCommand.setArgument(0, new PluginsLoadArgument());
-            PluginsEnableCommand pluginsEnableCommand = new PluginsEnableCommand();
-            pluginsEnableCommand.setArgument(0, new PluginsArgument());
-            PluginsDisableCommand pluginsDisableCommand = new PluginsDisableCommand();
-            pluginsDisableCommand.setArgument(0, new PluginsArgument());
-            pluginsCommand.addSubCommand("load", pluginsLoadCommand);
-            pluginsCommand.addSubCommand("enable", pluginsEnableCommand);
-            pluginsCommand.addSubCommand("disable", pluginsDisableCommand);
-            plugins.setExecutor(pluginsCommand);
         }
         PluginCommand skull = this.getCommand("skull");
         if (skull != null) {
@@ -372,21 +394,16 @@ public class Essential extends JavaPlugin {
             skull.setExecutor(skullCommand);
             skull.setTabCompleter(skullCommand);
         }
-        PluginCommand sudo = this.getCommand("sudo");
-        if (sudo != null) {
-            SudoCommand sudoCommand = new SudoCommand();
-            sudoCommand.setArgument(0, new PlayerArgs());
-            sudoCommand.setArgument(1, new StringArgs("[command]"));
-            sudo.setExecutor(sudoCommand);
-            sudo.setTabCompleter(sudoCommand);
-        }
         PluginCommand suicide = this.getCommand("suicide");
         if (suicide != null) {
             suicide.setExecutor(new SuicideCommand());
         }
         PluginCommand sunday = this.getCommand("sun");
         if (sunday != null) {
-            sunday.setExecutor(new SunCommand());
+            SunCommand sunCommand = new SunCommand();
+            sunCommand.setArgument(0, new PlayerArgs());
+            sunday.setExecutor(sunCommand);
+            sunday.setTabCompleter(sunCommand);
         }
         PluginCommand table = this.getCommand("table");
         if (table != null) {
@@ -394,7 +411,7 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand mute = this.getCommand("mute");
         if (mute != null) {
-            MuteCommand muteCommand = new MuteCommand(cache);
+            MuteCommand muteCommand = new MuteCommand(cache, msg);
             muteCommand.setArgument(0, new PlayerArgs());
             muteCommand.setArgument(1, new NumberArgs());
             muteCommand.setArgument(2, new MuteArgument());
@@ -407,11 +424,11 @@ public class Essential extends JavaPlugin {
         }
         PluginCommand vanish = this.getCommand("vanish");
         if (vanish != null) {
-            vanish.setExecutor(new VanishCommand());
+            vanish.setExecutor(new VanishCommand(msg));
         }
         PluginCommand god = this.getCommand("god");
         if (god != null) {
-            god.setExecutor(new GodCommand());
+            god.setExecutor(new GodCommand(msg));
         }
         PluginCommand chat = this.getCommand("chat");
         if (chat != null) {
@@ -449,12 +466,17 @@ public class Essential extends JavaPlugin {
             hold.setExecutor(holdCommand);
             hold.setTabCompleter(holdCommand);
         }
-        PluginCommand motd = this.getCommand("motd");
-        if (motd != null) {
-            MotdCommand motdCommand = new MotdCommand(cache);
-            motdCommand.setArgument(0, new MotdArgument());
-            motd.setExecutor(motdCommand);
-            motd.setTabCompleter(motdCommand);
+        PluginCommand accelerate = this.getCommand("accelerate");
+        if (accelerate != null) {
+            AccelerateCommand accelerateCommand = new AccelerateCommand();
+            accelerateCommand.setArgument(0, new NumberArgs());
+            accelerate.setExecutor(accelerateCommand);
+            accelerate.setTabCompleter(accelerateCommand);
+        }
+        PluginCommand menu = this.getCommand("menu");
+        if (menu != null) {
+            MenuCommand menuCommand = new MenuCommand(guide);
+            menu.setExecutor(menuCommand);
         }
     }
 
@@ -479,7 +501,7 @@ public class Essential extends JavaPlugin {
         PluginCommand sethome = this.getCommand("sethome");
         if (sethome != null) {
             SethomeCommand sethomeCommand = new SethomeCommand(service);
-            sethomeCommand.setArgument(0, new StringArgs("[name]"));
+            sethomeCommand.setArgument(0, new StringArgs("[home]"));
             sethome.setExecutor(sethomeCommand);
             sethome.setTabCompleter(sethomeCommand);
         }
@@ -571,15 +593,23 @@ public class Essential extends JavaPlugin {
             WorldUnloadCommand worldUnloadCommand = new WorldUnloadCommand();
             worldUnloadCommand.setArgument(0, new WorldArgument());
             WorldCreateCommand worldCreateCommand = new WorldCreateCommand();
+            worldCreateCommand.setArgument(0, new StringArgs("world_"));
+            worldCreateCommand.setArgument(1, new EnvironmentArgument());
+            worldCreateCommand.setArgument(2, new WorldTypeArgument());
+            WorldGenerateCommand worldGenerateCommand = new WorldGenerateCommand();
+            worldGenerateCommand.setArgument(0, new StringArgs("world_"));
+            worldGenerateCommand.setArgument(1, new PluginsArgument());
+            worldGenerateCommand.setArgument(2, new StringArgs("<id>"));
             worldCommand.addSubCommand("tp", worldTpCommand);
             worldCommand.addSubCommand("unload", worldUnloadCommand);
             worldCommand.addSubCommand("create", worldCreateCommand);
+            worldCommand.addSubCommand("generate", worldGenerateCommand);
             world.setExecutor(worldCommand);
         }
         PluginCommand structure = this.getCommand("structure");
         if (structure != null) {
             StructureCommand structureCommand = new StructureCommand();
-            StructureCreateCommand structureCreateCommand = new StructureCreateCommand(cache);
+            StructureCreateCommand structureCreateCommand = new StructureCreateCommand(cache, particleTasks);
             structureCreateCommand.setArgument(0, new StructureTypeArgument());
             StructurePlaceCommand structurePlaceCommand = new StructurePlaceCommand();
             structurePlaceCommand.setArgument(0, new StructureArgument());
@@ -595,6 +625,12 @@ public class Essential extends JavaPlugin {
             TimingCommand timingCommand = new TimingCommand(timings, guide);
             timing.setExecutor(timingCommand);
             timing.setTabCompleter(timingCommand);
+        }
+        PluginCommand clean = this.getCommand("clean");
+        if (clean != null) {
+            CleanCommand cleanCommand = new CleanCommand(msg);
+            clean.setExecutor(cleanCommand);
+            clean.setTabCompleter(cleanCommand);
         }
     }
 
@@ -654,14 +690,14 @@ public class Essential extends JavaPlugin {
             PlotCommand plotCommand = new PlotCommand();
             PlotCreateCommand plotCreateCommand = new PlotCreateCommand(service, worldMap);
             plotCreateCommand.setArgument(0, new StringArgs("[name]"));
-            PlotTpCommand plotTpCommand = new PlotTpCommand(service, cache);
+            PlotTpCommand plotTpCommand = new PlotTpCommand(service, cache, worldMap);
             plotTpCommand.setArgument(0, new PlotArgument(service));
             PlotRemoveCommand plotRemoveCommand = new PlotRemoveCommand(service, economy, cache, worldMap);
             plotRemoveCommand.setArgument(0, new PlotArgument(service));
             PlotGiveCommand plotGiveCommand = new PlotGiveCommand(service, cache, worldMap);
             plotGiveCommand.setArgument(0, new PlotArgument(service));
             plotGiveCommand.setArgument(1, new PlayerArgs());
-            PlotSetCommand plotSetCommand = new PlotSetCommand(service, worldMap);
+            PlotSetCommand plotSetCommand = new PlotSetCommand(service, guide, worldMap);
             plotSetCommand.setArgument(0, flags);
             PlotFsetCommand plotFsetCommand = new PlotFsetCommand(service, worldMap);
             plotFsetCommand.setArgument(0, flags);
@@ -670,8 +706,11 @@ public class Essential extends JavaPlugin {
             PlotPsetCommand plotPsetCommand = new PlotPsetCommand(service, worldMap);
             plotPsetCommand.setArgument(0, new PlayerArgs());
             plotPsetCommand.setArgument(1, flags);
+            PlotManagerCommand plotManagerCommand = new PlotManagerCommand(service, guide, worldMap);
+            plotManagerCommand.setArgument(0, new PlotArgument(service));
             PlotFlatCommand plotFlatCommand = new PlotFlatCommand(cache, worldMap);
             plotFlatCommand.setArgument(0, new NumberArgs());
+            PlotReserveCommand plotReserveCommand = new PlotReserveCommand(service, worldMap);
             PlotRoadCommand plotRoadCommand = new PlotRoadCommand(cache, worldMap);
             plotRoadCommand.setArgument(0, new NumberArgs());
             plotRoadCommand.setArgument(1, new StringArgs("none"));
@@ -685,16 +724,57 @@ public class Essential extends JavaPlugin {
             plotCommand.addSubCommand("fset", plotFsetCommand);
             plotCommand.addSubCommand("iset", plotIsetCommand);
             plotCommand.addSubCommand("pset", plotPsetCommand);
+            plotCommand.addSubCommand("manager", plotManagerCommand);
             plotCommand.addSubCommand("flat", plotFlatCommand);
+            plotCommand.addSubCommand("reserve", plotReserveCommand);
             plotCommand.addSubCommand("road", plotRoadCommand);
             plotCommand.addSubCommand("rename", plotRenameCommand);
             plotCommand.addSubCommand("expand", new PlotExpandCommand(economy, worldMap));
             plotCommand.addSubCommand("abandon", new PlotAbandonCommand(economy, worldMap));
-            plotCommand.addSubCommand("map", new PlotMapCommand(service, economy, worldMap));
+            plotCommand.addSubCommand("map", new PlotMapCommand(service, worldMap));
             plotCommand.addSubCommand("tpset", new PlotTpsetCommand(service, worldMap));
             plot.setExecutor(plotCommand);
             plot.setTabCompleter(plotCommand);
         }
+    }
+
+    private void setupTipCommand() {
+        PluginCommand tip = this.getCommand("tip");
+        if (tip != null) {
+            TipCommand tipCommand = new TipCommand();
+            TipAddCommand tipAddCommand = new TipAddCommand();
+            tipAddCommand.setArgument(0, new StringArgs("[text]"));
+            TipCreateCommand tipCreateCommand = new TipCreateCommand();
+            tipCreateCommand.setArgument(0, new StringArgs("[title]"));
+            TipEditCommand tipEditCommand = new TipEditCommand();
+            tipEditCommand.setArgument(0, new StringArgs("[text]"));
+            TipNextCommand tipNextCommand = new TipNextCommand();
+            TipPreCommand tipPreCommand = new TipPreCommand();
+            TipRemoveCommand tipRemoveCommand = new TipRemoveCommand();
+            TipSelectCommand tipSelectCommand = new TipSelectCommand();
+            tipCommand.addSubCommand("add", tipAddCommand);
+            tipCommand.addSubCommand("create", tipCreateCommand);
+            tipCommand.addSubCommand("edit", tipEditCommand);
+            tipCommand.addSubCommand("next", tipNextCommand);
+            tipCommand.addSubCommand("pre", tipPreCommand);
+            tipCommand.addSubCommand("remove", tipRemoveCommand);
+            tipCommand.addSubCommand("select", tipSelectCommand);
+            tip.setExecutor(tipCommand);
+            tip.setTabCompleter(tipCommand);
+        }
+    }
+
+    private void setupCleaner() {
+        cleanTimer = new BukkitRunnable() {
+            @Override
+            public void run() {
+                msg.pushGlobalMessage("§f" + Language.WORLD_CLEAN, 15);
+                for (World world : Bukkit.getWorlds()) {
+                    WorldCleaner cleaner = new WorldCleaner(world);
+                    cleaner.clean();
+                }
+            }
+        }.runTaskTimer(this, 0, 20 * 60 *30L);
     }
 
 }

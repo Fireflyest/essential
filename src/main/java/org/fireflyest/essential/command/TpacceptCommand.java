@@ -38,10 +38,8 @@ public class TpacceptCommand extends SimpleCommand {
             if (target != null) {
                 Location loc = target.getLocation();
                 cache.set(target.getName() + ".base.back", SerializationUtil.serialize(loc));
-                target.sendMessage(Language.SAVE_POINT);
                 
-                TeleportUtils.teleportTo(target, player.getLocation(), target.hasPermission("essential.vip"));
-                target.sendMessage(Language.TELEPORT_POINT.replace("%point%", player.getName()));
+                TeleportUtils.teleportTo(target, player.getLocation(), target.hasPermission("essential.vip"), player.getName() + "的身边");
 
                 sender.sendMessage(Language.APPLY_ACCEPT);
             }
@@ -54,10 +52,8 @@ public class TpacceptCommand extends SimpleCommand {
             if (target != null) {
                 Location loc = player.getLocation();
                 cache.set(player.getName() + ".base.back", SerializationUtil.serialize(loc));
-                player.sendMessage(Language.SAVE_POINT);
                 
-                TeleportUtils.teleportTo(player, target.getLocation(), player.hasPermission("essential.vip"));
-                player.sendMessage(Language.TELEPORT_POINT.replace("%point%", target.getName()));
+                TeleportUtils.teleportTo(player, target.getLocation(), player.hasPermission("essential.vip"), target.getName() + "的身边");
 
                 sender.sendMessage(Language.APPLY_ACCEPT);
             }

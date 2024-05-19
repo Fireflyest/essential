@@ -6,8 +6,16 @@ world_main:
   protect: true
   pvp: false
   explode: false
+world_plot:
+  display: "地皮"
+  color: "c=#f0932b"
+  message: "欢迎来到这里"
+  border: 16000
+  protect: true
+  pvp: true
+  explode: false
 world:
-  display: "探险"
+  display: "生存"
   color: "c=#22a6b3"
   message: "欢迎来到这里"
   border: 16000

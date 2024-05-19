@@ -5,15 +5,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 import org.fireflyest.craftcommand.command.SimpleCommand;
+import org.fireflyest.craftmsg.MessageService;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.data.StateCache;
 
 public class MuteCommand extends SimpleCommand {
 
-    private StateCache cache;
+    private final StateCache cache;
+    private final MessageService message;
 
-    public MuteCommand(StateCache cache) {
+    public MuteCommand(StateCache cache, MessageService message) {
         this.cache = cache;
+        this.message = message;
     }
 
     @Override
@@ -36,7 +39,7 @@ public class MuteCommand extends SimpleCommand {
         Player target = Bukkit.getPlayerExact(arg1);
         int second = NumberConversions.toInt(arg2) * 60;
         if (target != null) {
-            target.sendMessage(Language.TITLE + "已被禁言§3" + arg2 + "§f分钟 (" + arg3 + ")");
+            message.popMessage(target, "你已被禁言" + arg2 + "分钟 (" + arg3 + ")");
             cache.setex(target.getName() + ".base.mute", second, arg3);
         }
         sender.sendMessage(Language.TITLE + "操作成功");

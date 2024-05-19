@@ -2,33 +2,46 @@ package org.fireflyest.essential.command;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.structure.Structure;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.RayTraceResult;
 import org.fireflyest.craftcommand.command.SubCommand;
+import org.fireflyest.craftparticle.Brush;
+import org.fireflyest.craftparticle.DynamicLocation;
+import org.fireflyest.craftparticle.ParticleTasks;
+import org.fireflyest.craftparticle.stroke.CuboidStroke;
+import org.fireflyest.craftparticle.stroke.Stroke;
 import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.data.StateCache;
-import org.fireflyest.util.ParticleUtils;
 import org.fireflyest.util.SerializationUtil;
 
 public class StructureCreateCommand extends SubCommand {
 
-    private StateCache cache;
+    private final StateCache cache;
+    private final ParticleTasks particleTasks;
+    private final Brush<Material> brush;
 
-    public StructureCreateCommand(StateCache cache) {
+    private final Map<String, Stroke<?>> strokeMap = new HashMap<>();
+
+    public StructureCreateCommand(StateCache cache, ParticleTasks particleTasks) {
         this.cache = cache;
+        this.particleTasks = particleTasks;
+
+        this.brush = new Brush<>(Particle.END_ROD);
     }
 
     @Override
@@ -60,6 +73,9 @@ public class StructureCreateCommand extends SubCommand {
             cache.del(cornerKey1);
             cache.del(cornerKey2);
             sender.sendMessage(Language.STRUCTURE_CREATE_TIP);
+            if (strokeMap.containsKey(sender.getName())) {
+                strokeMap.get(sender.getName()).stop();
+            }
         }
         return true;
     }
@@ -130,24 +146,43 @@ public class StructureCreateCommand extends SubCommand {
     }
 
     private void sizeDisplay(final String playerName) {
-        new BukkitRunnable() {
-            // 次数
-            int time = 0;
-            @Override
-            public void run() {
-                String cornerKey1 = playerName + StateCache.STRUCTURE_CORNER_1;
-                String cornerKey2= playerName + StateCache.STRUCTURE_CORNER_2;
-                String corner1 = cache.get(cornerKey1);
-                String corner2 = cache.get(cornerKey2);
-                // 到次数或清空取消
-                time++;
-                if (time > 50 || corner1 == null || corner2 == null) {
-                    cancel();
-                    return;
-                }
-                ParticleUtils.cuboid(Particle.END_ROD, SerializationUtil.deserialize(corner1, Location.class), SerializationUtil.deserialize(corner2, Location.class));
-            } 
-        }.runTaskTimer(Essential.getPlugin(), 0, 30);
+        // 如果已经存在，停止
+        if (strokeMap.containsKey(playerName)) {
+            strokeMap.get(playerName).stop();
+        }
+        String cornerKey1 = playerName + StateCache.STRUCTURE_CORNER_1;
+        String cornerKey2= playerName + StateCache.STRUCTURE_CORNER_2;
+        String corner1 = cache.get(cornerKey1);
+        String corner2 = cache.get(cornerKey2);
+        Location cornerLoc1 = SerializationUtil.deserialize(corner1, Location.class);
+        Location cornerLoc2 = SerializationUtil.deserialize(corner2, Location.class);
+        // 坐标是方块中心，要放边界去
+        if (cornerLoc1.getY() > cornerLoc2.getY()) {
+            cornerLoc1.add(0, .5, 0);
+            cornerLoc2.add(0, -.5, 0);
+        } else {
+            cornerLoc1.add(0, -.5, 0);
+            cornerLoc2.add(0, .5, 0);
+        }
+        if (cornerLoc1.getX() > cornerLoc2.getX()) {
+            cornerLoc1.add(.5, 0, 0);
+            cornerLoc2.add(-.5, 0, 0);
+        } else {
+            cornerLoc1.add(-.5, 0, 0);
+            cornerLoc2.add(.5, 0, 0);
+        }
+        if (cornerLoc1.getZ() > cornerLoc2.getZ()) {
+            cornerLoc1.add(0, 0, .5);
+            cornerLoc2.add(0, 0, -.5);
+        } else {
+            cornerLoc1.add(0, 0, -.5);
+            cornerLoc2.add(0, 0, .5);
+        }
+
+        CuboidStroke<Material> stroke = new CuboidStroke<>(brush, new DynamicLocation(cornerLoc1), 20, 30, new DynamicLocation(cornerLoc2));
+        stroke.setConstant(true);
+        strokeMap.put(playerName, stroke);
+        particleTasks.putTasks(stroke);
     }
     
 }

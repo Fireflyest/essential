@@ -467,8 +467,8 @@ public class EssentialService extends SQLService {
         return domainDao.selectDomainsNameByPlayer(owner.toString());
     }
 
-    public Domain selectDomainsByName(String name) {
-        return domainDao.selectDomainsByName(name);
+    public Domain selectDomainByName(String name) {
+        return domainDao.selectDomainByName(name);
     }
 
     public String selectDomainOwner(String name) {

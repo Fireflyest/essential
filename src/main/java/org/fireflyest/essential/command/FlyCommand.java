@@ -6,9 +6,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.fireflyest.craftcommand.command.SimpleCommand;
+import org.fireflyest.craftmsg.MessageService;
 import org.fireflyest.essential.data.Language;
 
 public class FlyCommand extends SimpleCommand {
+
+    private final MessageService message;
+
+    public FlyCommand(MessageService message) {
+        this.message = message;
+    }
 
     @Override
     protected boolean execute(@Nonnull CommandSender sender) {
@@ -18,7 +25,7 @@ public class FlyCommand extends SimpleCommand {
             return false;
         }
         player.setAllowFlight(!player.getAllowFlight());
-        player.sendMessage(Language.TITLE + "飞行: §3" + player.getAllowFlight());
+        message.popMessage(player, player.getAllowFlight() ? "飞行模式开启" : "飞行模式关闭");
         return true;
     }
 
@@ -35,7 +42,7 @@ public class FlyCommand extends SimpleCommand {
         }
         target.setAllowFlight(!target.getAllowFlight());
         sender.sendMessage(Language.SUCCEED_SWITCH + "§3" + arg1);
-        target.sendMessage(Language.TITLE + "飞行: §3" + target.getAllowFlight());
+        message.popMessage(target, target.getAllowFlight() ? "飞行模式开启" : "飞行模式关闭");
         return true;
     }
     

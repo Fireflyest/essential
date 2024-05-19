@@ -5,6 +5,7 @@ import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.fireflyest.craftcommand.command.SubCommand;
+import org.fireflyest.craftgui.api.ViewGuide;
 import org.fireflyest.essential.bean.Domain;
 import org.fireflyest.essential.data.Language;
 import org.fireflyest.essential.service.EssentialService;
@@ -13,11 +14,13 @@ import org.fireflyest.essential.world.Plot;
 
 public class PlotSetCommand extends SubCommand {
 
-    private Map<String, Dimension> worldMap;
-    private EssentialService service;
+    private final Map<String, Dimension> worldMap;
+    private final EssentialService service;
+    private final ViewGuide guide;
 
-    public PlotSetCommand(EssentialService service, Map<String, Dimension> worldMap) {
+    public PlotSetCommand(EssentialService service, ViewGuide guide, Map<String, Dimension> worldMap) {
         this.service = service;
+        this.guide = guide;
         this.worldMap = worldMap;
     }
 
@@ -38,6 +41,7 @@ public class PlotSetCommand extends SubCommand {
         Dimension dimension = worldMap.get(worldName);
         if (dimension == null) {
             sender.sendMessage(Language.PLOT_WORLD_UNKNOWN);
+            guide.refreshPage(sender.getName());
             return true;
         }
         String loc = player.getLocation().getChunk().getX() + ":" + player.getLocation().getChunk().getZ();
@@ -45,12 +49,14 @@ public class PlotSetCommand extends SubCommand {
         Plot plot = dimension.getPlot(loc);
         if (plot == null) {
             sender.sendMessage(Language.PLOT_OUTSIDE);
+            guide.refreshPage(sender.getName());
             return true;
         }
 
         Domain domain = plot.getDomain();
         if (domain == null) {
             sender.sendMessage(Language.PLOT_NON_EXISTENT);
+            guide.refreshPage(sender.getName());
             return true;
         }
         if (!domain.getOwner().equals(player.getUniqueId().toString())) {
@@ -121,6 +127,8 @@ public class PlotSetCommand extends SubCommand {
             .replace("%flag%", arg1) 
             .replace("%scope%", "全局") 
             + (dimension.isPermit(domain.getGlobe(), permit) ? "§a开启" : "§c关闭"));
+        
+        guide.refreshPage(sender.getName());
         return true;
     }
     

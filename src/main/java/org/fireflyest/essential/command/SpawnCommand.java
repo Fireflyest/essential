@@ -36,10 +36,8 @@ public class SpawnCommand extends SimpleCommand {
         World world = Bukkit.getWorld(Config.MAIN_WORLD);
         if (world != null) {
             cache.set(player.getName() + ".base.back", SerializationUtil.serialize(player.getLocation()));
-            player.sendMessage(Language.SAVE_POINT);
 
-            TeleportUtils.teleportTo(player, world.getSpawnLocation(), player.hasPermission("essential.vip"));
-            player.sendMessage(Language.TELEPORT_POINT.replace("%point%", "spawn"));
+            TeleportUtils.teleportTo(player, world.getSpawnLocation(), player.hasPermission("essential.vip"), "出生点");
         }
         
         return true;

@@ -16,6 +16,21 @@ public class MessageCommand extends SimpleCommand {
     }
 
     @Override
+    protected boolean execute(CommandSender sender, String arg1) {
+        return this.execute(sender, new String[]{arg1});
+    }
+
+    @Override
+    protected boolean execute(CommandSender sender, String arg1, String arg2) {
+        return this.execute(sender, new String[]{arg1, arg2});
+    }
+
+    @Override
+    protected boolean execute(CommandSender sender, String arg1, String arg2, String arg3) {
+        return this.execute(sender, new String[]{arg1, arg2, arg3});
+    }
+
+    @Override
     protected boolean execute(@Nonnull CommandSender sender, @Nonnull String[] args) {
         Player target = Bukkit.getPlayerExact(args[0]);
         if (target == null) {

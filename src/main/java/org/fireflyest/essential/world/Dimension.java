@@ -24,7 +24,7 @@ public class Dimension {
     public static final int LEAGUE = 1;
     public static final int SERVER = 2;
 
-    public static final int PERMISSION_USE =              0b00000000000000000000000000000001; // 使用
+    public static final int PERMISSION_USE =              0b00000000000000000000000000000111; // 使用
     
     public static final int PERMISSION_DESTROY =      0b00000000000000000000000000001000; // 破坏
     public static final int PERMISSION_PLACE =           0b00000000000000000000000000010000; // 放置
@@ -121,7 +121,7 @@ public class Dimension {
      */
     public void createDomain(String name, UUID owner, Location point) {
         service.insertDomain(name, owner, point);
-        Domain domain = service.selectDomainsByName(name);
+        Domain domain = service.selectDomainByName(name);
         if (domain != null) {
             // 区块记录
             String loc = domain.getPlots();
@@ -142,6 +142,9 @@ public class Dimension {
                     roadBelong.add(domain);
                 }
             }
+
+            // 添加
+            domainMap.put(name, domain);
         }
     }
 

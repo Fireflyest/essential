@@ -1,3 +1,4 @@
+Version: '${project.version}'
 Debug: false
 
 # 语言文件
@@ -12,6 +13,10 @@ Password: '123456'
 DefaultPrefix: $<hg=#b2b9be:#5f7082>初来乍到
 Website: "craftedge.cn"
 ServerName: EdgeCraft
+
+# items.yml文件中的物品主键
+NewPlayerKits: new
+
 
 ###############################################
 #
@@ -29,10 +34,19 @@ IgniteArrow: false
 StructureEnable: true
 
 # 最大领地数量和领地包含的最大区块数量
-MaxDomain: 3
+MaxDomain: 5
 MaxChunk: 25
 # 区块价格=基本价格+[(当前区块数量^2)*(基本价格/5)]
 BaseChunkPrice: 300
+
+# 全局死亡保护
+KeepInventory: true
+# 如果不死亡保护 ，可以特定保护一些东西
+KeepEquip: false
+KeepLuxury: false
+KeepProp: false
+
+PlotWorld: world_plot
 
 ###############################################
 #
@@ -43,6 +57,7 @@ BaseChunkPrice: 300
 MaxMaster: 1
 MaxApprentice: 10
 
+
 ###############################################
 #
 # 经济
@@ -52,3 +67,23 @@ MaxApprentice: 10
 BaseMoney: 500
 # 货币名称
 CurrencyName: '§6ɞ'
+
+
+###############################################
+#
+# 聊天
+#
+###############################################
+# 默认聊天范围
+ChatRange: globe
+
+
+###############################################
+#
+# 账户
+#
+###############################################
+# 非群组服情况下自动登录
+AutoLogin: false
+# 重启自动回大厅
+AutoLobby: true

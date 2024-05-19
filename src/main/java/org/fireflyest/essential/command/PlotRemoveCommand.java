@@ -65,12 +65,14 @@ public class PlotRemoveCommand extends SubCommand {
         Dimension dimension = worldMap.get(worldName);
         if (dimension == null) {
             sender.sendMessage(Language.PLOT_WORLD_UNKNOWN);
+            player.closeInventory();
             return true;
         }
 
         Domain domain = dimension.getDomain(arg1);
         if (domain == null) {
             sender.sendMessage(Language.PLOT_NON_EXISTENT);
+            player.closeInventory();
             return true;
         }
         if (!domain.getOwner().equals(player.getUniqueId().toString())) {
@@ -85,11 +87,12 @@ public class PlotRemoveCommand extends SubCommand {
 
             dimension.removeDomain(domain);
             sender.sendMessage(Language.PLOT_REMOVE);
-            player.performCommand("plot map");
         } else {
             cache.setex(key, 30, "remove");
             sender.sendMessage(Language.COMMAND_CONFIRM);
         }
+
+        player.closeInventory();
 
         return true;
     }

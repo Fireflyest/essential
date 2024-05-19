@@ -56,6 +56,8 @@ public class Plot {
         this.domain = domain;
     }
 
-    
+    public boolean in(int px, int pz) {
+        return (x * 16 < px && z * 16 < pz && (x+1) * 16 > px && (z+1) * 16 > pz);
+    }
 
 }

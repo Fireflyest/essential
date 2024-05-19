@@ -24,6 +24,7 @@ public class Language {
 
     public static String WORLD_CREATE;
     public static String WORLD_UNLOAD;
+    public static String WORLD_CLEAN;
     
     public static String GROUP_ADD;
     public static String PERMISSION_ADD;
@@ -58,6 +59,7 @@ public class Language {
 
     public static String HAVE_NOT_SET_KIT;
     public static String DISPOSABLE_KIT;
+    public static String GIVE_KIT;
     
     public static String CHAT_GLOBAL;
     public static String CHAT_NEAR;
@@ -68,7 +70,6 @@ public class Language {
     public static String COOLDOWN_TO_USE;
 
     public static String TELEPORT_POINT;
-    public static String SAVE_POINT;
     public static String CANCEL_WAITING;
     public static String HAVE_NOT_SET_POI;
     public static String ALREADY_HAS_TPER;
@@ -118,6 +119,7 @@ public class Language {
     public static String PLOT_RESERVE;
     public static String PLOT_ENTER;
     public static String PLOT_LEAVE;
+    public static String PLOT_HELP;
 
     public static String COMMAND_CONFIRM;
     public static String COMMAND_ARGUMENT;

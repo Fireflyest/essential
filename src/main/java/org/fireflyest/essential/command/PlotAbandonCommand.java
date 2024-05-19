@@ -46,6 +46,7 @@ public class PlotAbandonCommand extends SubCommand {
         Dimension dimension = worldMap.get(worldName);
         if (dimension == null) {
             sender.sendMessage(Language.PLOT_WORLD_UNKNOWN);
+            player.closeInventory();
             return true;
         }
 
@@ -53,18 +54,21 @@ public class PlotAbandonCommand extends SubCommand {
         Plot plot = dimension.getPlot(arg1);
         if (plot == null) {
             sender.sendMessage(Language.PLOT_OUTSIDE);
+            player.closeInventory();
             return true;
         }
 
         Domain domain = plot.getDomain();
         if (!domain.getOwner().equals(player.getUniqueId().toString())) {
             sender.sendMessage(Language.PLOT_FORBID);
+            player.closeInventory();
             return true;
         }
 
         // 初始地皮无法删除
         if (!domain.getPlots().contains(" " + arg1)) {
             sender.sendMessage(Language.PLOT_ABANDON_CENTER);
+            player.closeInventory();
             return true;
         }
 
@@ -74,6 +78,8 @@ public class PlotAbandonCommand extends SubCommand {
         dimension.abandonPlot(domain, plot);
         player.performCommand("plot map");
         sender.sendMessage(Language.PLOT_ABANDON);
+
+        player.closeInventory();
 
         return true;
     }

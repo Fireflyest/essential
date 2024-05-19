@@ -22,13 +22,17 @@ public class TeleportUtils {
     private TeleportUtils() {
     }
 
+    public static void teleportTo(Player player, Location loc, boolean vip) {
+        teleportTo(player, loc, vip, "");
+    }
+
     /**
      * 传送
      * @param player 玩家
      * @param loc 位置
      * @param vip 是否无延迟
      */
-    public static void teleportTo(Player player, Location loc, boolean vip) {
+    public static void teleportTo(Player player, Location loc, boolean vip, String locName) {
         if (waiting.contains(player.getName())) {
             player.sendMessage(Language.TITLE + "waiting...");
             return;
@@ -56,7 +60,7 @@ public class TeleportUtils {
         }.runTaskLater(Essential.getPlugin(), t * 20);
 
         new BukkitRunnable() {
-            final BossBar coolbar = Bukkit.getServer().createBossBar("", BarColor.WHITE, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
+            final BossBar coolbar = Bukkit.getServer().createBossBar("正在传送到" + locName, BarColor.WHITE, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC);
             double time = t;
             boolean apply = false;
             @Override

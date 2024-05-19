@@ -2,12 +2,10 @@ package org.fireflyest.essential.command;
 
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -47,6 +45,9 @@ public class PlotRoadCommand extends SubCommand {
             sender.sendMessage(Language.ONLY_PLAYER_USE);
             return false;
         }
+        // TODO: a
+        if(!sender.isOp()) return true;
+
         String worldName = player.getWorld().getName();
         // 判断该世界是否记录
         Dimension dimension = worldMap.get(worldName);
@@ -180,6 +181,7 @@ public class PlotRoadCommand extends SubCommand {
                     case "swn":
                     case "ewn":
                     case "esn":
+                    case "eswn":
                         lu.getBlock().setType(Material.SMOOTH_STONE_SLAB);
                         ru.getBlock().setType(Material.SMOOTH_STONE_SLAB);
                         ld.getBlock().setType(Material.SMOOTH_STONE_SLAB);

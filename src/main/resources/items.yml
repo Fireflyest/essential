@@ -1,0 +1,51 @@
+menu:
+  type: interact
+  name: '§6§l菜单'
+  material: CLOCK
+  lore: 
+   - '§7右键使用'
+  trigger: 'craft-interact-use'
+  value: 'menu'
+  action: 'command'
+new:
+  type: interact
+  name: '&e&l新手工具包'
+  material: YELLOW_SHULKER_BOX
+  lore:
+    - '&f * 圈地工具'
+    - '&f * 新手食物'
+    - '&f * 新手装备'
+    - '&f * 新手工具'
+    - '&f * 新手武器'
+    - '&f * 新手工具'
+    - '&7右键使用'
+    - '&7请留意背包空间是否足够'
+  trigger: 'craft-interact-use'
+  value: 'kit default %player%'
+  action: 'console-disposable'
+kit_default_01:
+  type: interact
+  name: '&b&l圈地工具'
+  material: STICK
+  lore:
+    - '&7右键使用'
+  trigger: 'craft-interact-use'
+  cooldown: 0
+  value: 'res point'
+  action: 'command'
+kit_default_02:
+  name: '&f新手食物'
+  material: BREAD
+  amount: 16
+kit_default_03:
+  name: '&f新手装备'
+  material: DIAMOND_HELMET
+kit_default_04:
+  name: '&f新手工具'
+  material: IRON_AXE
+kit_default_05:
+  name: '&f新手武器'
+  material: IRON_SWORD
+kit_default_06:
+  name: '&f新手工具'
+  material: IRON_PICKAXE

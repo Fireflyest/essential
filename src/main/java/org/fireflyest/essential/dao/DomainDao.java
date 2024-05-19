@@ -23,7 +23,7 @@ public interface DomainDao {
     String[] selectDomainsNameByPlayer(String owner);
 
     @Select("SELECT * FROM `essential_domain` WHERE `name`='${name}';")
-    Domain selectDomainsByName(String name);
+    Domain selectDomainByName(String name);
 
     @Select("SELECT `owner` FROM `essential_domain` WHERE `name`='${name}';")
     String selectDomainOwner(String name);

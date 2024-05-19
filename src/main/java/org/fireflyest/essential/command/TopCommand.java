@@ -33,10 +33,13 @@ public class TopCommand extends SimpleCommand {
 
         Location loc = player.getLocation();
         cache.set(player.getName() + ".base.back", SerializationUtil.serialize(loc));
-        player.sendMessage(Language.SAVE_POINT);
         
-        loc.setY(loc.getChunk().getChunkSnapshot().getHighestBlockYAt(Math.abs((int)loc.getX() % 16), Math.abs((int)loc.getZ() % 16)) + 2.5);
-        TeleportUtils.teleportTo(player, loc, player.hasPermission("essential.vip"));
+        int x = (int)loc.getX() % 16;
+        if (x < 0) x += 16;
+        int z = (int)loc.getZ() % 16;
+        if (z < 0) z += 16;
+        loc.setY(loc.getChunk().getChunkSnapshot().getHighestBlockYAt(x, z) + 2.5);
+        TeleportUtils.teleportTo(player, loc, player.hasPermission("essential.vip"), "最高处");
         return true;
     }
     

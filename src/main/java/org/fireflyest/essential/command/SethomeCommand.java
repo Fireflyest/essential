@@ -54,6 +54,9 @@ public class SethomeCommand extends SimpleCommand {
             service.insertHome(uid, arg1, player.getLocation());
         }
         player.sendMessage(Language.SUCCEED_SETTLE.replace("%home%", arg1));
+
+        player.closeInventory();
+
         return true;
     }
     

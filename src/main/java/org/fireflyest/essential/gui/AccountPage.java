@@ -11,8 +11,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.fireflyest.craftgui.api.ViewPage;
 import org.fireflyest.craftitem.builder.ItemBuilder;
+import org.fireflyest.essential.Essential;
 import org.fireflyest.essential.data.StateCache;
 
 public class AccountPage implements ViewPage {
@@ -35,7 +37,7 @@ public class AccountPage implements ViewPage {
         this.target = target;
         this.isRegister = StateCache.UN_REGISTER.equals(cache.get(target + ".account.state"));
 
-        this.updateTitle(isRegister ? "§9§l注册账号" : "§9§l登录账号");
+        this.updateTitle(isRegister ? "Register - 注册" : "Login - 登录");
 
         this.refreshPage();
     }
@@ -71,12 +73,17 @@ public class AccountPage implements ViewPage {
         }
         Player player = Bukkit.getPlayerExact(target);
         if (player != null && !Objects.equals(password, TIP_TEXT)) {
-            if (isRegister) {
-                player.performCommand("register " + password);
-            } else {
-                player.performCommand("login " + password);
-            }
-            player.closeInventory();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (isRegister) {
+                        player.performCommand("register " + password);
+                    } else {
+                        player.performCommand("login " + password);
+                    }
+                    player.closeInventory();
+                }
+            }.runTaskLater(Essential.getPlugin(), 10);
         }
         return crashMap.get(slot);
     }
@@ -133,15 +140,6 @@ public class AccountPage implements ViewPage {
     public void updatePassword(String passwordStr) {
         if (!passwordStr.equals(password)) {
             password = passwordStr;
-        }
-    }
-
-    /**
-     * 删减
-     */
-    public void reducePassword() {
-        if (password.length() > 0) {
-            password = password.substring(0, password.length() - 1);
         }
     }
     

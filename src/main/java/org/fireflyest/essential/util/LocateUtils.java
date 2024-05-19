@@ -34,7 +34,7 @@ public class LocateUtils {
                     String resultString = doGet(ip);
                     if (resultString != null) {
                         Result result = new Gson().fromJson(resultString, Result.class);
-                        locMap.put(ip, null == result.province || "".equals(result.province) ? "麦块" : result.province);
+                        locMap.put(ip, null == result.regionName || "".equals(result.regionName) ? "麦块" : result.regionName.replace("省", ""));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -46,7 +46,7 @@ public class LocateUtils {
 
     private static String doGet(String ip) throws IOException {
         String result = null;
-        URL url = new URL("https://ip.useragentinfo.com/json?ip=" + ip);
+        URL url = new URL("http://ip-api.com/json/" + ip+ "?lang=zh-CN");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET"); // 设置连接方式：get
         connection.setConnectTimeout(15000); // 设置连接主机服务器的超时时间：15000毫秒
@@ -73,7 +73,7 @@ public class LocateUtils {
 
     class Result {
         private String country;
-        private String province;
+        private String regionName;
 
         public String getCountry() {
             return country;
@@ -81,11 +81,11 @@ public class LocateUtils {
         public void setCountry(String country) {
             this.country = country;
         }
-        public String getProvince() {
-            return province;
+        public String getRegionName() {
+            return regionName;
         }
-        public void setProvince(String province) {
-            this.province = province;
+        public void setRegionName(String regionName) {
+            this.regionName = regionName;
         }
     }
 

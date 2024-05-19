@@ -36,7 +36,7 @@ public class EssentialPermission extends Permission  {
             Group g = new Group(group, 
                     yaml.getGroup().getString(group + ".prefix"), 
                     yaml.getGroup().getString(group + ".desc"), 
-                    yaml.getGroup().getStringList(group + ".permission"));
+                    yaml.getGroup().getStringList(group + ".permissions"));
             groupList.add(group);
             groupMap.put(group, g);
         }
@@ -150,7 +150,6 @@ public class EssentialPermission extends Permission  {
 
     @Override
     public boolean groupAdd(String world, String group, String permission) {
-        
         // TODO: 
         return true;
     }
